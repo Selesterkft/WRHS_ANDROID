@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">SelWH</string>
+    <string name="belepes">Belépés</string>
+    <string name="barcode_ellenorzes">Vonalkód ellenőrzés</string>
+    <string name="buttonLabel">Válassza ki a vonalkódot</string>
+    <string name="accountText">Felhasználó név</string>
+    <string name="passwordText">Jelszó</string>
+    <string name="logo">logo</string>
+    <string name="loginicon">loginIcon</string>
+    <string name="loginsetting">loginSetting</string>
+    <string name="tooltipText">TooltipText</string>
+</resources>

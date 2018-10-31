@@ -1,0 +1,49 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    
+    <style name="ToolbarTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColorPrimary">@color/whiteColor</item>
+        <item name="android:textColorSecondary">@color/whiteColor</item>
+        <item name="android:background">@color/decorColor</item>
+    </style>
+
+    <style name="ToolTipLayoutCustomStyle">
+        <item name="ttlm_padding">25dip</item>
+        <item name="ttlm_strokeColor">#0050b7</item>
+        <item name="ttlm_backgroundColor">#0076e5</item>
+        <item name="ttlm_strokeWeight">1dip</item>
+        <item name="ttlm_cornerRadius">8dip</item>
+        <item name="ttlm_overlayStyle">@style/ToolTipOverlayCustomStyle</item>
+        <item name="android:textAppearance">@style/TextAppearance.MyToolsText.Custom</item>
+    </style>
+
+    <style name="ToolTipOverlayCustomStyle">
+        <item name="android:color">#662a65b3</item>
+        <item name="ttlm_repeatCount">999</item>
+        <item name="ttlm_duration">400</item>
+    </style>
+
+    <style name="TextAppearance.MyToolsText.Custom" parent="">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">#ffffff</item>
+    </style>
+
+    <style name="login_text_shadow">
+        <item name="android:shadowDx">5</item>
+        <item name="android:shadowDy">5</item>
+        <item name="android:shadowRadius">5</item>
+    </style>
+
+    <style name="MyCheckBoxStyle" parent="Base.Widget.AppCompat.CompoundButton.CheckBox">
+        <item name="android:textColor">@drawable/checkbox_color_selector</item>
+        <item name="buttonTint">@drawable/checkbox_color_selector</item>
+    </style>
+</resources>
+

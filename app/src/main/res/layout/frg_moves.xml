@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:id="@+id/moves_tableRoot"
+    android:weightSum="20">
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="Feladat kiválasztása"
+        android:background="@color/headerColor"
+        android:textColor="@color/whiteColor"
+        android:gravity="center"/>
+    <LinearLayout
+        android:layout_weight="20"
+        android:id="@+id/moves_mainLayout"
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"/>
+    <LinearLayout
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <ImageButton
+            android:layout_weight="1"
+            android:src="@drawable/but_cancel_44x44"
+            android:id="@+id/moves_backBtn"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:scaleType="fitCenter"
+            android:background="@null"
+            android:paddingBottom="10dp"
+            android:paddingTop="5dp"
+            android:text="X"/>
+        <ImageButton
+            android:src="@drawable/but_ean_44x44"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:layout_weight="1"
+            android:id="@+id/moves_selectBtn"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingBottom="10dp"
+            android:paddingTop="5dp"
+            android:text="Vonalkód összehasonlítás"/>
+        <ImageButton
+            android:layout_weight="1"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:paddingBottom="10dp"
+            android:paddingTop="5dp"
+            android:src="@drawable/but_download_44x44"
+            android:id="@+id/moves_selectBtn1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="Mozgás adatok betöltése"/>
+    </LinearLayout>
+</LinearLayout>

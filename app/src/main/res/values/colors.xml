@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="errorColor">#FF0000</color>
+    <color name="loginBtnColor">#669acc</color>
+    <color name="decorColor">#4cc5f3</color>
+    <color name="whiteColor">#ffffff</color>
+    <color name="ltGrayColor">#dfdfdf</color>
+    <color name="decorDarkColor">#06193d</color>
+    <color name="backOpacityColor">#55000000</color>
+    <color name="itemListFullColor">#dfdfdf</color>
+    <color name="blackColor">#000000</color>
+    <color name="headerColor">#485ba2</color>
+    <color name="headerColor2">#359338</color>
+    <color name="secondColor">#5d97d1</color>
+
+    <color name="productRowOKBack">#5500ff00</color>
+    <color name="productRowPHBack">#aad3d3ff</color>
+    <color name="productRowNOTBack">#ffffff</color>
+
+    // ------------ TablePanel ---------------------
+
+    <color name="backcolorTablePanelDefault">#00FFFFFF</color>
+    <color name="fontcolorTablePanelDefault">#FF000000</color>
+    <color name="colorDivider">#DADADA</color>
+
+</resources>
