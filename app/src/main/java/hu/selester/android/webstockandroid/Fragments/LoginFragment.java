@@ -1,7 +1,7 @@
 package hu.selester.android.webstockandroid.Fragments;
 
 
-// Login
+// Login ez egy másik
 
 import android.app.Dialog;
 import android.content.Context;
