@@ -84,7 +84,7 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frg_login,container,false);
         db = SelesterDatabase.getDatabase(getContext());
-        //db.systemDao().setValue(new SystemTable("WSUrl","http://webrestapiservices02.azurewebsites.net/Service1.svc"));
+        //db.systemDao().setValue(new SystemTable("WSUrl","http://ne hagyd benne az urlt-!/Service1.svc"));
         //db.systemDao().setValue(new SystemTable("terminal","mag"));
         //db.systemDao().setValue(new SystemTable("barcodeSuffix","#&"));
         //db.systemDao().setValue(new SystemTable("scanButtonCode", "203"));
