@@ -190,10 +190,15 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
                                                 passwordEt.getText().toString()
                                         )
                                     );
-                                    TelephonyManager telephonyManager;
-                                    telephonyManager = (TelephonyManager) getActivity().getSystemService(Context.
-                                            TELEPHONY_SERVICE);
-                                    String deviceId = telephonyManager.getDeviceId();
+                                    String deviceId = "0";
+                                    try {
+                                        TelephonyManager telephonyManager;
+                                        telephonyManager = (TelephonyManager) getActivity().getSystemService(Context.
+                                                TELEPHONY_SERVICE);
+                                        deviceId = telephonyManager.getDeviceId();
+                                    }catch (SecurityException e){
+                                        e.printStackTrace();
+                                    }
 
                                     SessionClass.setParam("userid",root.getString("ID"));
                                     SessionClass.setParam("name",root.getString("Name"));
@@ -305,6 +310,7 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
 
     private void newVersionDialog(String url) {
         builder = new AlertDialog.Builder(getActivity());
+
         View v = getLayoutInflater().inflate(R.layout.dialog_newversion,null);
         pb = v.findViewById(R.id.newversion_progressBar);
         pbText = v.findViewById(R.id.newversion_progressBarPercentText);

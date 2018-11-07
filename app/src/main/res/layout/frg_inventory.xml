@@ -50,7 +50,7 @@
                     android:layout_width="85dp"
                     android:layout_height="wrap_content"
                     android:textAlignment="textEnd"
-                    android:text="uj/0"
+                    android:text=""
                     android:layout_marginRight="5dp"/>
             </LinearLayout>
             <LinearLayout
@@ -189,10 +189,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
                 <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="10dp"
-                android:text="Puzzle"/>
+                    android:id="@+id/inventory_itemname"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:text="Puzzle"/>
                 <LinearLayout
                     android:id="@+id/inventory_panel6"
                     android:layout_width="match_parent"
@@ -324,16 +325,25 @@
             android:background="@null"
             android:scaleType="fitCenter"
             android:layout_marginStart="10dp"
-            android:id="@+id/checkplace_flushBtn"
+            android:id="@+id/inventory_flushBtn"
             android:layout_width="55dp"
             android:layout_height="match_parent"
             android:text="ElDOBÁS"/>
+        <ImageButton
+            android:src="@drawable/but_creditnote_44x44"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:layout_marginStart="10dp"
+            android:id="@+id/inventory_clearBtn"
+            android:layout_width="55dp"
+            android:layout_height="match_parent"
+            android:text="Törlés"/>
         <ImageButton
             android:src="@drawable/but_save_44x44"
             android:background="@null"
             android:scaleType="fitCenter"
             android:layout_marginStart="10dp"
-            android:id="@+id/checkplace_saveBtn"
+            android:id="@+id/inventory_saveBtn"
             android:layout_width="55dp"
             android:layout_height="match_parent"
             android:text="ElDOBÁS"/>

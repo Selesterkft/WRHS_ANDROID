@@ -17,23 +17,9 @@ import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
-import com.google.zxing.integration.android.IntentIntegrator;
-
-import org.json.JSONObject;
-
-import java.util.HashMap;
-
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
-import hu.selester.android.webstockandroid.Database.Tables.SystemTable;
 import hu.selester.android.webstockandroid.Fragments.CheckPlaceFragment;
 import hu.selester.android.webstockandroid.Fragments.ChkBarcodeFragment;
 import hu.selester.android.webstockandroid.Fragments.DialogFragment;
@@ -42,9 +28,7 @@ import hu.selester.android.webstockandroid.Fragments.MovesSubTableFragment;
 import hu.selester.android.webstockandroid.Fragments.ScanCountFragment;
 import hu.selester.android.webstockandroid.Fragments.SettingsFragment;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
-import hu.selester.android.webstockandroid.Helper.MySingleton;
 import hu.selester.android.webstockandroid.Objects.ActiveFragment;
-import hu.selester.android.webstockandroid.Objects.SessionClass;
 
 public class MainActivity extends FragmentActivity {
 
