@@ -76,8 +76,7 @@
                 android:textColor="@color/whiteColor"
                 android:text="Tárhely ellenőrzés"
                 android:textSize="18sp"
-                android:visibility="visible"
-                />
+                android:visibility="visible" />
             <Button
                 android:id="@+id/menu_settingsBtn"
                 android:textColor="@color/whiteColor"
@@ -86,12 +85,10 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp"
-
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:textSize="18sp"
-                android:text="Beállítások"
-                />
+                android:text="Beállítások"/>
             <Button
                 android:id="@+id/menu_log"
                 android:textColor="@color/whiteColor"
@@ -100,12 +97,11 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp"
-
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:textSize="18sp"
-                android:text="Napló"
-            />
+                android:visibility="gone"
+                android:text="Napló"/>
             <Button
                 android:id="@+id/menu_logoutBtn"
                 android:textColor="@color/whiteColor"
@@ -114,13 +110,10 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="15dp"
                 android:paddingBottom="15dp"
-
                 android:textSize="18sp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:text="Kilépés"
-                />
+                android:text="Kilépés" />
         </LinearLayout>
     </ScrollView>
-
 </android.support.constraint.ConstraintLayout>

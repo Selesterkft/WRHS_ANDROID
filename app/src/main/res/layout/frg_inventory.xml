@@ -47,10 +47,14 @@
                     android:layout_height="wrap_content"
                     android:text="Válasszon raktárat..."/>
                 <TextView
-                    android:layout_width="85dp"
+                    android:id="@+id/inventory_counter"
+                    android:layout_width="80dp"
                     android:layout_height="wrap_content"
                     android:textAlignment="textEnd"
-                    android:text=""
+                    android:padding="5dp"
+                    android:textSize="12sp"
+                    android:textColor="@color/whiteColor"
+                    android:background="@color/secondColor"
                     android:layout_marginRight="5dp"/>
             </LinearLayout>
             <LinearLayout
@@ -328,7 +332,7 @@
             android:id="@+id/inventory_flushBtn"
             android:layout_width="55dp"
             android:layout_height="match_parent"
-            android:text="ElDOBÁS"/>
+            android:text="ELDOBÁS"/>
         <ImageButton
             android:src="@drawable/but_creditnote_44x44"
             android:background="@null"
@@ -338,6 +342,15 @@
             android:layout_width="55dp"
             android:layout_height="match_parent"
             android:text="Törlés"/>
+        <ImageButton
+            android:src="@drawable/but_group_add_44x44"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:layout_marginStart="10dp"
+            android:id="@+id/inventory_addBtn"
+            android:layout_width="55dp"
+            android:layout_height="match_parent"
+            android:text="Új elem"/>
         <ImageButton
             android:src="@drawable/but_save_44x44"
             android:background="@null"

@@ -66,7 +66,7 @@ public class ChangeStatusThread extends Thread{
                     String rtext = jsonObject.getString("ERROR_CODE");
                     if(!rtext.isEmpty()){
                         if(rtext.equals("-1")){
-                            Toast.makeText(context,"Státusz váltása sikeres: "+status+"!",Toast.LENGTH_LONG).show();
+                            //Toast.makeText(context,"Státusz váltása sikeres: "+status+"!",Toast.LENGTH_LONG).show();
                             if(status.equals("PDA")){
                                 new DeleteTempThread(context,tranCode,f).start();
                             }

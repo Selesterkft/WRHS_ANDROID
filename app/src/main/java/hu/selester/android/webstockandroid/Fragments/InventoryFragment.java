@@ -64,6 +64,8 @@ public class InventoryFragment extends Fragment {
     private Integer[] WHIds, virtWHIds, renterIds;
     private int selectWHID, selectvirtWHID, selectRenterID;
     private EditText placeIdET, palET, itemIdET, countET, lotET, expET;
+    private TextView counterTV;
+    private int itemCounter;
     private boolean WHListLoaded = false;
     private String isBar;
     private Button nextBtn1, nextBtn2;
@@ -72,6 +74,9 @@ public class InventoryFragment extends Fragment {
     private View rootView;
     private String Locks_ID, WrhsRenters_ID, OUT_WrhsGoods_ID, OUT_WrhsGoods_ItemNum, OUT_WrhsGoods_Name, FieldParams_TextBox_MHD, expDate ;
     private int mYear, mMonth, mDay;
+
+    // Store temp data split pipline
+    private String Vector_Paletta_ParamStr, Vector_EinlagererID_ParamStr, Vector_ArtikelID_ParamStr, Vector_Anz_ParamStr, Vector_ProdFeld1_ParamStr, Vector_MHD_ParamStr, Vector_VirtualLagerID_ParamStr;
 
 
     @Nullable
@@ -86,6 +91,8 @@ public class InventoryFragment extends Fragment {
         loadGetParams();
         loadRenterData();
         params = new String[5];
+
+        counterTV = rootView.findViewById(R.id.inventory_counter);
         whIDTV = rootView.findViewById(R.id.inventory_text1);
         placeIdET = rootView.findViewById(R.id.inventory_text2);
         palET = rootView.findViewById(R.id.inventory_text3);
@@ -108,12 +115,6 @@ public class InventoryFragment extends Fragment {
                 datePicker();
             }
         });
-        expET.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-            @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                datePicker();
-            }
-        });
 
         whIDTV.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -126,6 +127,15 @@ public class InventoryFragment extends Fragment {
         clearBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                clearData();
+            }
+        });
+
+        ImageButton addBtn = rootView.findViewById(R.id.inventory_addBtn);
+        addBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                addTempDatas();
                 clearData();
             }
         });
@@ -180,12 +190,24 @@ public class InventoryFragment extends Fragment {
         return rootView;
     }
 
+    private void addTempDatas() {
+        Vector_Paletta_ParamStr         += palET.getText().toString()+"|";
+        Vector_EinlagererID_ParamStr    += selectRenterID + "|";
+        Vector_ArtikelID_ParamStr       += OUT_WrhsGoods_ID + "|";
+        Vector_Anz_ParamStr             += countET.getText().toString() + "|";
+        Vector_ProdFeld1_ParamStr       += lotET.getText().toString() + "|";
+        Vector_MHD_ParamStr             += expDate + "|";
+        Vector_VirtualLagerID_ParamStr  += selectvirtWHID+"|";
+        itemCounter++;
+        counterTV.setText("Tételek: "+itemCounter);
+
+    }
+
     private void clearData() {
         selectRenterID = 0;
         selectvirtWHID = 0;
         FieldParams_TextBox_MHD = "";
         OUT_WrhsGoods_ID = "";
-        Locks_ID = "";
         expDate = "";
 
         group1.setVisibility(View.VISIBLE);
@@ -234,6 +256,16 @@ public class InventoryFragment extends Fragment {
         selectWHID = 0;
         selectRenterID = 0;
         selectvirtWHID = 0;
+        Vector_Paletta_ParamStr = "";
+        Vector_EinlagererID_ParamStr = "";
+        Vector_ArtikelID_ParamStr = "";
+        Vector_Anz_ParamStr = "";
+        Vector_ProdFeld1_ParamStr  = "";
+        Vector_MHD_ParamStr = "";
+        Vector_VirtualLagerID_ParamStr = "";
+        itemCounter = 1;
+        counterTV.setText("Tételek: "+itemCounter);
+
         group1.setVisibility(View.GONE);
         group2.setVisibility(View.GONE);
         nextBtn1.setVisibility(View.VISIBLE);
@@ -544,8 +576,10 @@ public class InventoryFragment extends Fragment {
                             if (x > 0) renterTV.setText(renterTexts[x]);
                             else renterTV.setText("Válasszon bérlőt...");
                             nextBtn2.setVisibility(View.GONE);
+                            group2.setVisibility(View.VISIBLE);
                         }else{
-                            Toast.makeText(getContext(), json.getString("ERROR_TEXT"), Toast.LENGTH_LONG).show();
+                            itemErrorDialog(json.getString("ERROR_TEXT"));
+                            //Toast.makeText(getContext(), json.getString("ERROR_TEXT"), Toast.LENGTH_LONG).show();
                         }
 
                     } catch (Exception e) {
@@ -587,7 +621,6 @@ public class InventoryFragment extends Fragment {
     private void loadData2() {
         if( !itemIdET.getText().toString().isEmpty() ) {
             loadGoodFromBarcode();
-            group2.setVisibility(View.VISIBLE);
             KeyboardUtils.hideKeyboard(getActivity());
         }else{
             Toast.makeText(getContext(), "Nincs kiválasztva a cikk!", Toast.LENGTH_LONG).show();
@@ -690,28 +723,29 @@ public class InventoryFragment extends Fragment {
     private void saveData() {
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
         String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_Func_BlindInventory_SET";
+        addTempDatas();
         HashMap<String, String> map = new HashMap<>();
         map.put("Terminal", SessionClass.getParam("terminal"));
         map.put("WrhsDecl_ID", ""+selectWHID);
         map.put("WrhsLocs_ID", Locks_ID);
-        map.put("Vector_Paletta", palET.getText().toString()+"|");
-        map.put("Vector_EinlagererID", selectRenterID + "|");
-        map.put("Vector_ArtikelID", OUT_WrhsGoods_ID + "|");
-        map.put("Vector_Anz", countET.getText().toString() + "|");
-        map.put("Vector_ProdFeld1", lotET.getText().toString() + "|");
-        map.put("Vector_MHD",  expDate + "|");
-        map.put("Vector_VirtualLagerID", selectvirtWHID+"|");
+        map.put("Vector_Paletta", Vector_Paletta_ParamStr);
+        map.put("Vector_EinlagererID", Vector_EinlagererID_ParamStr);
+        map.put("Vector_ArtikelID", Vector_ArtikelID_ParamStr);
+        map.put("Vector_Anz", Vector_Anz_ParamStr);
+        map.put("Vector_ProdFeld1", Vector_ProdFeld1_ParamStr);
+        map.put("Vector_MHD", Vector_MHD_ParamStr );
+        map.put("Vector_VirtualLagerID", Vector_VirtualLagerID_ParamStr );
 
         Log.i("Terminal", SessionClass.getParam("terminal"));
         Log.i("WrhsDecl_ID", ""+selectWHID);
         Log.i("WrhsLocs_ID", Locks_ID);
-        Log.i("Vector_Paletta", palET.getText().toString()+"|");
-        Log.i("Vector_EinlagererID", selectRenterID + "|");
-        Log.i("Vector_ArtikelID", OUT_WrhsGoods_ID + "|");
-        Log.i("Vector_Anz", countET.getText().toString() + "|");
-        Log.i("Vector_ProdFeld1", lotET.getText().toString() + "|");
-        Log.i("Vector_MHD",  expDate);
-        Log.i("Vector_VirtualLagerID", selectvirtWHID+"|");
+        Log.i("Vector_Paletta", Vector_Paletta_ParamStr);
+        Log.i("Vector_EinlagererID", Vector_EinlagererID_ParamStr);
+        Log.i("Vector_ArtikelID", Vector_ArtikelID_ParamStr);
+        Log.i("Vector_Anz", Vector_Anz_ParamStr);
+        Log.i("Vector_ProdFeld1", Vector_ProdFeld1_ParamStr);
+        Log.i("Vector_MHD",  Vector_MHD_ParamStr);
+        Log.i("Vector_VirtualLagerID", Vector_VirtualLagerID_ParamStr);
 
         Log.i("SaveData", url);
         if (HelperClass.isOnline(getContext())) {
@@ -726,6 +760,7 @@ public class InventoryFragment extends Fragment {
                         if (!rtext.isEmpty()) {
                             if (rtext.equals("0")) {
                                 Toast.makeText(getContext(), "Adatok mentése megtörtént!", Toast.LENGTH_LONG).show();
+                                refreshData();
                             } else {
                                 Toast.makeText(getContext(), "Adatok mentése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
                             }
@@ -772,6 +807,23 @@ public class InventoryFragment extends Fragment {
                 Locks_ID = id;
                 group1.setVisibility(View.VISIBLE);
                 group2.setVisibility(View.GONE);
+            }
+        });
+        builder.show();
+    }
+
+    private void itemErrorDialog(String errorText) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Cikkszám meghatározás");
+        TextView tv1 = new TextView(getContext());
+        tv1.setPadding(HelperClass.dpToPx(getContext(),20),HelperClass.dpToPx(getContext(),20),0,0);
+        tv1.setText(errorText);
+        builder.setView(tv1);
+        builder.setNegativeButton("Rendben", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                dialog.cancel();
             }
         });
         builder.show();
