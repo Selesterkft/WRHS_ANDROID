@@ -8,6 +8,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
+import android.media.ToneGenerator;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -44,6 +47,7 @@ import hu.selester.android.webstockandroid.AsyncTask.DownloadNewVersion;
 import hu.selester.android.webstockandroid.BuildConfig;
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Database.Tables.LogTable;
+import hu.selester.android.webstockandroid.Database.Tables.SystemTable;
 import hu.selester.android.webstockandroid.Database.Tables.UsersTable;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
@@ -73,8 +77,8 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frg_login,container,false);
         db = SelesterDatabase.getDatabase(getContext());
-        //db.systemDao().setValue(new SystemTable("WSUrl","http://ne hagyd benne az urlt-!xxx/Service1.svc"));
-        //db.systemDao().setValue(new SystemTable("terminal","mag"));
+        //db.systemDao().setValue(new SystemTable("WSUrl","http://ysel1.yusen.hu:8080/Service1.svc"));
+        //db.systemDao().setValue(new SystemTable("terminal","AdmAndr"));
         //db.systemDao().setValue(new SystemTable("barcodeSuffix","#&"));
         //db.systemDao().setValue(new SystemTable("scanButtonCode", "203"));
         showPasword = false;
@@ -210,6 +214,11 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
                                     editor.putString("whrs_selexped_account", accountEt.getText().toString());
                                     db.logDao().addLog(new LogTable("M","Bejelentkezés", SessionClass.getParam("account"), HelperClass.getCurrentDate(), HelperClass.getCurrentTime() ));
                                     editor.commit();
+
+                                    //ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);
+                                    //toneGen1.startTone(ToneGenerator.TONE_CDMA_PIP,150);
+
+
                                     Fragment f = new MainMenuFragment();
                                     FragmentManager fm = getFragmentManager();
                                     FragmentTransaction ft = fm.beginTransaction();

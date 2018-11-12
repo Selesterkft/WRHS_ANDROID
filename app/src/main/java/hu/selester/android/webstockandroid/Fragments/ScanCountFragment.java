@@ -374,12 +374,14 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                                     }
                                     isnew = !isnew;
                                 } else {
+                                    HelperClass.errorSound(getActivity());
                                     Toast.makeText(getContext(), "Nem tárolható ilyen tétel!", Toast.LENGTH_LONG).show();
                                 }
                                 //}
 
                             }
                         } else {
+                            HelperClass.errorSound(getActivity());
                             Toast.makeText(getContext(), "Nem létező vonalkód!", Toast.LENGTH_LONG).show();
                         }
                         findValue.removeTextChangedListener(textWatcher);
@@ -430,6 +432,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                         }
                     }
                 }else{
+                    HelperClass.errorSound(getActivity());
                     Toast.makeText(getContext(), "Nem létező vonalkód!", Toast.LENGTH_LONG).show();
                 }
             }
@@ -474,6 +477,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 int maxItemCount = Integer.parseInt(AllLinesData.getParam(lineID)[qNeed]);
                 if ((itemCount + 1) > maxItemCount) {
                     if (tranCode.charAt(0) == '2') {
+                        HelperClass.errorSound(getActivity());
                         Toast.makeText(getContext(), "Nem tárolható ki több tétel!", Toast.LENGTH_LONG).show();
                     }
                 } else {

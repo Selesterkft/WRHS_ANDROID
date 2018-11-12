@@ -455,6 +455,7 @@ public class ChkBarcodeFragment extends Fragment {
 
             } else {
                 resultImage.setImageResource(R.drawable.warningicon);
+                HelperClass.errorSound(getActivity());
                 resultText.setText("Vonalkód nem egyezik!");
             }
         }

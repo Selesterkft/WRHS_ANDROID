@@ -15,7 +15,7 @@ public interface ProductDataDao {
     @Query("Select transactId from ProductData LIMIT 1")
     long getLastTransactId();
 
-    @Query("Select prodid from ProductData where bar1=:barcode1")
+    @Query("Select prodid from ProductData where bar1=:barcode1 or bar1 like '0'+:barcode1 or bar1 like '00'+:barcode1")
     String getBarcodeProd(String barcode1);
 
     @Query("Select bar1 from ProductData where prodid=:prodid")

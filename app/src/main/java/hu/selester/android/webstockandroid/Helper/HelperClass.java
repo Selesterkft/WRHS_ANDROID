@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
@@ -29,6 +30,7 @@ import java.util.Map;
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
 import hu.selester.android.webstockandroid.Dialogs.MessageDialog;
+import hu.selester.android.webstockandroid.MainActivity;
 import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.CheckedList;
 import hu.selester.android.webstockandroid.Objects.MessageBoxSettingsObject;
@@ -180,6 +182,22 @@ public class HelperClass {
         return null;
     }
 
+    public static String isBarcodeALLTEXT(String barcode){
+        if(barcode.length()>3){
+            if(!barcode.isEmpty()) {
+                barcode = barcode.replace(" ","");
+
+                int suffixLen = SessionClass.getParam("barcodeSuffix").length();
+                //Log.i("SUFFIX", barcode + " - " + SessionClass.getParam("barcodeSuffix"));
+                if ((barcode.substring(barcode.length() - suffixLen, barcode.length()).equals(SessionClass.getParam("barcodeSuffix")))) {
+                    String bar = barcode.substring(0, barcode.length() - suffixLen);
+                    return bar;
+                }
+            }
+        }
+        return null;
+    }
+
     public static void tooltipBuild(Context context, View aView, String text, int style){
         Tooltip.make(context,
                 new Tooltip.Builder(101)
@@ -288,6 +306,12 @@ public class HelperClass {
         SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss");
         String formattedTime = df.format(c);
         return formattedTime;
+    }
+
+    public static void errorSound(Activity activity){
+        MediaPlayer mPlayer = MediaPlayer.create(activity, R.raw.alert);
+        mPlayer.start();
+
     }
 
 }

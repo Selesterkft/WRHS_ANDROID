@@ -216,7 +216,7 @@ public class CheckPlaceFragment extends Fragment {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            isBar = HelperClass.isBarcode(findValue.getText().toString());
+            isBar = HelperClass.isBarcodeALLTEXT(findValue.getText().toString());
             if( isBar != null ){
                 Log.i("TAG", isBar);
                 loadData(isBar);
@@ -239,7 +239,7 @@ public class CheckPlaceFragment extends Fragment {
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if(!findValueEAN.getText().toString().isEmpty()) {
-                isBar = HelperClass.isBarcode(findValueEAN.getText().toString());
+                isBar = HelperClass.isBarcodeALLTEXT(findValueEAN.getText().toString());
                 if (isBar != null) {
                     Log.i("TAG", isBar);
                     addItemCount(isBar);
@@ -457,7 +457,7 @@ public class CheckPlaceFragment extends Fragment {
         try {
             KeyboardUtils.hideKeyboard(getActivity());
             findValueEAN.setText("");
-            String ean = db.productDataDAO().getBarcodeProd(isBar);
+            String ean = db.productDataDAO().getBarcodeProd("0"+isBar);
             if (ean != null && !ean.isEmpty()) {
                 Log.i("TAG", ean);
                 String[] datas = AllLinesData.getParam(ean);
