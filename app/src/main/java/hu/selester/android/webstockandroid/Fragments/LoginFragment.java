@@ -44,6 +44,7 @@ import hu.selester.android.webstockandroid.AsyncTask.DownloadNewVersion;
 import hu.selester.android.webstockandroid.BuildConfig;
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Database.Tables.LogTable;
+import hu.selester.android.webstockandroid.Database.Tables.SystemTable;
 import hu.selester.android.webstockandroid.Database.Tables.UsersTable;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
@@ -73,10 +74,10 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frg_login,container,false);
         db = SelesterDatabase.getDatabase(getContext());
-        //db.systemDao().setValue(new SystemTable("WSUrl","http://ne hagyd benne az urlt-!xxx/Service1.svc"));
-        //db.systemDao().setValue(new SystemTable("terminal","mag"));
-        //db.systemDao().setValue(new SystemTable("barcodeSuffix","#&"));
-        //db.systemDao().setValue(new SystemTable("scanButtonCode", "203"));
+        db.systemDao().setValue(new SystemTable("WSUrl","http://ysel1.yusen.hu:8080/Service1.svc"));
+        db.systemDao().setValue(new SystemTable("terminal","AdmAndr"));
+        db.systemDao().setValue(new SystemTable("barcodeSuffix","#&"));
+        db.systemDao().setValue(new SystemTable("scanButtonCode", "203"));
         showPasword = false;
         loginBtn = rootView.findViewById(R.id.login_btn);
         if(db.systemDao().getValue("WSUrl")!=null ||  db.systemDao().getValue("terminal")!=null){

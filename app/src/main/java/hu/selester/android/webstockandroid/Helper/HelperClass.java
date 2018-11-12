@@ -180,6 +180,22 @@ public class HelperClass {
         return null;
     }
 
+    public static String isBarcodeALLTEXT(String barcode){
+        if(barcode.length()>3){
+            if(!barcode.isEmpty()) {
+                barcode = barcode.replace(" ","");
+
+                int suffixLen = SessionClass.getParam("barcodeSuffix").length();
+                //Log.i("SUFFIX", barcode + " - " + SessionClass.getParam("barcodeSuffix"));
+                if ((barcode.substring(barcode.length() - suffixLen, barcode.length()).equals(SessionClass.getParam("barcodeSuffix")))) {
+                    String bar = barcode.substring(0, barcode.length() - suffixLen);
+                    return bar;
+                }
+            }
+        }
+        return null;
+    }
+
     public static void tooltipBuild(Context context, View aView, String text, int style){
         Tooltip.make(context,
                 new Tooltip.Builder(101)
