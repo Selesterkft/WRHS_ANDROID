@@ -314,4 +314,14 @@ public class HelperClass {
 
     }
 
+    public static int getArrayPosition(String findElement, String parameterField){
+        if(parameterField != null) {
+            String[] field = parameterField.split(",");
+            return Arrays.asList(field).indexOf(findElement);
+        }else{
+            return -1;
+        }
+
+    }
+
 }

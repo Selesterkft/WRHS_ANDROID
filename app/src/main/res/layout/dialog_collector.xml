@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimaryDark"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_margin="0dp"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_gravity="center_horizontal"
+            android:src="@drawable/box"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18sp"
+            android:background="@color/secondColor"
+            android:textColor="@color/whiteColor"
+            android:gravity="center_horizontal"
+            android:text="Kérem adja meg a gyűjtő kódját"
+            android:paddingTop="10dp"
+            android:paddingBottom="10dp"/>
+
+    </LinearLayout>
+    <EditText
+        android:id="@+id/dialog_collect_ean"
+        android:layout_width="match_parent"
+        android:paddingLeft="3dp"
+        android:paddingRight="3dp"
+        android:layout_margin="30dp"
+        android:layout_height="40dp"
+        android:background="@drawable/logintext_et_shape_round"
+        android:text="grfedse"/>
+
+</LinearLayout>

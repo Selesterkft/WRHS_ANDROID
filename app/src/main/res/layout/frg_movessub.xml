@@ -109,6 +109,37 @@
             android:layout_height="match_parent"
             android:orientation="horizontal"/>
 
+        <LinearLayout
+            android:id="@+id/movessub_palettBtn"
+            android:orientation="horizontal"
+            android:layout_margin="10dp"
+            android:elevation="2dp"
+            android:background="@drawable/round_corner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_marginLeft="10dp"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:textColor="@color/whiteColor"
+                android:gravity="center_vertical"
+                android:textSize="23sp"
+                android:text="+"/>
+
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="50dp"
+                android:layout_marginLeft="5dp"
+                android:padding="0dp"
+                android:src="@drawable/pallett"/>
+            <TextView
+                android:layout_marginLeft="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@color/whiteColor"
+                android:gravity="center_vertical"
+                android:text="Új gyűjtő hozzáadása"/>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_weight="1"

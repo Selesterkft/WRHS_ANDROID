@@ -9,4 +9,5 @@
     <string name="loginicon">loginIcon</string>
     <string name="loginsetting">loginSetting</string>
     <string name="tooltipText">TooltipText</string>
+    <string name="collectorTV">Gyűjtő</string>
 </resources>

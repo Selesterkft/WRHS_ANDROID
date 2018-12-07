@@ -548,7 +548,5 @@ public class ChkBarcodeFragment extends Fragment {
         }else{
             super.onActivityResult(requestCode, resultCode, data);
         }
-
     }
-
 }

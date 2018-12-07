@@ -166,9 +166,7 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     protected void onDestroy() {
-        Toast.makeText(this,"DESTROY",Toast.LENGTH_LONG).show();
+        //Toast.makeText(this,"DESTROY",Toast.LENGTH_LONG).show();
         super.onDestroy();
     }
-
-
 }

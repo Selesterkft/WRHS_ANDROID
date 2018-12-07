@@ -2,7 +2,6 @@ package hu.selester.android.webstockandroid.Fragments;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -15,6 +14,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +22,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -42,12 +43,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Database.Tables.LogTable;
-import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
@@ -76,7 +75,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     private String tranCode;
     private String tranID;
     private String movenum;
-    private int qNeed,qCurrent;
+    private int qNeed,qCurrent,qBarcode01;
     private ImageButton saveDataBtn, lockBtn, selectBtn, flushBtn;
     private Dialog popup = null;
     public ProgressBar uploadpbar;
@@ -96,9 +95,11 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         ActiveFragment.setFragment(this);
         db = SelesterDatabase.getDatabase(getContext());
         tranCode = getArguments().getString("tranCode");
+        SessionClass.setParam("tranCode", ""+tranCode);
         tranID = getArguments().getString("tranid");
         movenum = getArguments().getString("movenum");
         reload = getArguments().getString("reload");
+        qBarcode01 = HelperClass.getArrayPosition("Barcode01", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         if(SessionClass.getParam(tranCode+"_Detail_TextBox_Needed_Qty_Index").equals("")){
             qNeed = 0;
         }else{
@@ -110,12 +111,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         }else{
             qCurrent = Integer.parseInt(SessionClass.getParam(tranCode+"_Detail_TextBox_Current_Qty_Index"));
         }
-//        String[] temp = SessionClass.getParam(tranCode+"_Detail_TextBox_Current_Qty_Index").split(",",-1);
-//        qCurrent = Integer.parseInt(temp[0]);
-
         findRow = Integer.parseInt(SessionClass.getParam(tranCode+"_Line_TextBox_Find_Index"));
-
-
         rootView = inflater.inflate(R.layout.frg_movessub, container, false);
         functLayout = rootView.findViewById(R.id.movessub_tableRoot);
         uploadpbar = rootView.findViewById(R.id.movessub_progressBar);
@@ -128,6 +124,14 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         Button findValueBtn = rootView.findViewById(R.id.movessub_header_btn);
         lockBtn = rootView.findViewById(R.id.movessub_lockBtn);
         flushBtn = rootView.findViewById(R.id.movessub_flushBtn);
+        LinearLayout palettBtn = rootView.findViewById(R.id.movessub_palettBtn);
+        palettBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PalettCollectFragment f = new PalettCollectFragment();
+                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragments, f).addToBackStack("app").commit();
+            }
+        });
         flushBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -281,9 +285,6 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        int selectedPos;
-        //selectedPos = table.getAdapter().selectedPosition;
-        selectedPos = 0;
         switch (v.getId()){
             case R.id.movessub_selectBtn:
                 if(v.isClickable()) {
@@ -328,17 +329,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 findValue.setText(isBar);
                 if (findValueList != null) {
                     if (findValueList.size() > 0) {
-                        if (resourceDataList.size() > 1) {
-
-                            //table.getAdapter().updateAdapter(resourceDataList);
-                            loadScanCount(findValueList.get(0));
-                        } else {
-                            if (tranCode.charAt(0)=='1') {
-                                placeDialog(findValueList.get(0));
-                            } else {
-                                loadScanCount(findValueList.get(0));
-                            }
-                        }
+                        loadScanCount(findValueList.get(0));
                     }
                 }
             }
@@ -363,7 +354,6 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 }
             } else {
                 if (resourceDataList.size() > 1) {
-                    //table.getAdapter().updateAdapter(resourceDataList);
                     loadScanCount(findValueList.get(0));
                 } else {
                     if (findValueList != null && findValueList.size()>0 ) {
@@ -378,7 +368,20 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         }
     }
 
-    private void loadScanCount(String id){
+    private void loadScanCount(String id) {
+        if (tranCode.charAt(0) == '2') {
+            if (AllLinesData.getParam(id)[qBarcode01].equals("")) {
+                collectDialog(id);
+            }else{
+                SessionClass.setParam("currentCollect",AllLinesData.getParam(id)[qBarcode01]);
+                loadScanCount_now(id);
+            }
+        } else {
+            loadScanCount_now(id);
+        }
+    }
+
+    private void loadScanCount_now(String id){
         Fragment f = new ScanCountFragment();
         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
         Bundle b = new Bundle();
@@ -678,6 +681,29 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
             View v = getLayoutInflater().inflate(R.layout.dialog_place_number, null);
             final EditText ed1 = v.findViewById(R.id.dialog_place_item);
             builder.setView(v);
+            ed1.setOnKeyListener(new View.OnKeyListener()
+            {
+                public boolean onKey(View v, int keyCode, KeyEvent event)
+                {
+                    if (event.getAction() == KeyEvent.ACTION_DOWN)
+                    {
+                        switch (keyCode)
+                        {
+                            case KeyEvent.KEYCODE_DPAD_CENTER:
+                            case KeyEvent.KEYCODE_ENTER:
+                                KeyboardUtils.hideKeyboard(getActivity());
+                                SessionClass.setParam("currentPlace", ed1.getText().toString());
+                                loadScanCount(id);
+                                popup.dismiss();
+                                return true;
+                            default:
+                                break;
+                        }
+                    }
+                    return false;
+                }
+            });
+
             ed1.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -691,9 +717,9 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 @Override
                 public void afterTextChanged(Editable s) {
                     if (s.length() > 3) {
-                        if (s.toString().substring(s.length() - 2, s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
+                        if (s.toString().substring(s.length() - SessionClass.getParam("barcodeSuffix").length(), s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
                             KeyboardUtils.hideKeyboard(getActivity());
-                            SessionClass.setParam("currentPlace", s.toString().substring(0, s.toString().length() - 2));
+                            SessionClass.setParam("currentPlace", s.toString().substring(0, s.toString().length() - SessionClass.getParam("barcodeSuffix").length()));
                             loadScanCount(id);
                             popup.dismiss();
                         }
@@ -793,4 +819,155 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
 
         builder.show();
     }
+
+    private void collectDialog(final String id) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View v = getLayoutInflater().inflate(R.layout.dialog_collector,null);
+        final EditText eanET = v.findViewById(R.id.dialog_collect_ean);
+        eanET.setText("");
+        eanET.setOnKeyListener(new View.OnKeyListener()
+        {
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                if (event.getAction() == KeyEvent.ACTION_DOWN)
+                {
+                    switch (keyCode)
+                    {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            KeyboardUtils.hideKeyboard(getActivity());
+                            SessionClass.setParam("currentCollect",eanET.getText().toString());
+                            loadScanCount_now(id);
+                            popup.dismiss();
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
+        eanET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 3) {
+                    if (s.toString().substring(s.length() - SessionClass.getParam("barcodeSuffix").length(), s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
+                        KeyboardUtils.hideKeyboard(getActivity());
+                        SessionClass.setParam("currentCollect",eanET.getText().toString());
+                        loadScanCount_now(id);
+                        popup.dismiss();
+                    }
+                }
+            }
+        });
+        builder.setView(v);
+        builder.setPositiveButton("IGEN", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                SessionClass.setParam("currentCollect",eanET.getText().toString());
+                loadScanCount_now(id);
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("NEM", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                dialog.cancel();
+            }
+        });
+        popup = builder.create();
+        popup.show();
+    }
+
+
+/*
+    private void palettDialog() {
+        final boolean locked = false;
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View v = getLayoutInflater().inflate(R.layout.frg_palett,null);
+        final EditText bar1 = v.findViewById(R.id.dialog_palett_barcode1);
+        ImageView lockBtn = v.findViewById(R.id.dialog_palett_lock);
+        lockBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(locked){
+                    ((ImageView)v).setImageDrawable(getResources().getDrawable(R.drawable.lock_off));
+                }else{
+                    ((ImageView)v).setImageDrawable(getResources().getDrawable(R.drawable.lock_on));
+                }
+            }
+        });
+        bar1.setText("");
+        bar1.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 3) {
+                    if (s.toString().substring(s.length() - 2, s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
+                        KeyboardUtils.hideKeyboard(getActivity());
+                        popup.dismiss();
+                    }
+                }
+            }
+        });
+        final EditText bar2 = v.findViewById(R.id.dialog_palett_barcode2);
+        bar2.setText("");
+        bar2.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 3) {
+                    if (s.toString().substring(s.length() - 2, s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
+                        KeyboardUtils.hideKeyboard(getActivity());
+                        popup.dismiss();
+                    }
+                }
+            }
+        });
+
+        builder.setView(v);
+        builder.setPositiveButton("IGEN", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("NEM", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                dialog.cancel();
+            }
+        });
+        popup = builder.create();
+        popup.show();
+    }*/
 }

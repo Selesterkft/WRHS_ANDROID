@@ -46,7 +46,6 @@ public class SaveDataThread_All extends Thread {
         Log.i("SAVE DATA", "START : "+fromNum+" - "+toNum+" - "+CheckedList.getParam().size());
         for(int i=fromNum; i<toNum; i++ ){
                 String commandString = SessionClass.getParam(data.get(i)[2] + "_Line_Update_String");
-
                 commandString = commandString.replace("@TERMINAL",SessionClass.getParam("terminal"));
                 commandString = commandString.replace("@LINE_ID", data.get(i)[4]);
                 commandString = commandString.replace("@TRAN_CODE",data.get(i)[2]);

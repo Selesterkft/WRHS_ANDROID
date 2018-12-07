@@ -2,6 +2,7 @@ package hu.selester.android.webstockandroid.Fragments;
 
 import android.Manifest;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -141,11 +142,13 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
         infoBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                manualSetDialog();
+                /*
                 if(urlPanel.getVisibility()==View.GONE){
                     urlPanel.setVisibility(View.VISIBLE);
                 }else{
                     urlPanel.setVisibility(View.GONE);
-                }
+                }*/
             }
         });
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -488,5 +491,31 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
         }
         super.onDestroyView();
     }
+
+    private void manualSetDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View v = getLayoutInflater().inflate(R.layout.dialog_manual_setting,null);
+        final EditText eanET = v.findViewById(R.id.dialog_manual_set_ed);
+        eanET.setText(urlText.getText());
+        builder.setView(v);
+        builder.setPositiveButton("IGEN", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                urlText.setText(eanET.getText());
+                chkQRConnect();
+                dialog.cancel();
+            }
+        });
+        builder.setNegativeButton("NEM", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
 
 }

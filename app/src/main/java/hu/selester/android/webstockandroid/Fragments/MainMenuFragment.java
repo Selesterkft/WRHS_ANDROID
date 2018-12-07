@@ -212,6 +212,7 @@ public class MainMenuFragment extends Fragment {
             public void onResponse(JSONObject response) {
                 try {
                     String jsonText = response.getString("getFormSettings_Result");
+                    Log.i("TAG",jsonText);
                     if( !jsonText.equals("")) {
                         JSONArray jsonArray = new JSONArray(jsonText);
                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -227,7 +228,7 @@ public class MainMenuFragment extends Fragment {
                                     }
                                     key = tranCode + "_" + key;
                                     SessionClass.setParam(key, value);
-                                    //Log.i("TAG", key + " - " + value);
+                                    Log.i("TAG", key + " - " + value);
                                 } catch (JSONException e) {
                                     // Something went wrong!
                                 }

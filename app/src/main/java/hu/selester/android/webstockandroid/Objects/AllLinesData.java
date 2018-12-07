@@ -9,9 +9,11 @@ import com.android.volley.toolbox.StringRequest;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class AllLinesData {
 
@@ -154,4 +156,46 @@ public class AllLinesData {
         return count;
     }
 
+    public  static void setParamsPosition(int checkValuePosition, int insertPosition, String checkData, String insertData){
+        for (Map.Entry<String, String[]> entry : params.entrySet()) {
+            try {
+                if (entry.getValue()[checkValuePosition].equals(checkData) ){
+                    setItemParams(entry.getKey(),insertPosition,insertData);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public  static List<String> getParamsPosition(int checkValuePosition, int getPosition, String checkData){
+        Set<String> result = new HashSet<>();
+        List<String> resultList = new ArrayList<>();
+        try {
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                if (entry.getValue()[checkValuePosition].equals(checkData) ){
+                    if( !entry.getValue()[getPosition].equals("") ){
+                        result.add(entry.getValue()[getPosition]);
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        resultList.addAll(result);
+        return resultList;
+    }
+
+    public static boolean isValidateValue(int searchPosition, String searchData){
+        try {
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                if( entry.getValue()[searchPosition].equals(searchData) ){
+                    return true;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
 }

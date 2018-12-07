@@ -15,6 +15,7 @@
     <color name="headerColor">#485ba2</color>
     <color name="headerColor2">#359338</color>
     <color name="secondColor">#5d97d1</color>
+    <color name="btnIconColor">#0071ad</color>
 
     <color name="productRowOKBack">#5500ff00</color>
     <color name="productRowPHBack">#aad3d3ff</color>

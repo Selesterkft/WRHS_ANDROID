@@ -1,5 +1,6 @@
 package hu.selester.android.webstockandroid.Fragments;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,7 +41,6 @@ import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Objects.ActiveFragment;
 import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.CheckedList;
-import hu.selester.android.webstockandroid.Objects.MessageBoxSettingsObject;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.Threads.SaveCheckedDataThread;
@@ -53,14 +53,16 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
     private String isBar;
     private int findRow;
     private String lineID;
+    private Dialog popup = null;
     private EditText textDataValue1;
-    private TextView textDataValue2,textDataValue3;
+    private TextView textDataValue2,textDataValue3,getTextDataValue3;
+    private LinearLayout collectorBtn, collectorLabel;
     private MessageDialog message;
     private Bundle si;
     private View rootView;
     private ArrayList<String> inBar;
     private String tranCode, Head_ID;
-    private int qNeed,qCurrent,qMissing;
+    private int qNeed,qCurrent,qMissing,qBarcode01,qBarcode02;
     private EditText textDataValue;
     private String[] arrayTempInt, arrayTempNames, arrayTempType;
     private TextView headerText;
@@ -70,12 +72,14 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
     private int def;
     private boolean dialogActive = false;
     private int dataCounter;
+    private boolean enabledCollect = true;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         ActiveFragment.setFragment(this);
         lineID = getArguments().getString("lineID");
+        tranCode = getArguments().getString("tranCode");
         CheckedList.setParamItem(lineID,1);
         dataCounter = 0;
         si = savedInstanceState;
@@ -102,8 +106,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 }
             });
             db = SelesterDatabase.getDatabase(getContext());
-
-            tranCode = getArguments().getString("tranCode");
             isnew = false;
             Log.i("SQL", tranCode);
             KeyboardUtils.hideKeyboard(getActivity());
@@ -125,6 +127,10 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             } catch (Exception e) {
                 qCurrent = 0;
             }
+            collectorBtn = rootView.findViewById(R.id.scancount_collectorBtn);
+            collectorLabel = rootView.findViewById(R.id.scancount_collectorLabel);
+            collectorBtn.setVisibility(View.GONE);
+            collectorLabel.setVisibility(View.GONE);
             headerText = rootView.findViewById(R.id.scancount_headertext);
             headerText.setBackgroundResource(R.color.headerColor);
             subHeadText1 = rootView.findViewById(R.id.scancount_subHeadText1);
@@ -149,6 +155,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             arrayTempNames = SessionClass.getParam(tranCode + "_Detail_TextBox_Names").split(",");
             arrayTempType = SessionClass.getParam(tranCode + "_Detail_TextBox_DataType").split(",");
             arrayTempInt = SessionClass.getParam(tranCode + "_Detail_TextBox_Index").split(",");
+            collectorBtn.setVisibility(View.GONE);
             if (tranCode.charAt(0) == '1') {
                 TextView textDataLabel = rootView.findViewById(R.id.scancount_data_label);
                 textDataValue = rootView.findViewById(R.id.scancount_data_value);
@@ -195,10 +202,10 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 });
             }
             findValue.requestFocus();
-
             TextView textLabel1 = rootView.findViewById(R.id.scancount_textLabel1);
             TextView textLabel2 = rootView.findViewById(R.id.scancount_textLabel2);
             TextView textLabel3 = rootView.findViewById(R.id.scancount_textLabel3);
+            getTextDataValue3 = rootView.findViewById(R.id.scancount_data3_value);
             String[] labelArray = (SessionClass.getParam(tranCode + "_Detail_Label_Info_Names")).split(",", -1);
             textLabel1.setText(labelArray[0]);
             textLabel2.setText(labelArray[1]);
@@ -240,6 +247,80 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         }
         //HelperClass.loadTempSession(getContext());
         return rootView;
+    }
+
+    private void collectorDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        View v = getLayoutInflater().inflate(R.layout.dialog_collector,null);
+        final EditText eanET = v.findViewById(R.id.dialog_collect_ean);
+        eanET.setText("");
+        builder.setView(v);
+        eanET.setOnKeyListener(new View.OnKeyListener()
+        {
+            public boolean onKey(View v, int keyCode, KeyEvent event)
+            {
+                if (event.getAction() == KeyEvent.ACTION_DOWN)
+                {
+                    switch (keyCode)
+                    {
+                        case KeyEvent.KEYCODE_DPAD_CENTER:
+                        case KeyEvent.KEYCODE_ENTER:
+                            KeyboardUtils.hideKeyboard(getActivity());
+                            getTextDataValue3.setText(eanET.getText());
+                            SessionClass.setParam("currentCollect",eanET.getText().toString());
+                            AllLinesData.setItemParams(lineID, qBarcode01, eanET.getText().toString());
+                            popup.dismiss();
+                            return true;
+                        default:
+                            break;
+                    }
+                }
+                return false;
+            }
+        });
+
+        eanET.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() > 3) {
+                    if (s.toString().substring(s.length() - SessionClass.getParam("barcodeSuffix").length(), s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
+                        KeyboardUtils.hideKeyboard(getActivity());
+                        getTextDataValue3.setText(eanET.getText());
+                        SessionClass.setParam("currentCollect",eanET.getText().toString());
+                        AllLinesData.setItemParams(lineID, qBarcode01, eanET.getText().toString());
+                        popup.dismiss();
+                    }
+                }
+            }
+        });
+        builder.setPositiveButton("IGEN", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                getTextDataValue3.setText(eanET.getText());
+                SessionClass.setParam("currentCollect",eanET.getText().toString());
+                AllLinesData.setItemParams(lineID, qBarcode01, eanET.getText().toString());
+                dialog.cancel();
+            }
+        });
+        builder.setNegativeButton("NEM", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                dialog.cancel();
+            }
+        });
+        popup = builder.create();
+        popup.show();
     }
 
 
@@ -548,6 +629,22 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                     }
                 });
             }
+            if (tranCode.charAt(0) == '2') {
+                if(enabledCollect) {
+                    collectorBtn.setVisibility(View.VISIBLE);
+                    collectorLabel.setVisibility(View.VISIBLE);
+                    qBarcode01 = HelperClass.getArrayPosition("Barcode01", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+                    collectorBtn.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            collectorDialog();
+                        }
+                    });
+                    getTextDataValue3.setText(SessionClass.getParam("currentCollect"));
+                    AllLinesData.setItemParams(lineID, qBarcode01, getTextDataValue3.getText().toString());
+                }
+            }
+
             refreshPlaceCounter();
         }catch (Exception e){
             e.printStackTrace();
@@ -602,22 +699,21 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             new SaveCheckedDataThread(getContext()).start();
         }
         dataCounter++;
-
-
     }
 
     private void saveDBDatas(){
         SaveIdSessionTemp sit = new SaveIdSessionTemp(getContext());
-        sit.setId(Long.parseLong(lineID));
+        List<Long> ids = new ArrayList<>();
+        ids.add(Long.parseLong(lineID));
+        sit.setId( ids );
         sit.start();
     }
+
     void buildFullDialog() {
         dialogActive = true;
         KeyboardUtils.hideKeyboard(getActivity());
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Nem található több ebből a cikkből!");
-        //builder.setMessage("Törlés esetén az eddig felvett adatok törlődnek!");
-
         builder.setNegativeButton("Rendben", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -629,4 +725,5 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         builder.show();
 
     }
+
 }
