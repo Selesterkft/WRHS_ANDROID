@@ -102,7 +102,6 @@ public class TableListFragment extends Fragment {
             elements[5] = AllLinesData.getAllDataList().get(i)[5];
             dtList.add(elements);
         }
-        Log.i("PAGE",""+page+" - "+dtList.size());
         List<String[]> tempDataList = new ArrayList<>();
         if(page == 0) {
             for (int i = 0; i < dtList.size() ; i++) {
@@ -110,7 +109,6 @@ public class TableListFragment extends Fragment {
                     try {
                         int ek = Integer.parseInt(dtList.get(i)[3]);
                         int t = Integer.parseInt(dtList.get(i)[4]);
-                        Log.i("DATA VALUE", "page:" + page + " - " + ek + " - " + t);
                         if (ek > t) {
                             tempDataList.add(dtList.get(i));
                         }
@@ -141,11 +139,9 @@ public class TableListFragment extends Fragment {
                 if( dtList.get(i)[3].isEmpty() ){
                     tempDataList.add(dtList.get(i));
                 }else {
-                    Log.i("TAG","ELSE");
                     try {
                         int ek = Integer.parseInt(dtList.get(i)[3]);
                         int t = Integer.parseInt(dtList.get(i)[4]);
-                        Log.i("DATA VALUE", "page:" + page + " - " + ek + " - " + t);
                         if (ek < t) {
                             dtList.get(i)[4] = String.valueOf(t - ek);
 

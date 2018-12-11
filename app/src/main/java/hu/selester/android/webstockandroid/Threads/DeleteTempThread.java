@@ -19,6 +19,7 @@ import java.util.HashMap;
 
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Fragments.MovesSubTableFragment;
+import hu.selester.android.webstockandroid.Fragments.MovesSubViewPager;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 
@@ -46,27 +47,17 @@ public class DeleteTempThread extends Thread{
         map.put("PDA_ID","123");
         map.put("Tran_code",tranCode);
         map.put("Table_Name",SessionClass.getParam(tranCode + "_Line_ListView_FROM"));
-        Log.i("STATUS URL",url);
-        Log.i("Terminal",SessionClass.getParam("terminal"));
-        Log.i("User_id",SessionClass.getParam("userid"));
-        Log.i("PDA_ID","123");
-        Log.i("Tran_code",tranCode);
-        Log.i("Table_Name",SessionClass.getParam(tranCode + "_Line_ListView_FROM"));
-
-
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     SelesterDatabase db = SelesterDatabase.getDatabase(context);
-                    Log.i("DELETE REQUEST TAG",response.toString());
                     String rootText=response.getString("WRHS_PDA_DeleteTempDataResult");
                     JSONObject jsonObject = new JSONObject(rootText);
                     String rtext = jsonObject.getString("ERROR_CODE");
                     if(!rtext.isEmpty()){
                         if(rtext.equals("-1")){
                             Toast.makeText(context,"Ideiglenes adatok törlése sikeres!",Toast.LENGTH_LONG).show();
-
                             f.closeFragment();
                         }else{
                             Toast.makeText(context,"Ideiglenes adatok törlése sikertelen, kérem jelezze a Selesternek!",Toast.LENGTH_LONG).show();

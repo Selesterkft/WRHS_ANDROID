@@ -47,9 +47,8 @@ public class SaveDataThread extends Thread {
 
     @Override
     public void run() {
-        CheckedList.toLogString();
+        //CheckedList.toLogString();
         String str="";
-        Log.i("SaveData", "START : "+fromNum+" - "+toNum+" - "+CheckedList.getParam().size());
         for(int i=fromNum; i<toNum; i++ ){
             int x = CheckedList.getParamItem(data.get(i)[0]);
             if(x == 1 || x == 2){
@@ -69,7 +68,6 @@ public class SaveDataThread extends Thread {
                 CheckedList.setParamItem(data.get(i)[0],2);
             }
         }
-        Log.i("SaveData",str);
         RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
         String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_SaveLineData_ByGroup";
         HashMap<String,String> map = new HashMap<>();
@@ -86,7 +84,6 @@ public class SaveDataThread extends Thread {
                 public void onResponse(JSONObject response) {
                     try {
                         frg.stopProgress();
-                        Log.i("SaveData", response.toString());
                         String rootText = response.getString("WRHS_PDA_SaveLineData_ByGroupResult");
                         JSONObject jsonObject = new JSONObject(rootText);
                         String rtext = jsonObject.getString("ERROR_CODE");
@@ -94,7 +91,6 @@ public class SaveDataThread extends Thread {
                             if (rtext.equals("-1")) {
                                 if (frg.uploadpbar.getMax() == frg.uploadpbar.getProgress()) {
                                     Toast.makeText(context, "Adatok áttöltése sikeresen megtörtént!", Toast.LENGTH_LONG).show();
-                                    Log.i("SaveData", "Áttöltés sikeres!");
                                     CheckedList.setSetChecked(0);
                                 }
                             } else {

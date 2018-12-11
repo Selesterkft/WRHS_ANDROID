@@ -56,7 +56,7 @@ public class TasksFragment extends Fragment {
         String pdaid = SessionClass.getParam("pdaid");
         String userid = SessionClass.getParam("userid");
         String url = SessionClass.getParam("WSUrl")+"/get_task/"+terminal+"/"+userid+"/"+pdaid;
-        Log.i("TAG",url);
+        Log.i("URL",url);
         ImageButton backBtn = rootView.findViewById(R.id.tasks_back);
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +71,6 @@ public class TasksFragment extends Fragment {
             public void onResponse(JSONObject response) {
                 try {
                     String rootText=response.getString("get_task_Result");
-                    Log.i("TAG",rootText);
                     JSONArray jsonArray = new JSONArray(rootText);
                     List<TaskObject> list = new ArrayList<>();
 

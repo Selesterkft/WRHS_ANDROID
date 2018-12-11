@@ -59,7 +59,6 @@ public class LogFragment extends Fragment {
                 ((LogListAdapter)logList.getAdapter()).updateData(db.logDao().getErrorLog());
             }
         });
-        Log.i("TAG",db.logDao().getAllLog().size()+"");
         mLayountManager = new LinearLayoutManager(getContext());
         LogListAdapter lla = new LogListAdapter(getContext(),db.logDao().getAllLog());
         logList.setLayoutManager(mLayountManager);

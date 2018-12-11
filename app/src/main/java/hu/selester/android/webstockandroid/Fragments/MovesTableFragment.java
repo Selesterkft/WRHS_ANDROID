@@ -61,6 +61,7 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         CheckedList.clearAllData();
+        SessionClass.setParam("TreeViewSearchText","");
         rootView = inflater.inflate(R.layout.frg_moves, container, false);
         tranCode = getArguments().getInt("tranCode");
         ImageButton selectBtn = rootView.findViewById(R.id.moves_selectBtn);
@@ -93,16 +94,12 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
             }
         }
         headerWidth[0] = 0;
-
         headerText = SessionClass.getParam(tranCode+"_Head_ListView_Names").split(",");
         final String[] columnName = SessionClass.getParam(tranCode+"_Head_ListView_SELECT").split(",");
         //final String[] columnName = {"Tran_Order", "Tran_ID", "Tran_Code", "Tran_No","Tran_Date", "Supplier_Short_Name","Rentner_Short_Name"};
         ls = new ListSettings(headerText, headerWidth, columnName,true);
 
         //table.setHeaderData(R.id.headerTextLayout, ls);
-
-
-
 
         // ---------------------------- Content -------------------------------
 
@@ -115,7 +112,7 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
         String listOrder = SessionClass.getParam(tranCode+"_Head_ListView_ORDER_BY");
         String url = SessionClass.getParam("WSUrl")+"/get_task_head/"+terminal+"/"+userid+"/"+pdaid+"/"+listSelect+"/"+listFrom+"/"+listOrder+"/"+tranCode;
         url = url.replace(" ","");
-        Log.i("TAG",url);
+        Log.i("URL",url);
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
         JSONObject jsonObject=null;
         pd = HelperClass.loadingDialogOn(getActivity());
@@ -125,7 +122,6 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
                 try {
                     List<String[]> tl = new ArrayList<>();
                     String rootText=response.getString("getTaskHead_Result");
-                    Log.i("TAG",rootText);
                     JSONArray jsonArray = new JSONArray(rootText);
                     for(int i=0;i<jsonArray.length();i++){
                         JSONObject jsonObj = jsonArray.getJSONObject(i);
@@ -135,12 +131,9 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
 
                         }
                         tl.add(dataText);
-                        //table.setContentData(R.id.dataListView,tl,ls);
-                        //Log.i("TAG",jsonObj.getString("Tran_Order"));
                     }
                     tablePanel = new TablePanel(getContext(), rootView, R.id.moves_mainLayout, headerText, tl,headerWidth);
                     createTablePanel();
-                    Log.i("TAG", rootText);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -165,7 +158,6 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
     }
 
     private void createTablePanel(){
-        Log.i("TAG","CTP");
         TablePanel.TablePanelSetting tps = tablePanel.getTablePanelSettingInstance();
         tps.setFontSize(14f);
         tps.setCellLeftRightPadding(HelperClass.dpToPx(getContext(),6));
@@ -206,7 +198,6 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        Log.i("TAG","ONCREATED");
         super.onViewCreated(view, savedInstanceState);
     }
 
@@ -215,10 +206,6 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
         Fragment f;
         FragmentTransaction ft;
         Bundle b;
-        int selectedPos=0;
-        //selectedPos = table.getAdapter().selectedPosition;
-        //Log.i("Selected POS",""+selectedPos);
-
         switch (v.getId()){
             case R.id.moves_selectBtn:
                 if(tablePanel.getAdapter().getCheckedPosition(1) != null && tablePanel.getAdapter().getCheckedPosition(1).size()>0){
@@ -238,7 +225,12 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
                 break;
             case R.id.moves_selectBtn1:
                 if(tablePanel.getAdapter().getCheckedPosition(1) != null && tablePanel.getAdapter().getCheckedPosition(1).size()>0){
-                    f = new MovesSubTableFragment();
+                    if( SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").equals("1") ){
+                        f = new MovesSubViewPager();
+                    }else{
+                        f = new MovesSubTableFragment();
+                    }
+
                     ft = getActivity().getSupportFragmentManager().beginTransaction();
                     b = new Bundle();
                     b.putString("tranid", tablePanel.getAdapter().getCheckedPosition(1).get(0));

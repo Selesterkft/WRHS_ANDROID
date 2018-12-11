@@ -47,20 +47,11 @@ public class ChangeStatusThread extends Thread{
         map.put("Tran_code",tranCode);
         map.put("where","ID=" + tranID);
         map.put("NewStatus",status);
-        Log.i("STATUS URL",url);
-        Log.i("Terminal",SessionClass.getParam("terminal"));
-        Log.i("User_id",SessionClass.getParam("userid"));
-        Log.i("PDA_ID","123");
-        Log.i("Tran_code",tranCode);
-        Log.i("where","ID=" + tranID);
-        Log.i("NewStatus",status);
-
-
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    Log.i("STATUS REQUEST TAG",response.toString());
                     String rootText=response.getString("WRHS_PDA_setStatusResult");
                     JSONObject jsonObject = new JSONObject(rootText);
                     String rtext = jsonObject.getString("ERROR_CODE");

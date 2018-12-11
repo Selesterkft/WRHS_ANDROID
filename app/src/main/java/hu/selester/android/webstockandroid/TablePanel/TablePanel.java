@@ -292,7 +292,6 @@ public class TablePanel {
         sortSignView = rootView.findViewById(R.id.tablepanel_sort_sign);
         sortSignView.setVisibility(View.GONE);
         LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(dpToPx(context, 10), dpToPx(context, 10));
-        Log.i("TAG",""+tablePanelSetting.isCheckable());
         if(tablePanelSetting.isCheckable()){
             TextView tv = new TextView( context );
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(getChkWidth(), LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -337,10 +336,12 @@ public class TablePanel {
                 int maxStrLen = 0;
                 String maxString = "";
                 for (int row = 0; row < dataList.size(); row++) {
-                    int strLen = dataList.get(row)[col].length();
-                    if(strLen > maxStrLen){
-                        maxString = dataList.get(row)[col];
-                        maxStrLen = strLen;
+                    if(dataList.get(row)[col]!=null) {
+                        int strLen = dataList.get(row)[col].length();
+                        if (strLen > maxStrLen) {
+                            maxString = dataList.get(row)[col];
+                            maxStrLen = strLen;
+                        }
                     }
                 }
                 int x = getTvWidth(maxString, getRealRowFontSize(0));
@@ -352,7 +353,6 @@ public class TablePanel {
                 widthsReal[col] = widths[col];
             }
         }
-        Log.i("TAG WIDTHS", Arrays.toString(widthsReal));
         return widthsReal;
     }
 
@@ -418,7 +418,6 @@ public class TablePanel {
         List<String[]> data = getAdapter().getdataList();
         boolean[] sortDataChk = new boolean[data.size()];
         boolean[] dataChk = getAdapter().checkedList;
-        Log.i("TAGCHK",Arrays.toString(dataChk));
         for(int i=0; i<data.size(); i++) {
             changeCol.add(new ShortClass(i,data.get(i)[position]));
         }

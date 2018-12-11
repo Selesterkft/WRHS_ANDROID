@@ -81,6 +81,7 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
         //db.systemDao().setValue(new SystemTable("terminal","AdmAndr"));
         //db.systemDao().setValue(new SystemTable("barcodeSuffix","#&"));
         //db.systemDao().setValue(new SystemTable("scanButtonCode", "203"));
+
         showPasword = false;
         loginBtn = rootView.findViewById(R.id.login_btn);
         if(db.systemDao().getValue("WSUrl")!=null ||  db.systemDao().getValue("terminal")!=null){
@@ -160,14 +161,12 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
         String terminal = SessionClass.getParam("terminal");
         String pdaid = SessionClass.getParam("pdaid");
         String url = SessionClass.getParam("WSUrl")+"/log_in/"+account+"/"+password+"/"+terminal+"/"+pdaid;
-        Log.i("TAG",url);
         JSONObject jsonObject=null;
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     String rootText=response.getString("Log_in_Result");
-                    Log.i("TAG",rootText);
                     if(!rootText.isEmpty()){
                         JSONObject root=new JSONObject(rootText);
 
@@ -265,14 +264,13 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
         String terminal = SessionClass.getParam("terminal");
         String pdaid = SessionClass.getParam("pdaid");
         String url = SessionClass.getParam("WSUrl")+"/log_in/a/a/"+terminal+"/"+pdaid;
-        Log.i("TAG",url);
+        Log.i("URL",url);
         JSONObject jsonObject=null;
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     String rootText=response.getString("Log_in_Result");
-                    Log.i("TAG",rootText);
                     if(!rootText.isEmpty()) {
                         JSONObject root = new JSONObject(rootText);
                         if (root.getString("version") != null) {
@@ -350,7 +348,6 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
                 Intent intent;
                 if (Build.VERSION.SDK_INT > Build.VERSION_CODES.N) {
                     f = FileProvider.getUriForFile(getActivity().getBaseContext(), getActivity().getApplicationContext().getPackageName() + ".hu.selester.android.webstockandroid.provider", new File(Environment.getExternalStorageDirectory() + "/Selester/" + "newversion.apk"));
-                    Log.i("TAG",f.toString());
                     intent = new Intent(Intent.ACTION_INSTALL_PACKAGE);
                     intent.setData(f);
                     intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);

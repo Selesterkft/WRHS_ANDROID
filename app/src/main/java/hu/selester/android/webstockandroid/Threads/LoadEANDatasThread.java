@@ -37,11 +37,10 @@ public class LoadEANDatasThread extends Thread {
     public void run() {
         Long lastTID = db.productDataDAO().getLastTransactId();
         if(lastTID == null){ lastTID = 0L; }
-        Log.i("TAG","LAST TRANSACT ID: "+lastTID);
         String url=SessionClass.getParam("WSUrl")+"/GET_items_width_eans/"+lastTID;
         RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
         JSONObject jsonObject=null;
-        Log.i("TAG",url);
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -58,10 +57,8 @@ public class LoadEANDatasThread extends Thread {
                                 jsonArray.getJSONObject(i).getLong("TransactID")
                         );
                         list.add(pd);
-                        //Log.i("TAG",jsonArray.getJSONObject(i).getString("ITEM")+" - "+jsonArray.getJSONObject(i).getString("EAN_Code"));
                     }
                     db.productDataDAO().setProductData(list);
-                    Log.i("TAG", "EAN CODES LOADING COUNT: "+list.size());
 
                 } catch (JSONException e) {
                     e.printStackTrace();

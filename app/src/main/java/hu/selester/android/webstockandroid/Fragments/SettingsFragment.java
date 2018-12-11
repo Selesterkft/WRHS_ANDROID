@@ -171,12 +171,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
     private void saveSetting() {
         String error = "";
         if(urlText.getText().toString().equals("")){error+="Nincs megadva a szerver host!\n\r";}
-        Log.i("TAG",error);
         if(error.equals("")) {
-
             RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
             String url = urlText.getText() + "/teszt";
-            Log.i("TAG", url);
             JSONObject jsonObject = null;
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
@@ -255,10 +252,8 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
     }
 
     private void chkQRConnect(){
-        Log.i("TAG","TESZT");
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
         String url = urlText.getText()+"/teszt";
-        Log.i("TAG",url);
         JSONObject jsonObject=null;
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
@@ -309,17 +304,15 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
     }
 
     private void getTerminalString(final int type,final boolean save) {
-        Log.i("TAGO","getTerminal");
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
         JSONObject jsonObject=null;
         String url = urlText.getText()+"/get_freeTerminal";
-        Log.i("TAG",url);
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 String rootText= null;
                 try {
-                    Log.i("TAG",response.toString());
                     rootText = response.getString("get_freeTerminalResult");
                     JSONObject jsonObject = new JSONObject(rootText);
                     String terminal = jsonObject.getString("Free terminal");
@@ -346,19 +339,16 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
     }
 
     private void lockTerminal(final boolean save) {
-        Log.i("TAGO","lockTerminal");
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
         String url = SessionClass.getParam("WSUrl") + "/SEL_SYS_INSTALLED_TERMINALS_CHECK";
         HashMap<String,String> map = new HashMap<>();
         map.put("Terminal",terminalText.getText().toString());
         map.put("Computername", HelperClass.getAndroidID(getContext()));
         map.put("StartupPath","/data/data/" + getContext().getPackageName());
-        Log.i("TAG",(new JSONObject(map)).toString());
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    Log.i("TAGO",response.toString());
                     String rootText = response.getString("SEL_SYS_INSTALLED_TERMINALS_CHECKResult");
                     JSONObject jsonObject = new JSONObject(rootText);
                     String rtext = jsonObject.getString("ERROR_CODE");
@@ -425,11 +415,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.i("WS",requestCode+" - "+resultCode);
         switch (requestCode) {
             case ACTIVITY_CHOOSE_FILE1: {
                 if (resultCode == Activity.RESULT_OK) {
-                    Log.i("S", "LOAD OK: "+data.getData().getPath());
                     importCSV(data);
                 }
             }
@@ -439,7 +427,6 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
             if(result.getContents()==null){
                 errorText.setText("");
             }else{
-                //Log.i("TAG",result.getContents());
                 urlText.setText(result.getContents());
                 chkQRConnect();
             }
@@ -497,6 +484,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
         View v = getLayoutInflater().inflate(R.layout.dialog_manual_setting,null);
         final EditText eanET = v.findViewById(R.id.dialog_manual_set_ed);
         eanET.setText(urlText.getText());
+        eanET.selectAll();
         builder.setView(v);
         builder.setPositiveButton("IGEN", new DialogInterface.OnClickListener() {
             @Override

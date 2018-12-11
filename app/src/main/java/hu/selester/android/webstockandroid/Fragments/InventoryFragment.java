@@ -235,7 +235,6 @@ public class InventoryFragment extends Fragment {
             mDay = c.get(Calendar.DAY_OF_MONTH);
         } else {
             String[] dateStr = expET.getText().toString().split(".");
-            Log.i("TAG", "");
         }
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
@@ -460,7 +459,6 @@ public class InventoryFragment extends Fragment {
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    Log.i("TAG", response.toString());
                     try {
                         String rootText = response.getString("WHSResult");
                         JSONArray jsonArray = new JSONArray(rootText);
@@ -508,7 +506,6 @@ public class InventoryFragment extends Fragment {
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    Log.i("TAG", response.toString());
                     try {
                         String rootText = response.getString("WRHS_RENTERResult");
                         JSONArray jsonArray = new JSONArray(rootText);
@@ -556,7 +553,6 @@ public class InventoryFragment extends Fragment {
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
-                    Log.i("TAG", response.toString());
                     try {
                         String rootText = response.getString("WRHS_PDA_getGoodFromBarcodeResult");
                         JSONObject json = new JSONObject(rootText);
@@ -570,9 +566,7 @@ public class InventoryFragment extends Fragment {
                             itemIdET.setText(OUT_WrhsGoods_ItemNum);
                             itemIdET.setEnabled(false);
                             selectRenterID = Integer.parseInt(WrhsRenters_ID);
-                            Log.i("TAG", Arrays.toString(renterIds));
                             int x = Arrays.asList(renterIds).indexOf(Integer.parseInt(WrhsRenters_ID));
-                            Log.i("TAG", x + " - " + selectRenterID);
                             if (x > 0) renterTV.setText(renterTexts[x]);
                             else renterTV.setText("Válasszon bérlőt...");
                             nextBtn2.setVisibility(View.GONE);
@@ -694,7 +688,6 @@ public class InventoryFragment extends Fragment {
                     String rootText = response.getString("Locs_Control_LocNameResult");
                     JSONObject jsonObject = new JSONObject(rootText);
                     if (jsonObject.getInt("ERROR_CODE") == 0) {
-                        Log.i("TAG", jsonObject.getString("OUT_WrhsLocks_ID"));
                         Locks_ID = jsonObject.getString("OUT_WrhsLocks_ID");
                         group1.setVisibility(View.VISIBLE);
                         group2.setVisibility(View.GONE);
@@ -736,24 +729,11 @@ public class InventoryFragment extends Fragment {
         map.put("Vector_MHD", Vector_MHD_ParamStr );
         map.put("Vector_VirtualLagerID", Vector_VirtualLagerID_ParamStr );
 
-        Log.i("Terminal", SessionClass.getParam("terminal"));
-        Log.i("WrhsDecl_ID", ""+selectWHID);
-        Log.i("WrhsLocs_ID", Locks_ID);
-        Log.i("Vector_Paletta", Vector_Paletta_ParamStr);
-        Log.i("Vector_EinlagererID", Vector_EinlagererID_ParamStr);
-        Log.i("Vector_ArtikelID", Vector_ArtikelID_ParamStr);
-        Log.i("Vector_Anz", Vector_Anz_ParamStr);
-        Log.i("Vector_ProdFeld1", Vector_ProdFeld1_ParamStr);
-        Log.i("Vector_MHD",  Vector_MHD_ParamStr);
-        Log.i("Vector_VirtualLagerID", Vector_VirtualLagerID_ParamStr);
-
-        Log.i("SaveData", url);
         if (HelperClass.isOnline(getContext())) {
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
                     try {
-                        Log.i("SaveData", response.toString());
                         String rootText = response.getString("WRHS_PDA_Func_BlindInventory_SETResult");
                         JSONObject jsonObject = new JSONObject(rootText);
                         String rtext = jsonObject.getString("ERROR_CODE");

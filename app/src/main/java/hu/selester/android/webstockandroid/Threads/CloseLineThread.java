@@ -50,7 +50,6 @@ public class CloseLineThread extends Thread {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    Log.i("REQUEST TAG",response.toString());
                     String rootText=response.getString("WRHS_PDA_CloseLineDataResult");
                     JSONObject jsonObject = new JSONObject(rootText);
                     String rtext = jsonObject.getString("ERROR_CODE");

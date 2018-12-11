@@ -55,7 +55,7 @@ public class MainActivity extends FragmentActivity {
                 HelperClass.tooltipBuild(getSupportFragmentManager().getFragments().get(0).getContext(), v,"Tartsa lenyomva az adott gombon az újad és megjelenik a segítség!", R.style.ToolTipLayoutCustomStyle);
             }
         });
-        if (Build.VERSION.SDK_INT >= 23) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             String[] PERMISSIONS = {android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE};
             if (!hasPermissions(getApplicationContext(), PERMISSIONS)) {
                 ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST );
@@ -100,7 +100,6 @@ public class MainActivity extends FragmentActivity {
                         int scanButtonInt = ((DialogFragment) getSupportFragmentManager().getFragments().get(1)).scanBtnTempCode;
                         if(keyCode == scanButtonInt){
                             ((DialogFragment)getSupportFragmentManager().getFragments().get(1)).loadQR();
-                            Log.i("TESTER","DONE");
                         }
                     }catch(NumberFormatException e){
 
@@ -146,7 +145,6 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.i("ACTIVITY RESULT",resultCode+" - "+requestCode);
         super.onActivityResult(requestCode, resultCode, data);
     }
 

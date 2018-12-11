@@ -1,9 +1,12 @@
 package hu.selester.android.webstockandroid.Fragments;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.CircularProgressDrawable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatEditText;
 import android.text.Editable;
@@ -17,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.lang.reflect.Array;
@@ -27,14 +31,19 @@ import java.util.List;
 import java.util.Set;
 
 import hu.selester.android.webstockandroid.Adapters.CollectListAdapter;
+import hu.selester.android.webstockandroid.AsyncTask.LoadingParams;
+import hu.selester.android.webstockandroid.Database.SelesterDatabase;
+import hu.selester.android.webstockandroid.Database.Tables.PalettTable;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Objects.AllLinesData;
+import hu.selester.android.webstockandroid.Objects.CheckedList;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
+import hu.selester.android.webstockandroid.Threads.SaveAllSessionTemp;
 import hu.selester.android.webstockandroid.Threads.SaveIdSessionTemp;
 
-public class PalettCollectFragment extends Fragment {
+public class PalettCollectFragment extends Fragment implements LoadingParams.AsyncResponse{
 
     private boolean locked = false;
     private ImageView lockBtn;
@@ -42,7 +51,8 @@ public class PalettCollectFragment extends Fragment {
     private ListView palettList;
     private List<String> dataList = new ArrayList<>();
     private int qBarcode01, qBarcode02, tranCode;
-
+    private CollectListAdapter collectListAdapter;
+    private SelesterDatabase db;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,6 +63,7 @@ public class PalettCollectFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frg_palett, container,false);
+        db = SelesterDatabase.getDatabase(getContext());
         palettList = rootView.findViewById(R.id.palett_list);
         lockBtn = rootView.findViewById(R.id.palett_lock);
         tranCode = Integer.parseInt(SessionClass.getParam("tranCode"));
@@ -60,6 +71,24 @@ public class PalettCollectFragment extends Fragment {
         qBarcode02 = HelperClass.getArrayPosition("Barcode02", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         barcodeET1 = rootView.findViewById(R.id.palett_barcode1);
         barcodeET2 = rootView.findViewById(R.id.palett_barcode2);
+        barcodeET2.requestFocus();
+        ImageView del2Btn = rootView.findViewById(R.id.palett_delBtn2);
+        del2Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                barcodeET2.setText("");
+                barcodeET2.requestFocus();
+            }
+        });
+        ImageView del1Btn = rootView.findViewById(R.id.palett_delBtn1);
+        del1Btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                barcodeET1.setText("");
+                barcodeET1.requestFocus();
+            }
+        });
+        KeyboardUtils.hideKeyboard(getActivity());
         barcodeET2.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -94,9 +123,13 @@ public class PalettCollectFragment extends Fragment {
                 if (!hasFocus){
                     KeyboardUtils.hideKeyboard(getActivity());
                     barcodeET1.requestFocus();
-                    dataList = AllLinesData.getParamsPosition(qBarcode02, qBarcode01, barcodeET2.getText().toString());
-                    Log.i("TAG", "SIZE "+dataList.size());
-                    ((CollectListAdapter) palettList.getAdapter()).updateItems(dataList);
+                    if( !barcodeET2.getText().toString().equals("") ) {
+                        dataList = AllLinesData.getParamsPosition(qBarcode02, qBarcode01, barcodeET2.getText().toString());
+                        ((CollectListAdapter) palettList.getAdapter()).updateItems(dataList);
+                    }else{
+                        ((CollectListAdapter) palettList.getAdapter()).clearItems();
+                    }
+
                 }
             }
         });
@@ -152,7 +185,12 @@ public class PalettCollectFragment extends Fragment {
                                     KeyboardUtils.hideKeyboard(getActivity());
                                     addItem();
                                     if (!locked) {
+                                        barcodeET2.setText("");
                                         barcodeET2.requestFocus();
+                                        collectListAdapter.clearItems();
+                                    }else{
+                                        barcodeET1.setText("");
+                                        barcodeET1.requestFocus();
                                     }
                                 }
                             }catch (Exception e){
@@ -188,7 +226,12 @@ public class PalettCollectFragment extends Fragment {
                                         KeyboardUtils.hideKeyboard(getActivity());
                                         addItem();
                                         if (!locked) {
+                                            barcodeET2.setText("");
                                             barcodeET2.requestFocus();
+                                            collectListAdapter.clearItems();
+                                        }else{
+                                            barcodeET1.setText("");
+                                            barcodeET1.requestFocus();
                                         }
                                     }
                                 }catch (Exception e){
@@ -234,27 +277,40 @@ public class PalettCollectFragment extends Fragment {
                 }
             }
         });
-        CollectListAdapter collectListAdapter = new CollectListAdapter(getContext(),dataList);
+        collectListAdapter = new CollectListAdapter(getContext(),dataList);
         palettList.setAdapter(collectListAdapter);
         return rootView;
     }
 
     private void addItem(){
         if( !barcodeET1.getText().toString().equals("") ) {
+            //db.palettDao().setPalettTable(new PalettTable(barcodeET2.getText().toString(), barcodeET1.getText().toString()));
             AllLinesData.setParamsPosition(qBarcode01, qBarcode02, barcodeET1.getText().toString(), barcodeET2.getText().toString());
-            dataList = AllLinesData.getParamsPosition(qBarcode02, qBarcode01, barcodeET2.getText().toString());
-            List<String> dataIDSStringList = AllLinesData.getParamsPosition(qBarcode01, 0, barcodeET1.getText().toString());
-            List<Long> dataIDSList = new ArrayList<>();
-            for(int j = 0 ;j<dataIDSStringList.size(); j++){
-                dataIDSList.add(Long.parseLong(dataIDSStringList.get(j)));
-            }
-            SaveIdSessionTemp sit = new SaveIdSessionTemp(getContext());
-            sit.setId( dataIDSList );
-            sit.start();
-
-            ((CollectListAdapter) palettList.getAdapter()).updateItems(dataList);
-            barcodeET1.setText( "" );
+            ProgressDialog pd = HelperClass.loadingDialogOn(getActivity());
+            LoadingParams lp = new LoadingParams(this, pd, qBarcode02, qBarcode01, barcodeET2.getText().toString() );
+            lp.execute();
+            //dataList = AllLinesData.getParamsPosition(qBarcode02, qBarcode01, barcodeET2.getText().toString());
         }
+    }
+
+
+    @Override
+    public void processFinish(List<String> dataList) {
+        List<String> dataIDSStringList = AllLinesData.getParamsPosition(qBarcode01, 0, barcodeET1.getText().toString());
+        List<Long> dataIDSList = new ArrayList<>();
+        for(int j = 0 ;j<dataIDSStringList.size(); j++){
+            dataIDSList.add(Long.parseLong(dataIDSStringList.get(j)));
+            CheckedList.setParamItem(dataIDSStringList.get(j),1);
+        }
+        if( !barcodeET2.getText().toString().equals("") ) {
+            ((CollectListAdapter) palettList.getAdapter()).updateItems(dataList);
+        }else{
+            ((CollectListAdapter) palettList.getAdapter()).clearItems();
+        }
+        barcodeET1.setText( "" );
+        SaveIdSessionTemp savePalett = new SaveIdSessionTemp(getContext());
+        savePalett.setId(dataIDSList);
+        savePalett.start();
     }
 
     void findThisCollectDialog() {
@@ -272,5 +328,4 @@ public class PalettCollectFragment extends Fragment {
         builder.show();
 
     }
-
 }

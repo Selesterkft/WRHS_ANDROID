@@ -218,7 +218,6 @@ public class CheckPlaceFragment extends Fragment {
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             isBar = HelperClass.isBarcodeALLTEXT(findValue.getText().toString());
             if( isBar != null ){
-                Log.i("TAG", isBar);
                 loadData(isBar);
                 selectPlaceID = isBar;
             }
@@ -241,7 +240,6 @@ public class CheckPlaceFragment extends Fragment {
             if(!findValueEAN.getText().toString().isEmpty()) {
                 isBar = HelperClass.isBarcodeALLTEXT(findValueEAN.getText().toString());
                 if (isBar != null) {
-                    Log.i("TAG", isBar);
                     addItemCount(isBar);
                 }
             }
@@ -270,7 +268,6 @@ public class CheckPlaceFragment extends Fragment {
         IntentResult result= IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
         if(result!=null){
             if(result.getContents()==null){
-                Log.i("TAG","ERROR");
             }else{
                 if(findValue.isFocused()) {
                     findValue.setText(result.getContents() + SessionClass.getParam("barcodeSuffix"));
@@ -459,7 +456,6 @@ public class CheckPlaceFragment extends Fragment {
             findValueEAN.setText("");
             String ean = db.productDataDAO().getBarcodeProd("0"+isBar);
             if (ean != null && !ean.isEmpty()) {
-                Log.i("TAG", ean);
                 String[] datas = AllLinesData.getParam(ean);
                 if(datas!=null){
                     if (datas[4].isEmpty()) {

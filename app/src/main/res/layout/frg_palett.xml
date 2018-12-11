@@ -51,6 +51,8 @@
         app:layout_constraintTop_toBottomOf="@+id/textView">
 
         <android.support.v7.widget.AppCompatEditText
+            android:ellipsize="start"
+            android:gravity="center_horizontal"
             android:id="@+id/palett_barcode2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,6 +62,24 @@
             android:textAlignment="center"
             app:backgroundTint="@color/colorPrimaryDark" />
     </android.support.design.widget.TextInputLayout>
+
+    <ImageView
+        android:id="@+id/palett_delBtn2"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@android:drawable/ic_delete"
+        app:layout_constraintBottom_toBottomOf="@+id/textInputLayout1"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout1"
+        app:layout_constraintTop_toTopOf="@+id/textInputLayout1" />
+
+    <ImageView
+        android:id="@+id/palett_delBtn1"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@android:drawable/ic_delete"
+        app:layout_constraintBottom_toBottomOf="@+id/textInputLayout2"
+        app:layout_constraintStart_toStartOf="@+id/textInputLayout2"
+        app:layout_constraintTop_toTopOf="@+id/textInputLayout2" />
 
     <ImageView
         android:id="@+id/palett_lock"
@@ -84,6 +104,8 @@
         app:layout_constraintTop_toBottomOf="@+id/textInputLayout1">
 
         <android.support.v7.widget.AppCompatEditText
+            android:ellipsize="start"
+            android:gravity="center_horizontal"
             android:id="@+id/palett_barcode1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

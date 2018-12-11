@@ -1,6 +1,7 @@
 package hu.selester.android.webstockandroid.Threads;
 
 import android.content.Context;
+import android.util.Log;
 import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +23,7 @@ public class SaveAllSessionTemp extends Thread{
 
     @Override
     public void run() {
+        Log.i("TAG","Save All SessionTemp");
         try {
             db.sessionTempDao().deleteAllData();
             List<SessionTemp> stList = new ArrayList<>();

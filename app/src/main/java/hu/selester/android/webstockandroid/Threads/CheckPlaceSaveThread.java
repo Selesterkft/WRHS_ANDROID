@@ -45,7 +45,6 @@ public class CheckPlaceSaveThread extends Thread {
     public void run() {
 
         SelesterDatabase db = SelesterDatabase.getDatabase(context);
-        Log.i("TAG","RUN");
         List<String[]> dataList = AllLinesData.getAllDataList();
         String str = "[";
         String ean;
@@ -63,7 +62,6 @@ public class CheckPlaceSaveThread extends Thread {
                     ean = "";
                 }else{
                     ean = x[0];
-                    Log.i("EAN", Arrays.toString(x) );
                 }
                 if( c!=0 ) str +="{\"terminal\":\""+SessionClass.getParam("terminal")+"\",\"taskid\":\""+taskID+"\",\"whid\":\""+whID+"\",\"placeid\":\""+placeID+"\",\"itemno\":\""+dataList.get(i)[0]+"\", \"ean\":\""+ean+"\", \"count\":\""+c+"\"},";
 
@@ -83,13 +81,10 @@ public class CheckPlaceSaveThread extends Thread {
         }catch (Exception e){
             e.printStackTrace();
         }
-
-        Log.i("TAG",job.toString());
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, job , new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
-                    Log.i("STATUS REQUEST TAG",response.toString());
                     String rootText=response.getString("randominventory_saveResult");
                     JSONObject jsonObject = new JSONObject(rootText);
                     String rtext = jsonObject.getString("ERROR_CODE");

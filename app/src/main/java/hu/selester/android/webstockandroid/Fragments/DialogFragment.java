@@ -32,7 +32,6 @@ public class DialogFragment extends Fragment {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        Log.i("TAG","CREATE");
         super.onCreate(savedInstanceState);
     }
 
@@ -43,7 +42,6 @@ public class DialogFragment extends Fragment {
         rootView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("TAG","FRG CLICK");
             }
         });
         scanBtnTempCode=0;
@@ -76,7 +74,6 @@ public class DialogFragment extends Fragment {
                 closeFragment();
             }
         });
-        Log.i("TAG","CREATE VIEW");
         return rootView;
     }
 
@@ -90,7 +87,6 @@ public class DialogFragment extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.i("WS",requestCode+" - "+resultCode);
         title.setText("Sikerült a tesztelés?");
         layoutBtn2.setVisibility(View.VISIBLE);
         layoutBtn1.setVisibility(View.GONE);
@@ -99,10 +95,8 @@ public class DialogFragment extends Fragment {
         if(result!=null){
             if(result.getContents()==null){
                 message.setText("Nem történt beolvasás!");
-                Log.i("TAG","ERROR");
             }else{
                 message.setText("Az ön által beolvasott kód: "+result.getContents());
-                Log.i("TAG",result.getContents());
             }
         }else{
             super.onActivityResult(requestCode, resultCode, data);
@@ -124,15 +118,12 @@ public class DialogFragment extends Fragment {
 
 
     private void saveScanBarcodeBtn(){
-        Log.i("SCANBTN","YES");
         getActivity().getSupportFragmentManager().getFragments().get(1);
         ((SettingsFragment)getFragmentManager().getFragments().get(0)).scanBtnCode = scanBtnTempCode;
-        Log.i("SCANBTN","SAVE CODE:"+scanBtnTempCode);
         closeFragment();
     }
 
     private void newScanBarcodeBtn(){
-        Log.i("SCANBTN","NO");
         scanTesterActive=false;
         scanBtnTempCode=0;
         title.setText("Vonalkódolvasó kalibrálás");

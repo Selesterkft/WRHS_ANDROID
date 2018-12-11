@@ -47,7 +47,6 @@ public class CheckedList {
     }
 
     public static void toLogString(){
-        Log.i("TAG",""+CheckedList.getParam().entrySet().size());
         for (Map.Entry<String, Integer> entry : CheckedList.getParam().entrySet()) {
             Log.i("TAG",entry.getKey()+" - "+entry.getValue());
         }

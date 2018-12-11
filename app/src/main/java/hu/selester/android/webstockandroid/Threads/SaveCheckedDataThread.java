@@ -44,8 +44,6 @@ public class SaveCheckedDataThread extends Thread{
 
         datas = AllLinesData.getAllDataList();
         String str="";
-
-        Log.i("SaveCheckedData", "START");
         String tranCode = "";
         String headID = "";
         int count = 0;
@@ -68,7 +66,6 @@ public class SaveCheckedDataThread extends Thread{
                             }
                         }
                         str = str + "[Line" + data[4] + "[comm " + commandString;
-                        Log.i("SaveCheckedData", str);
                         CheckedList.setParamItem(entry.getKey(), 2);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -92,13 +89,11 @@ public class SaveCheckedDataThread extends Thread{
             map.put("Tran_code",tranCode);
             map.put("Head_ID",headID);
             map.put("cmd", str);
-            Log.i("SaveCheckedData",new JSONObject(map).toString());
             if(HelperClass.isOnline(context)) {
                 JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
-                            Log.i("SaveCheckedData", response.toString());
                             String rootText = response.getString("WRHS_PDA_SaveLineData_ByGroupResult");
                             JSONObject jsonObject = new JSONObject(rootText);
                             String rtext = jsonObject.getString("ERROR_CODE");
@@ -107,7 +102,6 @@ public class SaveCheckedDataThread extends Thread{
                                     CheckedList.setSetChecked(0);
                                     if (mainSave)
                                         Toast.makeText(context, "Adatok áttöltése sikeresen megtörtént!", Toast.LENGTH_LONG).show();
-                                    Log.i("SaveCheckedData", "Áttöltés sikeres!");
                                 } else {
                                     CheckedList.setSetChecked(1);
                                     if (mainSave)

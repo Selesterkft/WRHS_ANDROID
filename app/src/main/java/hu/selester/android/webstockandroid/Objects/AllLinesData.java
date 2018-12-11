@@ -6,6 +6,8 @@ import android.widget.Toast;
 
 import com.android.volley.toolbox.StringRequest;
 
+import org.apache.commons.collections.map.HashedMap;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -101,7 +103,6 @@ public class AllLinesData {
                 String id = findArray.get(i);
                 int max = Integer.parseInt(AllLinesData.getParam(id)[maxValuePosition]);
                 int cur = Integer.parseInt(AllLinesData.getParam(id)[curValuePosition]);
-                Log.i("ALLDATA",max+" - "+cur);
                 if (cur < max) {
                     return id;
                 }
@@ -159,22 +160,106 @@ public class AllLinesData {
     public  static void setParamsPosition(int checkValuePosition, int insertPosition, String checkData, String insertData){
         for (Map.Entry<String, String[]> entry : params.entrySet()) {
             try {
-                if (entry.getValue()[checkValuePosition].equals(checkData) ){
-                    setItemParams(entry.getKey(),insertPosition,insertData);
-                }
+
+                    if (entry.getValue()[checkValuePosition].equals(checkData)) {
+                        setItemParams(entry.getKey(), insertPosition, insertData);
+                    }
+
             }catch (Exception e){
                 e.printStackTrace();
             }
         }
     }
 
-    public  static List<String> getParamsPosition(int checkValuePosition, int getPosition, String checkData){
+    public static List<String> getParamsPosition(int checkValuePosition, int getPosition, String checkData){
         Set<String> result = new HashSet<>();
         List<String> resultList = new ArrayList<>();
         try {
             for (Map.Entry<String, String[]> entry : params.entrySet()) {
-                if (entry.getValue()[checkValuePosition].equals(checkData) ){
-                    if( !entry.getValue()[getPosition].equals("") ){
+
+                if (entry.getValue()[checkValuePosition].equals(checkData)) {
+                    if (!entry.getValue()[getPosition].equals("")) {
+                        result.add(entry.getValue()[getPosition]);
+                    }
+                }
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        resultList.addAll(result);
+        return resultList;
+    }
+
+    public static String getParamPosition(int checkValuePosition, int getPosition, String checkData){
+        try {
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+
+                if (entry.getValue()[checkValuePosition].equals(checkData)) {
+                    if (!entry.getValue()[getPosition].equals("")) {
+                        return entry.getValue()[getPosition];
+                    }
+                }
+
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public  static Map<String,Integer> getParamsPositionMap(int checkValuePosition, int getPosition, String checkData){
+        Map<String,Integer> result = new HashedMap();
+        try {
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                if(entry.getValue()[checkValuePosition] != null) {
+                    if (entry.getValue()[checkValuePosition].equals(checkData)) {
+                        if (!entry.getValue()[getPosition].equals("")) {
+                            if (result.get(entry.getValue()[getPosition]) != null) {
+                                result.put(entry.getValue()[getPosition], result.get(entry.getValue()[getPosition]) + Integer.parseInt(entry.getValue()[11]));
+                            } else {
+                                result.put(entry.getValue()[getPosition], Integer.parseInt(entry.getValue()[11]));
+                            }
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public  static Map<String,Integer> getParamsPositionMapSecond(int checkValuePosition, int getPosition, int getSecondPosition, String checkData){
+        Map<String,Integer> result = new HashedMap();
+        try {
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                if(entry.getValue()[checkValuePosition] != null) {
+                    if (entry.getValue()[checkValuePosition].equals(checkData)) {
+                        if (!entry.getValue()[getPosition].equals("")) {
+
+                            if (result.get(entry.getValue()[getPosition]+"#"+entry.getValue()[getSecondPosition]) != null) {
+                                result.put(entry.getValue()[getPosition]+"#"+entry.getValue()[getSecondPosition], result.get(entry.getValue()[getPosition]+"#"+entry.getValue()[getSecondPosition]) + Integer.parseInt(entry.getValue()[11]));
+                            } else {
+                                result.put(entry.getValue()[getPosition]+"#"+entry.getValue()[getSecondPosition], Integer.parseInt(entry.getValue()[11]));
+                            }
+                        }
+                    }
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public  static List<String> getParamsMainPosition(int getPosition){
+        Set<String> result = new HashSet<>();
+        List<String> resultList = new ArrayList<>();
+        try {
+            for (Map.Entry<String, String[]> entry : params.entrySet()) {
+                if(entry.getValue()[getPosition] != null) {
+                    if (!entry.getValue()[getPosition].equals("")) {
                         result.add(entry.getValue()[getPosition]);
                     }
                 }
@@ -198,4 +283,7 @@ public class AllLinesData {
         }
         return false;
     }
+
+
+
 }

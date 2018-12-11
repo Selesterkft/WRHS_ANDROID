@@ -161,14 +161,11 @@ public class HelperClass {
         if(barcode.length()>3){
             if(!barcode.isEmpty()) {
                 barcode = barcode.replace(" ","");
-
                 int suffixLen = SessionClass.getParam("barcodeSuffix").length();
-                //Log.i("SUFFIX", barcode + " - " + SessionClass.getParam("barcodeSuffix"));
                 if ((barcode.substring(barcode.length() - suffixLen, barcode.length()).equals(SessionClass.getParam("barcodeSuffix")))) {
                     String bar = barcode.substring(0, barcode.length() - suffixLen);
                     if(bar.charAt(0)=='0') {
                         try {
-                            //Log.i("FIND BAR", bar.substring(1));
                             bar = bar.substring(1);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -188,7 +185,6 @@ public class HelperClass {
                 barcode = barcode.replace(" ","");
 
                 int suffixLen = SessionClass.getParam("barcodeSuffix").length();
-                //Log.i("SUFFIX", barcode + " - " + SessionClass.getParam("barcodeSuffix"));
                 if ((barcode.substring(barcode.length() - suffixLen, barcode.length()).equals(SessionClass.getParam("barcodeSuffix")))) {
                     String bar = barcode.substring(0, barcode.length() - suffixLen);
                     return bar;
@@ -218,7 +214,6 @@ public class HelperClass {
     }
 
     public static void loadTempSession(Context context) {
-        Log.i("SQL","LOAD TEMP");
         SelesterDatabase db = SelesterDatabase.getDatabase(context);
         List<SessionTemp> tempList = db.sessionTempDao().getAllData();
         if(tempList != null && tempList.size() > 0) {
@@ -226,12 +221,10 @@ public class HelperClass {
                 Log.i("SQL", tempList.get(i).toString());
             }
         }else{
-            Log.i("SQL","DATABASE EMPTY");
         }
     }
 
     public static void reloadTempSession(Context context, int datacount) {
-        Log.i("SQL","LOAD TEMP");
         SelesterDatabase db = SelesterDatabase.getDatabase(context);
         List<SessionTemp> tempList = db.sessionTempDao().getAllData();
         if(tempList != null && tempList.size() > 0) {
@@ -290,6 +283,7 @@ public class HelperClass {
     public static ProgressDialog loadingDialogOn(Activity activity){
         ProgressDialog pd = new ProgressDialog(activity);
         pd.setMessage("Adatok betöltése...");
+        pd.setCancelable(false);
         pd.show();
         return pd;
     }
@@ -322,6 +316,26 @@ public class HelperClass {
             return -1;
         }
 
+    }
+
+    public static boolean inArrayString(String findString, String arrayString){
+        if( findString != null && !findString.equals("") && arrayString != null && !arrayString.equals("") ) {
+            if (findString.charAt(0) == '0') {
+                findString = findString.substring(1);
+            }
+            String[] tag = arrayString.split("\\|");
+            for (int i = 0; i < tag.length; i++) {
+                if( !tag[i].equals("") ) {
+                    if (tag[i].charAt(0) == '0') {
+                        tag[i] = tag[i].substring(1);
+                    }
+                    if (findString.equals(tag[i])) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
 }

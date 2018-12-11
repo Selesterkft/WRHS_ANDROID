@@ -43,7 +43,6 @@ public class TableView {
         }
         for(int i=0; i<listSettings.getHeaderWidth().length;i++){
             TextView tv = new TextView(context);
-            Log.i("ITEM",listSettings.getHeaderText()[i]);
             tv.setText(listSettings.getHeaderText()[i]);
 
             tv.setTextColor(Color.BLACK);
@@ -56,14 +55,12 @@ public class TableView {
     }
 
     public void setContentData(int listViewResource, List<String[]> listData, ListSettings listSettings, List<Integer> textColor){
-        Log.i("TAG","TEXTCOLOR");
         lv = rootView.findViewById(listViewResource);
         TableViewAdapter sa = new TableViewAdapter(context, listData, listSettings, tableName, textColor);
         lv.setAdapter(sa);
     }
 
     public void setContentData(int listViewResource, List<String[]> listData, ListSettings listSettings){
-        Log.i("TAG","TEXTCOLOR NULL");
         lv = rootView.findViewById(listViewResource);
         TableViewAdapter sa = new TableViewAdapter(context, listData, listSettings, tableName, null);
         lv.setAdapter(sa);

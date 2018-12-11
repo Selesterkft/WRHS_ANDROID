@@ -7,6 +7,7 @@ import android.content.Context;
 
 import hu.selester.android.webstockandroid.Database.Daos.EansDao;
 import hu.selester.android.webstockandroid.Database.Daos.LogDao;
+import hu.selester.android.webstockandroid.Database.Daos.PalettDao;
 import hu.selester.android.webstockandroid.Database.Daos.ProductDataDao;
 import hu.selester.android.webstockandroid.Database.Daos.SessionTempDao;
 import hu.selester.android.webstockandroid.Database.Daos.SystemDao;

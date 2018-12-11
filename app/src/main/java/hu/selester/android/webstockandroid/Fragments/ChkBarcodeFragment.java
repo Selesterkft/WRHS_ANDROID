@@ -92,7 +92,6 @@ public class ChkBarcodeFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        Log.i(LOG_TAG, "CREATE View");
         trimBarcode1 = false;trimBarcode2 = false;
         View rootView = inflater.inflate(R.layout.frg_chkbarcode, container, false);
         tranid = getArguments().getString("tranid");
@@ -189,7 +188,6 @@ public class ChkBarcodeFragment extends Fragment {
             endChk.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.i("YL", "OK BTN");
                     String a = db.eansDao().getAllData().toString();
                     sendEans(a);
                     Toast.makeText(getActivity(), "Várjon!", Toast.LENGTH_SHORT).show();
@@ -202,7 +200,6 @@ public class ChkBarcodeFragment extends Fragment {
         lock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            Log.i("YL", "LOCK BTN");
             if (bar1Btn.getText().toString().equals(getResources().getString(R.string.buttonLabel))) {
                 Toast.makeText(getActivity(), "Nincs kiválasztva az eredeti vonalkód!", Toast.LENGTH_LONG).show();
             } else {
@@ -236,10 +233,8 @@ public class ChkBarcodeFragment extends Fragment {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.i("TAGCHAR","START");
                 if (!barcodeEt.getText().toString().equals("")) {
                     barcodeEt.requestFocus();
-                    Log.i("TAGCHAR","KEYDOWN");
                     String isBar = HelperClass.isBarcode(s.toString());
                     if (activeButton == 2) {
                         if(trimBarcode2){
@@ -284,7 +279,6 @@ public class ChkBarcodeFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (bar1Btn.isEnabled()) {
-                    Log.i("YL", "Button1 Click");
                     activeButton = 1;
                     bar1Btn.setBackgroundColor(Color.YELLOW);
                     bar1Btn.setTextColor(Color.BLACK);
@@ -297,7 +291,6 @@ public class ChkBarcodeFragment extends Fragment {
         bar2Btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.i("YL", "Button2 Click");
                 if (bar1Btn.getText().toString().equals(getResources().getString(R.string.buttonLabel))) {
                     Toast.makeText(getActivity(), "Nincs kiválasztva az eredeti vonalkód!", Toast.LENGTH_LONG).show();
                 } else {
@@ -315,7 +308,6 @@ public class ChkBarcodeFragment extends Fragment {
 
 
     void buildDialog() {
-        Log.i("YL", "DIALOG VOID");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Kérem gépelje be a vonalkódot");
         final EditText input = new EditText(getActivity());
@@ -325,7 +317,6 @@ public class ChkBarcodeFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 KeyboardUtils.hideKeyboard(getActivity());
-                Log.i("YL", "DIALOG");
                 CharSequence edtext = input.getText();
                 if (activeButton == 1) {
                     if(trimBarcode1){
@@ -372,7 +363,6 @@ public class ChkBarcodeFragment extends Fragment {
     }
 
     void buildDialogTrimBtn(final int tag) {
-        Log.i("YL", "DIALOG VOID");
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Kérem válassza ki a vágás értékét!");
         //final EditText input = new EditText(getActivity());
@@ -399,7 +389,6 @@ public class ChkBarcodeFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 KeyboardUtils.hideKeyboard(getActivity());
-                Log.i("YL", "DIALOG");
                 CharSequence edtext = String.valueOf(np.getValue());
                 if(tag==1){
                     trimET11.setText(edtext);
@@ -428,31 +417,20 @@ public class ChkBarcodeFragment extends Fragment {
         KeyboardUtils.hideKeyboard(getActivity());
         String prodid = db.productDataDAO().getBarcodeProd(bar1Btn.getText().toString());
         String[] barCodes = db.productDataDAO().getProdBarcode(prodid);
-        Log.i("EQUALS ERROR", bar1Btn.getText().toString() + "-" + bar2Btn.getText().toString() + "-" + prodid);
         if (bar1Btn.getText().toString().equals(bar2Btn.getText().toString())) {
 
             // DateFormat df = new SimpleDateFormat("MMddyyyyHHmmss");
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
             Date currentTime = Calendar.getInstance().getTime();
             String reportDate = df.format(currentTime);
-
             db.eansDao().setEansData(new EansTable(counter, bar1Btn.getText().toString(), bar2Btn.getText().toString(), "'" + reportDate + "'"));
-
             counter = counter + 1;
-
-            Log.i("EANS", db.eansDao().getAllData().toString() );
-
-
             resultImage.setImageResource(R.drawable.accept);
             resultText.setText("Vonalkód rendben!");
-
-
         } else {
             if (Arrays.asList(barCodes).contains(bar2Btn.getText().toString())) {
                 resultImage.setImageResource(R.drawable.accept);
                 resultText.setText("Vonalkód rendben!");
-
-
             } else {
                 resultImage.setImageResource(R.drawable.warningicon);
                 HelperClass.errorSound(getActivity());
@@ -464,13 +442,11 @@ public class ChkBarcodeFragment extends Fragment {
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        Log.i(LOG_TAG, "VIEW CREATED");
         super.onViewCreated(view, savedInstanceState);
     }
 
 
     private void sendEans(String eans){
-        Log.i("TAG","TESZT");
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
         String userid = SessionClass.getParam("userid");
         String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_POST_SCANNED_EANS";
@@ -485,7 +461,6 @@ public class ChkBarcodeFragment extends Fragment {
             public void onResponse(JSONObject response) {
                 try {
                     String rootText=response.getString("WRHS_PDA_POST_SCANNED_EANSResult");
-                    Log.i("TAG",rootText);
                     JSONObject jsonObject = new JSONObject(rootText);
                     String rtext = jsonObject.getString("message");
                     if(!rtext.isEmpty()){
@@ -543,7 +518,6 @@ public class ChkBarcodeFragment extends Fragment {
                 Log.i("TAG","ERROR");
             }else{
                 barcodeEt.setText(result.getContents()+SessionClass.getParam("barcodeSuffix"));
-                Log.i("TAG",result.getContents());
             }
         }else{
             super.onActivityResult(requestCode, resultCode, data);

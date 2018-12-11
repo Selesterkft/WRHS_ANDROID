@@ -41,9 +41,8 @@ public class SaveDataThread_All extends Thread {
 
     @Override
     public void run() {
-        CheckedList.toLogString();
+        //CheckedList.toLogString();
         String str="";
-        Log.i("SAVE DATA", "START : "+fromNum+" - "+toNum+" - "+CheckedList.getParam().size());
         for(int i=fromNum; i<toNum; i++ ){
                 String commandString = SessionClass.getParam(data.get(i)[2] + "_Line_Update_String");
                 commandString = commandString.replace("@TERMINAL",SessionClass.getParam("terminal"));
@@ -58,7 +57,6 @@ public class SaveDataThread_All extends Thread {
                 }
                 str = str + "[Line"+data.get(i)[4]+"[comm " + commandString;
         }
-        Log.i("INSERT",str);
         RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
         String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_SaveLineData_ByGroup";
         HashMap<String,String> map = new HashMap<>();
@@ -75,7 +73,6 @@ public class SaveDataThread_All extends Thread {
                 public void onResponse(JSONObject response) {
                     try {
                         frg.stopProgress();
-                        Log.i("REQUEST TAG", response.toString());
                         String rootText = response.getString("WRHS_PDA_SaveLineData_ByGroupResult");
                         JSONObject jsonObject = new JSONObject(rootText);
                         String rtext = jsonObject.getString("ERROR_CODE");

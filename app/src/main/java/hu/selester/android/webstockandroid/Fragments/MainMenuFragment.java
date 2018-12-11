@@ -29,14 +29,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
-import hu.selester.android.webstockandroid.Database.Tables.ProductData;
-import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
-import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
@@ -50,7 +45,6 @@ public class MainMenuFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        Log.i("FRAGMENT", ""+getFragmentManager().getFragments().size());
         View rootView = inflater.inflate(R.layout.frg_mainmenu,container,false);
         db = SelesterDatabase.getDatabase(getContext());
         int size = db.sessionTempDao().getDataSize();
@@ -66,6 +60,7 @@ public class MainMenuFragment extends Fragment {
         tasksBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                //Fragment f = new TreeViewFragment();
                 Fragment f = new TasksFragment();
                 FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                 ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
@@ -206,13 +201,11 @@ public class MainMenuFragment extends Fragment {
         String pdaid = SessionClass.getParam("pdaid");
         String terminal = SessionClass.getParam("terminal");
         String url = SessionClass.getParam("WSUrl")+"/getFormSettings/"+terminal+"/"+userid+"/"+pdaid;
-        Log.i("SETTINGS URL",url);
         JsonObjectRequest jro = new JsonObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     String jsonText = response.getString("getFormSettings_Result");
-                    Log.i("TAG",jsonText);
                     if( !jsonText.equals("")) {
                         JSONArray jsonArray = new JSONArray(jsonText);
                         for (int i = 0; i < jsonArray.length(); i++) {
@@ -228,7 +221,6 @@ public class MainMenuFragment extends Fragment {
                                     }
                                     key = tranCode + "_" + key;
                                     SessionClass.setParam(key, value);
-                                    Log.i("TAG", key + " - " + value);
                                 } catch (JSONException e) {
                                     // Something went wrong!
                                 }
@@ -286,7 +278,7 @@ public class MainMenuFragment extends Fragment {
                 Fragment f;
                 FragmentTransaction ft;
                 Bundle b;
-                f = new MovesSubTableFragment();
+                f = new MovesSubViewPager();
                 ft = getActivity().getSupportFragmentManager().beginTransaction();
                 b = new Bundle();
                 b.putString("tranid", tranID);

@@ -72,7 +72,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
     private int def;
     private boolean dialogActive = false;
     private int dataCounter;
-    private boolean enabledCollect = true;
 
     @Nullable
     @Override
@@ -80,6 +79,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         ActiveFragment.setFragment(this);
         lineID = getArguments().getString("lineID");
         tranCode = getArguments().getString("tranCode");
+        qBarcode01 = HelperClass.getArrayPosition("Barcode01", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qBarcode02 = HelperClass.getArrayPosition("Barcode02", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         CheckedList.setParamItem(lineID,1);
         dataCounter = 0;
         si = savedInstanceState;
@@ -107,7 +108,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             });
             db = SelesterDatabase.getDatabase(getContext());
             isnew = false;
-            Log.i("SQL", tranCode);
             KeyboardUtils.hideKeyboard(getActivity());
             try {
                 if (SessionClass.getParam(tranCode + "_Detail_TextBox_Needed_Qty_Index").equals("")) {
@@ -269,6 +269,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                             getTextDataValue3.setText(eanET.getText());
                             SessionClass.setParam("currentCollect",eanET.getText().toString());
                             AllLinesData.setItemParams(lineID, qBarcode01, eanET.getText().toString());
+                            if( eanET.getText().toString().equals("") ) AllLinesData.setItemParams(lineID, qBarcode02, "");
                             popup.dismiss();
                             return true;
                         default:
@@ -294,9 +295,9 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 if (s.length() > 3) {
                     if (s.toString().substring(s.length() - SessionClass.getParam("barcodeSuffix").length(), s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
                         KeyboardUtils.hideKeyboard(getActivity());
-                        getTextDataValue3.setText(eanET.getText());
-                        SessionClass.setParam("currentCollect",eanET.getText().toString());
-                        AllLinesData.setItemParams(lineID, qBarcode01, eanET.getText().toString());
+                        getTextDataValue3.setText(s.toString().substring(0, s.toString().length() - SessionClass.getParam("barcodeSuffix").length()));
+                        SessionClass.setParam("currentCollect",s.toString().substring(0, s.toString().length() - SessionClass.getParam("barcodeSuffix").length()));
+                        AllLinesData.setItemParams(lineID, qBarcode01, s.toString().substring(0, s.toString().length() - SessionClass.getParam("barcodeSuffix").length()) );
                         popup.dismiss();
                     }
                 }
@@ -309,6 +310,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 getTextDataValue3.setText(eanET.getText());
                 SessionClass.setParam("currentCollect",eanET.getText().toString());
                 AllLinesData.setItemParams(lineID, qBarcode01, eanET.getText().toString());
+                if( eanET.getText().toString().equals("") ) AllLinesData.setItemParams(lineID, qBarcode02, "");
                 dialog.cancel();
             }
         });
@@ -432,6 +434,15 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                                     textDataValue1.setText(AllLinesData.getParam(lineID)[qCurrent]);
                                     textDataValue2.setText(AllLinesData.getParam(lineID)[qNeed]);
                                     def = Integer.parseInt(AllLinesData.getParam(lineID)[qCurrent]) - Integer.parseInt(AllLinesData.getParam(lineID)[qNeed]);
+
+                                    if( SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").equals("1") ){
+                                        AllLinesData.setItemParams(lineID, qBarcode01, getTextDataValue3.getText().toString());
+                                        String palett = AllLinesData.getParamPosition(qBarcode01,qBarcode02,getTextDataValue3.getText().toString());
+                                        if(palett != null){
+                                            AllLinesData.setItemParams(lineID, qBarcode02, palett);
+                                        }
+                                    }
+
                                     if(AllLinesData.getParam(lineID)[qCurrent].equals("0")){def = 0;}
                                     textDataValue3.setText("" + def);
                                 }
@@ -538,7 +549,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString("whrs_selexped_currentLineID", lineID);
             editor.commit();
-
             KeyboardUtils.hideKeyboard(getActivity());
             String findItems = AllLinesData.getParam(lineID)[findRow];
             if (findItems != null && findItems.length() > 2) {
@@ -625,24 +635,19 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                     @Override
                     public void afterTextChanged(Editable s) {
                         AllLinesData.setItemParams(lineID, Integer.parseInt(arrayTempInt[0]), s.toString());
-
                     }
                 });
             }
-            if (tranCode.charAt(0) == '2') {
-                if(enabledCollect) {
-                    collectorBtn.setVisibility(View.VISIBLE);
-                    collectorLabel.setVisibility(View.VISIBLE);
-                    qBarcode01 = HelperClass.getArrayPosition("Barcode01", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
-                    collectorBtn.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            collectorDialog();
-                        }
-                    });
-                    getTextDataValue3.setText(SessionClass.getParam("currentCollect"));
-                    AllLinesData.setItemParams(lineID, qBarcode01, getTextDataValue3.getText().toString());
-                }
+            if( SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").equals("1") ){
+                collectorBtn.setVisibility(View.VISIBLE);
+                collectorLabel.setVisibility(View.VISIBLE);
+                collectorBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        collectorDialog();
+                    }
+                });
+                getTextDataValue3.setText(SessionClass.getParam("currentCollect"));
             }
 
             refreshPlaceCounter();
