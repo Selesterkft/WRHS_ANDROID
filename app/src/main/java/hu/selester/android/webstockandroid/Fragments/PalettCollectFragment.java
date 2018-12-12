@@ -17,6 +17,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
@@ -53,6 +54,7 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
     private int qBarcode01, qBarcode02, tranCode;
     private CollectListAdapter collectListAdapter;
     private SelesterDatabase db;
+    private Button nextBtn;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -71,6 +73,7 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
         qBarcode02 = HelperClass.getArrayPosition("Barcode02", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         barcodeET1 = rootView.findViewById(R.id.palett_barcode1);
         barcodeET2 = rootView.findViewById(R.id.palett_barcode2);
+        nextBtn = rootView.findViewById(R.id.movessub_header_btn);
         barcodeET2.requestFocus();
         ImageView del2Btn = rootView.findViewById(R.id.palett_delBtn2);
         del2Btn.setOnClickListener(new View.OnClickListener() {
@@ -116,7 +119,13 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
                 }
             }
         });
-
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String bar = barcodeET1.getText().toString();
+                addData(bar);
+            }
+        });
         barcodeET2.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
@@ -172,35 +181,9 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
                 if (s.length() > 3) {
                     if (s.toString().substring(s.length() - SessionClass.getParam("barcodeSuffix").length(), s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
                         String bar = s.toString().substring(0, s.length() - SessionClass.getParam("barcodeSuffix").length() );
-                        if( AllLinesData.isValidateValue(qBarcode01, bar) ) {
-                            barcodeET1.removeTextChangedListener(this);
-                            try {
-                                barcodeET1.setText(s.toString().substring(0, s.length() - SessionClass.getParam("barcodeSuffix").length()));
-                                List<String> l = AllLinesData.getParamsPosition(qBarcode01, qBarcode02, barcodeET1.getText().toString());
-                                String chkItem = "";
-                                if (l != null && l.size() > 0) chkItem = l.get(0);
-                                if (!chkItem.equals("") && !chkItem.equals(barcodeET1.getText().toString())) {
-                                    findThisCollectDialog();
-                                } else {
-                                    KeyboardUtils.hideKeyboard(getActivity());
-                                    addItem();
-                                    if (!locked) {
-                                        barcodeET2.setText("");
-                                        barcodeET2.requestFocus();
-                                        collectListAdapter.clearItems();
-                                    }else{
-                                        barcodeET1.setText("");
-                                        barcodeET1.requestFocus();
-                                    }
-                                }
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                            barcodeET1.addTextChangedListener(this);
-                        }else{
-                            Toast.makeText(getContext(), "Nincs ilyen gyűjtő létrehozva!", Toast.LENGTH_LONG).show();
-                            barcodeET1.setText( "" );
-                        }
+                        barcodeET1.removeTextChangedListener(this);
+                        addData(bar);
+                        barcodeET1.addTextChangedListener(this);
                     }
                 }
             }
@@ -215,32 +198,7 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
                         case KeyEvent.KEYCODE_DPAD_CENTER:
                         case KeyEvent.KEYCODE_ENTER:
                             String bar = barcodeET1.getText().toString();
-                            if( AllLinesData.isValidateValue(qBarcode01, bar) ) {
-                                try {
-                                    List<String> l = AllLinesData.getParamsPosition(qBarcode01, qBarcode02, barcodeET1.getText().toString());
-                                    String chkItem = "";
-                                    if (l != null && l.size() > 0) chkItem = l.get(0);
-                                    if (!chkItem.equals("") && !chkItem.equals(barcodeET1.getText().toString())) {
-                                        findThisCollectDialog();
-                                    } else {
-                                        KeyboardUtils.hideKeyboard(getActivity());
-                                        addItem();
-                                        if (!locked) {
-                                            barcodeET2.setText("");
-                                            barcodeET2.requestFocus();
-                                            collectListAdapter.clearItems();
-                                        }else{
-                                            barcodeET1.setText("");
-                                            barcodeET1.requestFocus();
-                                        }
-                                    }
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                }
-                            }else{
-                                Toast.makeText(getContext(), "Nincs ilyen gyűjtő létrehozva!", Toast.LENGTH_LONG).show();
-                                barcodeET1.setText( "" );
-                            }
+                            addData(bar);
                             return true;
                         default:
                             break;
@@ -282,17 +240,42 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
         return rootView;
     }
 
-    private void addItem(){
-        if( !barcodeET1.getText().toString().equals("") ) {
-            //db.palettDao().setPalettTable(new PalettTable(barcodeET2.getText().toString(), barcodeET1.getText().toString()));
-            AllLinesData.setParamsPosition(qBarcode01, qBarcode02, barcodeET1.getText().toString(), barcodeET2.getText().toString());
-            ProgressDialog pd = HelperClass.loadingDialogOn(getActivity());
-            LoadingParams lp = new LoadingParams(this, pd, qBarcode02, qBarcode01, barcodeET2.getText().toString() );
-            lp.execute();
-            //dataList = AllLinesData.getParamsPosition(qBarcode02, qBarcode01, barcodeET2.getText().toString());
-        }
-    }
+    private void addData(String bar) {
+        barcodeET1.setText(bar);
+        if( AllLinesData.isValidateValue(qBarcode01, bar) ) {
+            try {
+                List<String> l = AllLinesData.getParamsPosition(qBarcode01, qBarcode02, bar);
+                String chkItem = "";
+                if (l != null && l.size() > 0) chkItem = l.get(0);
+                if (!chkItem.equals("") && !chkItem.equals(bar)) {
+                    findThisCollectDialog();
+                } else {
+                    KeyboardUtils.hideKeyboard(getActivity());
+                    if( !bar.equals("") ) {
+                        AllLinesData.setParamsPosition(qBarcode01, qBarcode02, bar, barcodeET2.getText().toString());
+                        ProgressDialog pd = HelperClass.loadingDialogOn(getActivity());
+                        LoadingParams lp = new LoadingParams(this, pd, qBarcode02, qBarcode01, barcodeET2.getText().toString() );
+                        lp.execute();
+                    }
 
+                    if (!locked) {
+                        barcodeET2.setText("");
+                        barcodeET2.requestFocus();
+                        collectListAdapter.clearItems();
+                    }else{
+                        barcodeET1.setText("");
+                        barcodeET1.requestFocus();
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }else{
+            Toast.makeText(getContext(), "Nincs ilyen gyűjtő létrehozva!", Toast.LENGTH_LONG).show();
+            barcodeET1.setText( "" );
+        }
+
+    }
 
     @Override
     public void processFinish(List<String> dataList) {

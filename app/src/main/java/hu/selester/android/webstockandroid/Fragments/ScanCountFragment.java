@@ -435,14 +435,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                                     textDataValue2.setText(AllLinesData.getParam(lineID)[qNeed]);
                                     def = Integer.parseInt(AllLinesData.getParam(lineID)[qCurrent]) - Integer.parseInt(AllLinesData.getParam(lineID)[qNeed]);
 
-                                    if( SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").equals("1") ){
-                                        AllLinesData.setItemParams(lineID, qBarcode01, getTextDataValue3.getText().toString());
-                                        String palett = AllLinesData.getParamPosition(qBarcode01,qBarcode02,getTextDataValue3.getText().toString());
-                                        if(palett != null){
-                                            AllLinesData.setItemParams(lineID, qBarcode02, palett);
-                                        }
-                                    }
-
                                     if(AllLinesData.getParam(lineID)[qCurrent].equals("0")){def = 0;}
                                     textDataValue3.setText("" + def);
                                 }
@@ -623,13 +615,10 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 textDataLabel.setText(arrayTempNames[0]);
                 textDataValue.addTextChangedListener(new TextWatcher() {
                     @Override
-                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-                    }
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
                     @Override
                     public void onTextChanged(CharSequence s, int start, int before, int count) {
-
                     }
 
                     @Override
@@ -639,6 +628,38 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 });
             }
             if( SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").equals("1") ){
+                textDataValue1.addTextChangedListener(new TextWatcher() {
+                    @Override
+                    public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                    }
+
+                    @Override
+                    public void onTextChanged(CharSequence s, int start, int before, int count) {
+                        try{
+                            int x = Integer.parseInt(s.toString());
+                            if(x > 0){
+                                if( !getTextDataValue3.getText().toString().equals("")) {
+                                    AllLinesData.setItemParams(lineID, qBarcode01, getTextDataValue3.getText().toString());
+                                    String palett = AllLinesData.getParamPosition(qBarcode01, qBarcode02, getTextDataValue3.getText().toString());
+                                    if (palett != null) {
+                                        AllLinesData.setItemParams(lineID, qBarcode02, palett);
+                                    }
+                                }
+                            }else{
+                                AllLinesData.setItemParams(lineID, qBarcode02, "");
+                                AllLinesData.setItemParams(lineID, qBarcode01, "");
+                            }
+                        }catch (NumberFormatException e){
+                            Toast.makeText(getContext(),"Hibás szám formátum!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void afterTextChanged(Editable s) {
+
+                    }
+                });
                 collectorBtn.setVisibility(View.VISIBLE);
                 collectorLabel.setVisibility(View.VISIBLE);
                 collectorBtn.setOnClickListener(new View.OnClickListener() {

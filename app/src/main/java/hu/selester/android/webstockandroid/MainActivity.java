@@ -55,16 +55,6 @@ public class MainActivity extends FragmentActivity {
                 HelperClass.tooltipBuild(getSupportFragmentManager().getFragments().get(0).getContext(), v,"Tartsa lenyomva az adott gombon az újad és megjelenik a segítség!", R.style.ToolTipLayoutCustomStyle);
             }
         });
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            String[] PERMISSIONS = {android.Manifest.permission.READ_EXTERNAL_STORAGE,android.Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.READ_PHONE_STATE};
-            if (!hasPermissions(getApplicationContext(), PERMISSIONS)) {
-                ActivityCompat.requestPermissions(this, PERMISSIONS, REQUEST );
-            } else {
-                //do here
-            }
-        } else {
-            //do here
-        }
     }
 
     private static boolean hasPermissions(Context context, String... permissions) {

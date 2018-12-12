@@ -675,7 +675,8 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
 
     public void closeFragment(){
         KeyboardUtils.hideKeyboard(getActivity());
-        if(tranCode.charAt(0)=='2' && SessionClass.getParam( tranCode+"_Detail_Button_IsVisible")=="1" ){
+
+        if(SessionClass.getParam( tranCode+"_Detail_Button_IsVisible").equals("1") ){
             ((MovesSubViewPager)getParentFragment()).closeFragment();
         }else{
             getFragmentManager().popBackStack();
