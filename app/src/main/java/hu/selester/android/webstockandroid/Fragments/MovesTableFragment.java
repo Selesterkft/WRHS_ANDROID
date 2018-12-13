@@ -64,6 +64,7 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
         SessionClass.setParam("TreeViewSearchText","");
         rootView = inflater.inflate(R.layout.frg_moves, container, false);
         tranCode = getArguments().getInt("tranCode");
+        if(SessionClass.getParam(tranCode + "_Detail_Button_IsVisible") == null){SessionClass.setParam(tranCode + "_Detail_Button_IsVisible","");}
         ImageButton selectBtn = rootView.findViewById(R.id.moves_selectBtn);
         selectBtn.setOnClickListener(this);
         ImageButton selectBtn1 = rootView.findViewById(R.id.moves_selectBtn1);
@@ -114,9 +115,8 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
         url = url.replace(" ","");
         Log.i("URL",url);
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
-        JSONObject jsonObject=null;
         pd = HelperClass.loadingDialogOn(getActivity());
-        JsonRequest<JSONObject> jr = new  JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
+        JsonRequest<JSONObject> jr = new  JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -166,8 +166,8 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
         tps.setOnRowClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CheckBox cb = v.findViewById(R.dimen.tablepanel_row_checkBox);
-                if(v.getId() != R.dimen.tablepanel_row_checkBox) cb.setChecked(!cb.isChecked());
+                CheckBox cb = v.findViewById(11);
+                if(v.getId() != 11) cb.setChecked(!cb.isChecked());
                 for(int i = 0; i < tablePanel.getAdapter().getItemCount(); i++){
                     tablePanel.getAdapter().checkedList[i] = false;
                 }
