@@ -162,7 +162,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
                 .setOrientationLocked(false)
                 .setBeepEnabled(true)
                 .setCameraId(0)
-                .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES)
+                .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
                 .setBarcodeImageEnabled(true)
                 .initiateScan();
 
@@ -504,6 +504,4 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
         });
         builder.show();
     }
-
-
 }
