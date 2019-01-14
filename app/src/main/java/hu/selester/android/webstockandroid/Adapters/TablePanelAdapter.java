@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import java.util.ArrayList;
 import java.util.List;
 
+import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.TablePanel.TablePanel;
 
@@ -34,6 +36,10 @@ public class TablePanelAdapter extends RecyclerView.Adapter<TablePanelAdapter.Vi
     private int columnCount = 0;
     private int width;
     public boolean[] checkedList;
+    private int qNeed = 0;
+    private int qCurrent = 0;
+    private String tranCode;
+
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
@@ -64,6 +70,23 @@ public class TablePanelAdapter extends RecyclerView.Adapter<TablePanelAdapter.Vi
             this.checkedList[i] = false;
         }
         columnCount = columnWidth.length;
+        try {
+            if (SessionClass.getParam("tranCode") != null && !SessionClass.getParam("tranCode").equals("")) {
+                if (SessionClass.getParam(tranCode + "_Detail_TextBox_Needed_Qty_Index").equals("")) {
+                    qNeed = 0;
+                } else {
+                    qNeed = Integer.parseInt(SessionClass.getParam(tranCode + "_Detail_TextBox_Needed_Qty_Index"));
+                }
+
+                if (SessionClass.getParam(tranCode + "_Detail_TextBox_Current_Qty_Index").equals("")) {
+                    qCurrent = 0;
+                } else {
+                    qCurrent = Integer.parseInt(SessionClass.getParam(tranCode + "_Detail_TextBox_Current_Qty_Index"));
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
 
     }
 
@@ -76,6 +99,7 @@ public class TablePanelAdapter extends RecyclerView.Adapter<TablePanelAdapter.Vi
         if(tablePanelSetting.isCheckable()){
             CheckBox checkBox = new CheckBox(context);
             checkBox.setId(R.dimen.tablepanel_row_checkBox);
+            Log.i("TAG","CREATE CHECKBOX");
             if(tablePanelSetting.getOnRowClickListener() != null) checkBox.setOnClickListener(tablePanelSetting.getOnRowClickListener());
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
@@ -98,9 +122,24 @@ public class TablePanelAdapter extends RecyclerView.Adapter<TablePanelAdapter.Vi
         int fc = 0;
         LinearLayout rootLayout = holder.tableRowLayout.findViewById(R.id.tablepanel_rootLayout);
         if( rowSetting != null && rowSetting.size()>position && rowSetting.get(position)!=null ){
+
             if( rowSetting.get(position).getFontSize() != 0) fs = rowSetting.get(position).getFontSize(); else fs = tablePanelSetting.getFontSize();
-            if( rowSetting.get(position).getBackColor() != 0) bc = rowSetting.get(position).getBackColor(); else bc = R.color.backcolorTablePanelDefault;
+            if (qNeed > 0 && qCurrent > 0) {
+                int color = 0 ;
+                int curr = Integer.parseInt(list.get(position)[qCurrent]);
+                int need = Integer.parseInt(list.get(position)[qNeed]);
+                if ((curr < need) && curr != 0) {
+                    bc = R.color.productRowPHBack;
+                } else if (curr == need) {
+                    bc = R.color.productRowOKBack;
+                } else {
+                    bc = R.color.productRowNOTBack;
+                }
+            } else {
+                if( rowSetting.get(position).getBackColor() != 0) bc = rowSetting.get(position).getBackColor(); else bc = R.color.backcolorTablePanelDefault;
+            }
             if( rowSetting.get(position).getFontColor() != 0) fc = rowSetting.get(position).getFontColor(); else fc = R.color.fontcolorTablePanelDefault;
+
         } else {
             fs = tablePanelSetting.getFontSize();
             bc = R.color.backcolorTablePanelDefault;

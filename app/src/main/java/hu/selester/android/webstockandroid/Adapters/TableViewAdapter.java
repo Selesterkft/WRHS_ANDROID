@@ -18,6 +18,7 @@ import java.util.List;
 
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Objects.ListSettings;
+import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 
 public class TableViewAdapter extends BaseAdapter {
@@ -36,6 +37,9 @@ public class TableViewAdapter extends BaseAdapter {
     private ListSettings listSettings;
     private String tableName;
     private CheckBox chk;
+    private int qNeed = 0;
+    private int qCurrent = 0;
+    private String tranCode;
 
     public TableViewAdapter(Context context, List<String[]> textList, ListSettings listSettings, String tableName, List<Integer> textColor){
         checkedArray = new boolean[textList.size()];
@@ -108,11 +112,30 @@ public class TableViewAdapter extends BaseAdapter {
         }else{
             holder = (ViewHolder) convertView.getTag();
         }
-        if(textColor != null){
-            if(textColor.get(position) != null && textColor.get(position)>0){
-                LinearLayout ll = convertView.findViewById(R.id.contentLayout);
-                ll.setBackgroundResource(textColor.get(position));
+        try {
+            if (textColor != null) {
+                if (qNeed > 0 && qCurrent > 0) {
+                    int color = 0 ;
+                    int curr = Integer.parseInt(textList.get(position)[qCurrent]);
+                    int need = Integer.parseInt(textList.get(position)[qNeed]);
+                    if ((curr < need) && curr != 0) {
+                        color = R.color.productRowPHBack;
+                    } else if (curr == need) {
+                        color = R.color.productRowOKBack;
+                    } else {
+                        color = R.color.productRowNOTBack;
+                    }
+                    LinearLayout ll = convertView.findViewById(R.id.contentLayout);
+                    ll.setBackgroundResource(color);
+                } else {
+                    if (textColor.get(position) != null && textColor.get(position) > 0) {
+                        LinearLayout ll = convertView.findViewById(R.id.contentLayout);
+                        ll.setBackgroundResource(textColor.get(position));
+                    }
+                }
             }
+        }catch (Exception e){
+            e.printStackTrace();
         }
 
         for(int i=0; i<listSettings.getHeaderWidth().length;i++) {

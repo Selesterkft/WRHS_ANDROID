@@ -64,6 +64,7 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
         SessionClass.setParam("TreeViewSearchText","");
         rootView = inflater.inflate(R.layout.frg_moves, container, false);
         tranCode = getArguments().getInt("tranCode");
+        SessionClass.setParam("tranCode",String.valueOf(tranCode));
         if(SessionClass.getParam(tranCode + "_Detail_Button_IsVisible") == null){SessionClass.setParam(tranCode + "_Detail_Button_IsVisible","");}
         ImageButton selectBtn = rootView.findViewById(R.id.moves_selectBtn);
         selectBtn.setOnClickListener(this);
@@ -166,16 +167,16 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
         tps.setOnRowClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CheckBox cb = v.findViewById(11);
-                if(v.getId() != 11) cb.setChecked(!cb.isChecked());
+                CheckBox cb = v.findViewById(R.dimen.tablepanel_row_checkBox);
+                if(v.getId() != R.dimen.tablepanel_row_checkBox) cb.setChecked(!cb.isChecked());
                 for(int i = 0; i < tablePanel.getAdapter().getItemCount(); i++){
                     tablePanel.getAdapter().checkedList[i] = false;
                 }
                 tablePanel.getAdapter().checkedList[(int)cb.getTag()] = cb.isChecked();
                 tablePanel.getAdapter().update();
-                List<String> chcekedList = tablePanel.getAdapter().getCheckedPosition(0);
+                List<String> checkedList = tablePanel.getAdapter().getCheckedPosition(0);
 
-                if(chcekedList!=null && chcekedList.size()>0){
+                if(checkedList!=null && checkedList.size()>0){
                     //Toast.makeText(getContext(),"Kiválasztva: "+chcekedList.size()+" elem",Toast.LENGTH_LONG).show();
                 }else{
                     //Toast.makeText(getContext(),"NINCS KIVÁLASZTVA SEMMI",Toast.LENGTH_LONG).show();

@@ -93,7 +93,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
         terminalText = rootView.findViewById(R.id.setting_terminal);
         errorText = rootView.findViewById(R.id.setting_errorText);
         barCodeSuffix = rootView.findViewById(R.id.setting_barcodesuffix);
-        if( db.systemDao().getValue("barcodeSuffix")==null || db.systemDao().getValue("barcodeSuffix").equals("")) {
+        if( db.systemDao().getValue("barcodeSuffix") == null || db.systemDao().getValue("barcodeSuffix").equals("")) {
             barCodeSuffix.setText("#&");
         }else{
             barCodeSuffix.setText(db.systemDao().getValue("barcodeSuffix"));
