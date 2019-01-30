@@ -167,6 +167,7 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
         tps.setOnRowClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // Itt volt a HIBA
                 CheckBox cb = v.findViewById(R.dimen.tablepanel_row_checkBox);
                 if(v.getId() != R.dimen.tablepanel_row_checkBox) cb.setChecked(!cb.isChecked());
                 for(int i = 0; i < tablePanel.getAdapter().getItemCount(); i++){
