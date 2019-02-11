@@ -41,6 +41,7 @@ import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Objects.ActiveFragment;
 import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.CheckedList;
+import hu.selester.android.webstockandroid.Objects.CustomTextWatcher;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.Threads.SaveCheckedDataThread;
@@ -64,7 +65,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
     private String tranCode, Head_ID;
     private int qNeed,qCurrent,qMissing,qBarcode01,qBarcode02;
     private EditText textDataValue;
-    private String[] arrayTempInt, arrayTempNames, arrayTempType;
+    private String[] arrayTempInt, arrayTempNames, arrayTempType, arrayTextBoxLabels, arrayTextBoxEnableds, arrayTextBoxIndexes;
     private TextView headerText;
     private LinearLayout subHeadText1, subHeadText2, subHeadText3;
     private boolean newOpenWindow;
@@ -85,6 +86,11 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         dataCounter = 0;
         si = savedInstanceState;
         rootView = inflater.inflate(R.layout.frg_scancount,container,false);
+
+        arrayTextBoxLabels = SessionClass.getParam(tranCode + "_Detail_TextBox_Names").split(",");
+        arrayTextBoxEnableds = SessionClass.getParam(tranCode + "_Detail_TextBox_Enabled").split(",");
+        arrayTextBoxIndexes = SessionClass.getParam(tranCode + "_Detail_TextBox_Index").split(",");
+
         newOpenWindow = true;
         try {
             counter = rootView.findViewById(R.id.scancount_count);
@@ -237,6 +243,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                         AllLinesData.setItemParams(lineID, qMissing, textDataValue3.getText().toString());
                     }
                     saveDBDatas();
+                    KeyboardUtils.hideKeyboard(getActivity());
                     getFragmentManager().popBackStack();
                 }
             });
@@ -669,6 +676,33 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                     }
                 });
                 getTextDataValue3.setText(SessionClass.getParam("currentCollect"));
+            }
+
+            try {
+
+                for (int i = 0; i < arrayTextBoxIndexes.length; i++) {
+                    int resIDLayer = getActivity().getResources().getIdentifier("scancount_param" + (i + 1) + "_layer", "id", getActivity().getPackageName());
+                    int resIDLabel = getActivity().getResources().getIdentifier("scancount_param" + (i + 1) + "_label", "id", getActivity().getPackageName());
+                    LinearLayout layer = rootView.findViewById(resIDLayer);
+                    TextView label = rootView.findViewById(resIDLabel);
+                    if (arrayTextBoxEnableds[i].equals("1")) {
+                        layer.setVisibility(View.VISIBLE);
+                    } else {
+                        layer.setVisibility(View.GONE);
+                    }
+                    if (i > 2) {
+                        int resIDValue = getActivity().getResources().getIdentifier("scancount_param" + (i + 1) + "_value", "id", getActivity().getPackageName());
+                        EditText value = rootView.findViewById(resIDValue);
+                        value.setText( AllLinesData.getParam(lineID)[Integer.parseInt(arrayTextBoxIndexes[i])] );
+                        label.setText(arrayTextBoxLabels[i]);
+
+                        value.addTextChangedListener(new CustomTextWatcher(Integer.parseInt(arrayTextBoxIndexes[i]), lineID, value));
+
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+                Toast.makeText(getContext(),"Hiba a művelet közben!",Toast.LENGTH_LONG).show();
             }
 
             refreshPlaceCounter();

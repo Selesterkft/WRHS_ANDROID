@@ -232,6 +232,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         headerWidth[0]=0;
         headerText = SessionClass.getParam(tranCode+"_Line_ListView_Names").split(",",-1);
         columnName = SessionClass.getParam(tranCode+"_Line_ListView_SELECT").split(",",-1);
+        Log.i("TAG", Arrays.toString(headerText));
 
         ls = new ListSettings(headerText, headerWidth, columnName,true);
 
@@ -475,6 +476,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                                 }
                             }
                         }
+                        Log.i("TAG", Arrays.toString(dataText));
                         AllLinesData.setParam(dataText[0],dataText);
                         tl.add(dataText);
                     }

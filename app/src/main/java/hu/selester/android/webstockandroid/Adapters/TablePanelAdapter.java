@@ -41,7 +41,6 @@ public class TablePanelAdapter extends RecyclerView.Adapter<TablePanelAdapter.Vi
     private String tranCode;
 
 
-
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
         public View tableRowLayout;
@@ -70,22 +69,25 @@ public class TablePanelAdapter extends RecyclerView.Adapter<TablePanelAdapter.Vi
             this.checkedList[i] = false;
         }
         columnCount = columnWidth.length;
-        try {
-            if (SessionClass.getParam("tranCode") != null && !SessionClass.getParam("tranCode").equals("")) {
-                if (SessionClass.getParam(tranCode + "_Detail_TextBox_Needed_Qty_Index").equals("")) {
-                    qNeed = 0;
-                } else {
-                    qNeed = Integer.parseInt(SessionClass.getParam(tranCode + "_Detail_TextBox_Needed_Qty_Index"));
-                }
+        if(tranCode != null) {
+            try {
+                if (SessionClass.getParam("tranCode") != null && !SessionClass.getParam("tranCode").equals("")) {
+                    Log.i("TAG", "" + tranCode + "_Detail_TextBox_Needed_Qty_Index");
+                    if (SessionClass.getParam(tranCode + "_Detail_TextBox_Needed_Qty_Index").equals("")) {
+                        qNeed = 0;
+                    } else {
+                        qNeed = Integer.parseInt(SessionClass.getParam(tranCode + "_Detail_TextBox_Needed_Qty_Index"));
+                    }
 
-                if (SessionClass.getParam(tranCode + "_Detail_TextBox_Current_Qty_Index").equals("")) {
-                    qCurrent = 0;
-                } else {
-                    qCurrent = Integer.parseInt(SessionClass.getParam(tranCode + "_Detail_TextBox_Current_Qty_Index"));
+                    if (SessionClass.getParam(tranCode + "_Detail_TextBox_Current_Qty_Index").equals("")) {
+                        qCurrent = 0;
+                    } else {
+                        qCurrent = Integer.parseInt(SessionClass.getParam(tranCode + "_Detail_TextBox_Current_Qty_Index"));
+                    }
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        }catch (Exception e){
-            e.printStackTrace();
         }
 
     }

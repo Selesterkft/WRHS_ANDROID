@@ -220,6 +220,7 @@ public class MainMenuFragment extends Fragment {
                                         key = "Tran_ID";
                                     }
                                     key = tranCode + "_" + key;
+                                    Log.i("Settings",key + ": " + value);
                                     SessionClass.setParam(key, value);
                                 } catch (JSONException e) {
                                     // Something went wrong!
@@ -278,7 +279,11 @@ public class MainMenuFragment extends Fragment {
                 Fragment f;
                 FragmentTransaction ft;
                 Bundle b;
-                f = new MovesSubViewPager();
+                if( SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").equals("1") ) {
+                    f = new MovesSubViewPager();
+                }else{
+                    f = new MovesSubTableFragment();
+                }
                 ft = getActivity().getSupportFragmentManager().beginTransaction();
                 b = new Bundle();
                 b.putString("tranid", tranID);

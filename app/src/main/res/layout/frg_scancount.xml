@@ -1,315 +1,507 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
     <TextView
         android:id="@+id/scancount_headertext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
         android:paddingTop="10dp"
         android:paddingBottom="10dp"
         android:text="Ellenőrzés"
-        android:textSize="20sp"
         android:textColor="@color/whiteColor"
-        android:gravity="center"/>
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
         android:id="@+id/scancount_subHeadText1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         android:orientation="horizontal"
-        android:textColor="@color/whiteColor">
+        android:textColor="@color/whiteColor"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scancount_headertext">
+
         <TextView
             android:id="@+id/scancount_textLabel1"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
             android:text="-:"
             android:textColor="@color/whiteColor"
-            android:textStyle="bold"
-            android:paddingLeft="10dp"
-            android:gravity="center_vertical"
-            />
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/scancount_textValue1"
             android:layout_width="match_parent"
-            android:textColor="@color/whiteColor"
             android:layout_height="wrap_content"
-            android:text="-"/>
+            android:text="-"
+            android:textColor="@color/whiteColor" />
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/scancount_subHeadText2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
         android:orientation="horizontal"
-        android:id="@+id/scancount_subHeadText2">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scancount_subHeadText1">
+
         <TextView
             android:id="@+id/scancount_textLabel2"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:textColor="@color/whiteColor"
             android:text="-:"
-            android:textStyle="bold"
-            android:paddingLeft="10dp"
-            android:gravity="center_vertical"
-            />
+            android:textColor="@color/whiteColor"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/scancount_textValue2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/whiteColor"
-            android:text="-"/>
+            android:text="-"
+            android:textColor="@color/whiteColor" />
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/scancount_subHeadText3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:id="@+id/scancount_subHeadText3"
-        android:textColor="@color/whiteColor">
+        android:textColor="@color/whiteColor"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scancount_subHeadText2">
         <TextView
             android:id="@+id/scancount_textLabel3"
             android:layout_width="100dp"
             android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:textColor="@color/whiteColor"
             android:text="-:"
-            android:textStyle="bold"
-            android:paddingLeft="10dp"
-            android:gravity="center_vertical"
-            />
+            android:textColor="@color/whiteColor"
+            android:textStyle="bold" />
+
         <TextView
             android:id="@+id/scancount_textValue3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/whiteColor"
             android:paddingBottom="5dp"
-            android:text="-"/>
+            android:text="-"
+            android:textColor="@color/whiteColor" />
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/linearLayout5"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_margin="10dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:orientation="horizontal"
         android:paddingBottom="7dp"
-        android:orientation="horizontal">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scancount_subHeadText3">
+
         <TextView
             android:id="@+id/scancount_header_label"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:paddingRight="5dp"
             android:gravity="center_vertical"
+            android:paddingRight="5dp"
             android:text="Cikk kód:" />
+
         <EditText
-            android:layout_weight="1"
+            android:id="@+id/scancount_header_value"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:id="@+id/scancount_header_value"
             android:layout_margin="5dp"
-            android:maxLines="1"
+            android:layout_weight="1"
+            android:background="@drawable/logintext_et_shape_round"
             android:inputType="text"
-            android:paddingRight="5dp"
+            android:maxLines="1"
             android:paddingLeft="5dp"
-            android:textSize="16sp"
-            android:background="@drawable/logintext_et_shape_round" />
+            android:paddingRight="5dp"
+            android:textSize="16sp" />
+
         <Button
             android:id="@+id/scancount_header_btn"
-            android:textColor="@color/whiteColor"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:backgroundTint="@color/secondColor"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="-->" />
+            android:text="-->"
+            android:textColor="@color/whiteColor" />
     </LinearLayout>
-    <LinearLayout
-        android:id="@+id/scancount_data_layer"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:paddingBottom="5dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:orientation="horizontal">
-        <TextView
-            android:id="@+id/scancount_data_label"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:layout_marginRight="5dp"
-            android:text="Hova:" />
-        <EditText
-            android:id="@+id/scancount_data_value"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:paddingLeft="5dp"
-            android:textSize="15sp"
-            android:maxLines="1"
-            android:inputType="number"
-            android:background="@drawable/logintext_et_shape_round" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:paddingBottom="5dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        android:orientation="horizontal">
-        <TextView
-            android:id="@+id/scancount_data1_label"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:layout_marginRight="5dp"
-            android:text="Hiány" />
-        <TextView
-            android:id="@+id/scancount_data1_value"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:paddingLeft="5dp"
-            android:background="@drawable/logintext_et_shape_round" />
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:orientation="horizontal"
-        android:paddingBottom="5dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
-        <TextView
-            android:id="@+id/scancount_data2_label"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:layout_marginRight="5dp"
-            android:paddingRight="5dp"
-            android:text="Darab" />
-        <EditText
-            android:layout_weight="1"
-            android:id="@+id/scancount_data2_value1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="5sp"
-            android:textSize="15sp"
-            android:maxLines="1"
-            android:inputType="number"
-            android:background="@drawable/logintext_et_shape_round" />
-        <TextView
-            android:layout_weight="1"
-            android:id="@+id/scancount_data2_value2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:paddingLeft="5dp"
-            android:background="@drawable/logintext_et_shape_round" />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/scancount_collectorLabel"
-        android:layout_width="match_parent"
-        android:layout_height="35dp"
-        android:orientation="horizontal"
-        android:paddingBottom="5dp"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp">
-        <TextView
-            android:id="@+id/scancount_data3_label"
-            android:layout_width="60dp"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:layout_marginRight="5dp"
-            android:paddingRight="5dp"
-            android:text="@string/collectorTV" />
-        <TextView
-            android:layout_weight="1"
-            android:id="@+id/scancount_data3_value"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:paddingLeft="5sp"
-            android:textSize="15sp"
-            android:paddingTop="5dp"
-            android:background="@drawable/logintext_et_shape_round" />
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/scancount_collectorBtn"
-        android:orientation="horizontal"
-        android:layout_marginLeft="10dp"
-        android:elevation="2dp"
-        android:layout_marginRight="10dp"
-        android:background="@drawable/round_corner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <TextView
-            android:layout_marginLeft="10dp"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:textColor="@color/whiteColor"
-            android:gravity="center_vertical"
-            android:textSize="23sp"
-            android:text="+"/>
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="50dp"
-            android:layout_marginLeft="5dp"
-            android:padding="0dp"
-            android:src="@drawable/box"/>
-        <TextView
-            android:layout_marginLeft="10dp"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textColor="@color/whiteColor"
-            android:gravity="center_vertical"
-            android:text="Új gyűjtő hozzáadása"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_weight="1"
-        android:layout_width="match_parent"
-        android:layout_height="0dp">
 
-    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:id="@+id/scancount_param1_layer"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/scancount_data_label"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:text="Hova:" />
+                <EditText
+                    android:id="@+id/scancount_data_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:textSize="15sp"
+                    android:maxLines="1"
+                    android:inputType="number"
+                    android:background="@drawable/logintext_et_shape_round" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/scancount_param2_layer"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/scancount_data1_label"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:text="Hiány" />
+                <TextView
+                    android:id="@+id/scancount_data1_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:background="@drawable/logintext_et_shape_round" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/scancount_param3_layer"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+                <TextView
+                    android:id="@+id/scancount_data2_label"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:paddingRight="5dp"
+                    android:text="Darab" />
+                <EditText
+                    android:layout_weight="1"
+                    android:id="@+id/scancount_data2_value1"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="5sp"
+                    android:textSize="15sp"
+                    android:maxLines="1"
+                    android:inputType="number"
+                    android:background="@drawable/logintext_et_shape_round" />
+                <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/scancount_data2_value2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:background="@drawable/logintext_et_shape_round" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/scancount_param4_layer"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/scancount_param4_label"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:text="Param4" />
+                <EditText
+                    android:id="@+id/scancount_param4_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:background="@drawable/logintext_et_shape_round" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/scancount_param5_layer"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/scancount_param5_label"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:text="Param5" />
+                <EditText
+                    android:id="@+id/scancount_param5_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:background="@drawable/logintext_et_shape_round" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/scancount_param6_layer"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/scancount_param6_label"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:text="Param6" />
+                <EditText
+                    android:id="@+id/scancount_param6_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:background="@drawable/logintext_et_shape_round" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/scancount_param7_layer"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/scancount_param7_label"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:text="Param7" />
+                <EditText
+                    android:id="@+id/scancount_param7_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:background="@drawable/logintext_et_shape_round" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/scancount_param8_layer"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:orientation="horizontal">
+                <TextView
+                    android:id="@+id/scancount_param8_label"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:text="Param8" />
+                <EditText
+                    android:id="@+id/scancount_param8_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:paddingLeft="5dp"
+                    android:background="@drawable/logintext_et_shape_round" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/scancount_collectorLabel"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:orientation="horizontal"
+                android:paddingBottom="5dp"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp">
+                <TextView
+                    android:id="@+id/scancount_data3_label"
+                    android:layout_width="60dp"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:layout_marginRight="5dp"
+                    android:paddingRight="5dp"
+                    android:text="@string/collectorTV" />
+                <TextView
+                    android:layout_weight="1"
+                    android:id="@+id/scancount_data3_value"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingLeft="5sp"
+                    android:textSize="15sp"
+                    android:paddingTop="5dp"
+                    android:background="@drawable/logintext_et_shape_round" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/scancount_collectorBtn"
+                android:orientation="horizontal"
+                android:layout_marginLeft="10dp"
+                android:elevation="2dp"
+                android:layout_marginRight="10dp"
+                android:background="@drawable/round_corner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/whiteColor"
+                    android:gravity="center_vertical"
+                    android:textSize="23sp"
+                    android:text="+"/>
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="50dp"
+                    android:layout_marginLeft="5dp"
+                    android:padding="0dp"
+                    android:src="@drawable/box"/>
+                <TextView
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:textColor="@color/whiteColor"
+                    android:gravity="center_vertical"
+                    android:text="Új gyűjtő hozzáadása"/>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_weight="1"
+                android:layout_width="match_parent"
+                android:layout_height="0dp">
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </ScrollView>
+
     <LinearLayout
+        android:id="@+id/linearLayout6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
         <Button
             android:id="@+id/scancount_removeBtn"
-            android:backgroundTint="@color/secondColor"
-            android:textColor="@color/whiteColor"
-            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:backgroundTint="@color/secondColor"
             android:text="-"
-            android:textSize="42sp"/>
+            android:textColor="@color/whiteColor"
+            android:textSize="42sp" />
+
         <EditText
             android:id="@+id/scancount_count"
-            android:layout_height="match_parent"
             android:layout_width="80dp"
+            android:layout_height="match_parent"
             android:gravity="center"
-            android:textSize="28dp"
-            android:textStyle="bold"
-            android:maxLines="1"
             android:inputType="number"
-            android:text="1"/>
+            android:maxLines="1"
+            android:text="1"
+            android:textSize="28dp"
+            android:textStyle="bold" />
+
         <Button
             android:id="@+id/scancount_addBtn"
-            android:backgroundTint="@color/secondColor"
-            android:textColor="@color/whiteColor"
-            android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="+"
-            android:textSize="42sp"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-        <Button
             android:layout_weight="1"
             android:backgroundTint="@color/secondColor"
-
+            android:text="+"
             android:textColor="@color/whiteColor"
+            android:textSize="42sp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <Button
             android:id="@+id/scancount_goback"
             android:layout_width="wrap_content"
+
             android:layout_height="wrap_content"
-            android:text="Vissza"/>
+            android:layout_weight="1"
+            android:backgroundTint="@color/secondColor"
+            android:text="Vissza"
+            android:textColor="@color/whiteColor" />
     </LinearLayout>
-</LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
