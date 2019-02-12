@@ -36,6 +36,6 @@ public class CustomTextWatcher implements TextWatcher {
                 myET.setText(s.toString().substring(0, s.toString().length() - suffixLen));
             }
         }
-
+        CheckedList.setParamItem(lineID,1);
     }
 }

@@ -91,13 +91,13 @@
                 android:textColor="@color/whiteColor"
                 android:text="X"/>
             <Button
-            android:id="@+id/movessub_header_btn"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:backgroundTint="@color/secondColor"
-            android:textColor="@color/whiteColor"
-            android:layout_marginBottom="0dp"
-            android:text="-->"
+                android:id="@+id/movessub_header_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:backgroundTint="@color/secondColor"
+                android:textColor="@color/whiteColor"
+                android:layout_marginBottom="0dp"
+                android:text="-->"
             />
         </LinearLayout>
 

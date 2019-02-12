@@ -65,7 +65,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
     private String tranCode, Head_ID;
     private int qNeed,qCurrent,qMissing,qBarcode01,qBarcode02;
     private EditText textDataValue;
-    private String[] arrayTempInt, arrayTempNames, arrayTempType, arrayTextBoxLabels, arrayTextBoxEnableds, arrayTextBoxIndexes;
+    private String[] arrayTempInt, arrayTempNames, arrayTempType, arrayTextBoxLabels, arrayTextBoxEnableds, arrayTextBoxIndexes, arrayTextBoxSelect;
     private TextView headerText;
     private LinearLayout subHeadText1, subHeadText2, subHeadText3;
     private boolean newOpenWindow;
@@ -90,6 +90,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         arrayTextBoxLabels = SessionClass.getParam(tranCode + "_Detail_TextBox_Names").split(",");
         arrayTextBoxEnableds = SessionClass.getParam(tranCode + "_Detail_TextBox_Enabled").split(",");
         arrayTextBoxIndexes = SessionClass.getParam(tranCode + "_Detail_TextBox_Index").split(",");
+        arrayTextBoxSelect = SessionClass.getParam(tranCode + "_Detail_TextBox_SELECT").split(",");
 
         newOpenWindow = true;
         try {
@@ -146,22 +147,24 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             subHeadText3 = rootView.findViewById(R.id.scancount_subHeadText3);
             subHeadText3.setBackgroundResource(R.color.headerColor);
 //        qNeed = Integer.parseInt(SessionClass.getParam(tranCode+"_Line_ListView_Qty_Control"));
-            String[] temp = SessionClass.getParam(tranCode + "_Line_ListView_Qty_Part").split(",", -1);
-            if (SessionClass.getParam(tranCode + "_Line_ListView_Qty_Part").equals("")) {
+            String[] temp = SessionClass.getParam(tranCode + "_Detail_TextBox_Index").split(",", -1);
+            if (SessionClass.getParam(tranCode + "_Detail_TextBox_Index").equals("")) {
                 qMissing = 0;
             } else {
-                if (temp[1].equals("")) {
+                if (temp[0].equals("")) {
                     qMissing = 0;
                 } else {
-                    qMissing = Integer.parseInt(temp[1]);
+                    qMissing = Integer.parseInt(temp[0]);
                 }
             }
+            Log.i("TAG","Missing index: "+qMissing);
             findRow = Integer.parseInt(SessionClass.getParam(tranCode + "_Line_TextBox_Find_Index"));
             findValue = rootView.findViewById(R.id.scancount_header_value);
             arrayTempNames = SessionClass.getParam(tranCode + "_Detail_TextBox_Names").split(",");
             arrayTempType = SessionClass.getParam(tranCode + "_Detail_TextBox_DataType").split(",");
             arrayTempInt = SessionClass.getParam(tranCode + "_Detail_TextBox_Index").split(",");
             collectorBtn.setVisibility(View.GONE);
+            /*
             if (tranCode.charAt(0) == '1') {
                 TextView textDataLabel = rootView.findViewById(R.id.scancount_data_label);
                 textDataValue = rootView.findViewById(R.id.scancount_data_value);
@@ -205,8 +208,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                         }
                         refreshPlaceCounter();
                     }
-                });
-            }
+                }):
+            }*/
             findValue.requestFocus();
             TextView textLabel1 = rootView.findViewById(R.id.scancount_textLabel1);
             TextView textLabel2 = rootView.findViewById(R.id.scancount_textLabel2);
@@ -243,6 +246,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                         AllLinesData.setItemParams(lineID, qMissing, textDataValue3.getText().toString());
                     }
                     saveDBDatas();
+                    CheckedList.setParamItem(lineID,1);
                     KeyboardUtils.hideKeyboard(getActivity());
                     getFragmentManager().popBackStack();
                 }
@@ -299,6 +303,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
 
             @Override
             public void afterTextChanged(Editable s) {
+                CheckedList.setParamItem(lineID,1);
                 if (s.length() > 3) {
                     if (s.toString().substring(s.length() - SessionClass.getParam("barcodeSuffix").length(), s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
                         KeyboardUtils.hideKeyboard(getActivity());
@@ -605,6 +610,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             if(AllLinesData.getParam(lineID)[qCurrent].equals("0")){def = 0;}
             textDataValue3.setText("" + def);
 
+            /*
             if (tranCode.charAt(0) == '1') {
                 TextView textDataLabel = rootView.findViewById(R.id.scancount_data_label);
                 EditText textDataValue = rootView.findViewById(R.id.scancount_data_value);
@@ -633,7 +639,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                         AllLinesData.setItemParams(lineID, Integer.parseInt(arrayTempInt[0]), s.toString());
                     }
                 });
-            }
+            }*/
+
             if( SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").equals("1") ){
                 textDataValue1.addTextChangedListener(new TextWatcher() {
                     @Override
@@ -679,7 +686,12 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             }
 
             try {
+                int toplace = -1;
+                if (tranCode.charAt(0) == '1') {
+                     toplace = Arrays.asList(arrayTextBoxSelect).indexOf("To_Place");
 
+                }
+                Log.i("TAG","TOPLACE:" + toplace + " - " + SessionClass.getParam("currentPlace"));
                 for (int i = 0; i < arrayTextBoxIndexes.length; i++) {
                     int resIDLayer = getActivity().getResources().getIdentifier("scancount_param" + (i + 1) + "_layer", "id", getActivity().getPackageName());
                     int resIDLabel = getActivity().getResources().getIdentifier("scancount_param" + (i + 1) + "_label", "id", getActivity().getPackageName());
@@ -690,13 +702,17 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                     } else {
                         layer.setVisibility(View.GONE);
                     }
-                    if (i > 2) {
+                    if(i > 0) {
                         int resIDValue = getActivity().getResources().getIdentifier("scancount_param" + (i + 1) + "_value", "id", getActivity().getPackageName());
                         EditText value = rootView.findViewById(resIDValue);
-                        value.setText( AllLinesData.getParam(lineID)[Integer.parseInt(arrayTextBoxIndexes[i])] );
-                        label.setText(arrayTextBoxLabels[i]);
 
+                        label.setText(arrayTextBoxLabels[i]);
                         value.addTextChangedListener(new CustomTextWatcher(Integer.parseInt(arrayTextBoxIndexes[i]), lineID, value));
+                        if(i == toplace) {
+                            value.setText(SessionClass.getParam("currentPlace"));
+                        } else {
+                            value.setText(AllLinesData.getParam(lineID)[Integer.parseInt(arrayTextBoxIndexes[i])]);
+                        }
 
                     }
                 }
@@ -743,6 +759,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
     }
 
     private void refreshPlaceCounter(){
+        CheckedList.setParamItem(lineID,1);
         try {
             if (tranCode.charAt(0) == '1') {
                 headerText.setText("Ellenőrzés / " + AllLinesData.getPlaceCount(10, qCurrent, SessionClass.getParam("currentPlace")));

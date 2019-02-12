@@ -201,6 +201,7 @@ public class MainMenuFragment extends Fragment {
         String pdaid = SessionClass.getParam("pdaid");
         String terminal = SessionClass.getParam("terminal");
         String url = SessionClass.getParam("WSUrl")+"/getFormSettings/"+terminal+"/"+userid+"/"+pdaid;
+        Log.i("URL",url);
         JsonObjectRequest jro = new JsonObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
