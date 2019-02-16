@@ -56,6 +56,22 @@ public class MainMenuFragment extends Fragment {
                 SessionClass.setParam("barcodeSuffix", db.systemDao().getValue("barcodeSuffix"));
             }
         }
+
+        if( SessionClass.getParam("XD").equals("1")){
+            Button cdBtn = rootView.findViewById(R.id.menu_cdBtn);
+            cdBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //Fragment f = new TreeViewFragment();
+                    Fragment f = new CrossDockSelectFragment();
+                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+                    ft.replace(R.id.fragments,f);
+                    ft.addToBackStack("app");
+                    ft.commit();
+                }
+            });
+        }
         Button tasksBtn = rootView.findViewById(R.id.menu_tasksBtn);
         tasksBtn.setOnClickListener(new View.OnClickListener() {
             @Override

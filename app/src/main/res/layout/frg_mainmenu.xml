@@ -40,6 +40,20 @@
                 android:textSize="18sp"
                 android:enabled="true"/>
             <Button
+                android:id="@+id/menu_cdBtn"
+                android:visibility="gone"
+                android:textColor="@color/whiteColor"
+                android:backgroundTint="@color/secondColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="CrossDock feladatok lehívása"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:textSize="18sp"
+                android:enabled="true"/>
+            <Button
                 android:id="@+id/menu_barcodeChkBtn"
                 android:textColor="@color/whiteColor"
                 android:backgroundTint="@color/secondColor"

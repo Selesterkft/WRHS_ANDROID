@@ -66,13 +66,14 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
     private int qNeed,qCurrent,qMissing,qBarcode01,qBarcode02;
     private EditText textDataValue;
     private String[] arrayTempInt, arrayTempNames, arrayTempType, arrayTextBoxLabels, arrayTextBoxEnableds, arrayTextBoxIndexes, arrayTextBoxSelect;
-    private TextView headerText;
+    private TextView headerText, findTvLabel;
     private LinearLayout subHeadText1, subHeadText2, subHeadText3;
     private boolean newOpenWindow;
     private boolean isnew;
     private int def;
     private boolean dialogActive = false;
     private int dataCounter;
+    private CustomTextWatcher[] customTextWatcherArray = new CustomTextWatcher[8];
 
     @Nullable
     @Override
@@ -146,6 +147,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             subHeadText2.setBackgroundResource(R.color.headerColor);
             subHeadText3 = rootView.findViewById(R.id.scancount_subHeadText3);
             subHeadText3.setBackgroundResource(R.color.headerColor);
+            findTvLabel = rootView.findViewById(R.id.scancount_header_label);
+            findTvLabel.setText(SessionClass.getParam(tranCode+"_Detail_TextBox_Find_Text") + ":" );
 //        qNeed = Integer.parseInt(SessionClass.getParam(tranCode+"_Line_ListView_Qty_Control"));
             String[] temp = SessionClass.getParam(tranCode + "_Detail_TextBox_Index").split(",", -1);
             if (SessionClass.getParam(tranCode + "_Detail_TextBox_Index").equals("")) {
@@ -157,8 +160,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                     qMissing = Integer.parseInt(temp[0]);
                 }
             }
-            Log.i("TAG","Missing index: "+qMissing);
-            findRow = Integer.parseInt(SessionClass.getParam(tranCode + "_Line_TextBox_Find_Index"));
+            findRow = Integer.parseInt(SessionClass.getParam(tranCode + "_Detail_TextBox_Find_Index"));
             findValue = rootView.findViewById(R.id.scancount_header_value);
             arrayTempNames = SessionClass.getParam(tranCode + "_Detail_TextBox_Names").split(",");
             arrayTempType = SessionClass.getParam(tranCode + "_Detail_TextBox_DataType").split(",");
@@ -242,7 +244,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                         if(tranCode.charAt(0)=='1'){
                             AllLinesData.setItemParams(lineID, Integer.parseInt(arrayTempInt[0]), "");
                         }
-                    }else {
+                    } else {
                         AllLinesData.setItemParams(lineID, qMissing, textDataValue3.getText().toString());
                     }
                     saveDBDatas();
@@ -428,7 +430,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                                 resourceDataList.add(AllLinesData.getParam(findValueList.get(i)));
                             }
                             if (inBar.contains(isBar)) {
-
                                 int itemCount = Integer.parseInt(AllLinesData.getParam(lineID)[qCurrent]);
                                 int maxItemCount = Integer.parseInt(AllLinesData.getParam(lineID)[qNeed]);
                                 if ((itemCount + Integer.parseInt(counter.getText().toString())) > maxItemCount) {
@@ -453,7 +454,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                             } else {
                                 //                        if (tranCode.equals("21")) {
                                 //                            buildDialog();
-                                //                        }else{
+                                //
+                                //                   }else{
                                 String id = AllLinesData.searchFirstItem(findRow, qNeed, qCurrent, isBar);
                                 if (id != null) {
                                     refreshData(id);
@@ -474,7 +476,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                                     Toast.makeText(getContext(), "Nem tárolható ilyen tétel!", Toast.LENGTH_LONG).show();
                                 }
                                 //}
-
                             }
                         } else {
                             HelperClass.errorSound(getActivity());
@@ -555,15 +556,18 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             editor.commit();
             KeyboardUtils.hideKeyboard(getActivity());
             String findItems = AllLinesData.getParam(lineID)[findRow];
-            if (findItems != null && findItems.length() > 2) {
+            if (findItems != null && findItems.length() > 1) {
                 if ((findItems.substring(findItems.length() - 1, findItems.length())).equals("|")) {
                     if (findItems.charAt(0) == '0') {
                         findItems = findItems.substring(1);
                     }
                     findItems = findItems.replace("|0", "|");
                     findItems = findItems.substring(0, findItems.length() - 1);
+                    inBar = new ArrayList<>(Arrays.asList(findItems.split("\\|")));
+                }else{
+                    inBar = new ArrayList<>(Arrays.asList(findItems));
                 }
-                inBar = new ArrayList<>(Arrays.asList(findItems.split("\\|")));
+
             } else {
 
             }
@@ -691,7 +695,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                      toplace = Arrays.asList(arrayTextBoxSelect).indexOf("To_Place");
 
                 }
-                Log.i("TAG","TOPLACE:" + toplace + " - " + SessionClass.getParam("currentPlace"));
                 for (int i = 0; i < arrayTextBoxIndexes.length; i++) {
                     int resIDLayer = getActivity().getResources().getIdentifier("scancount_param" + (i + 1) + "_layer", "id", getActivity().getPackageName());
                     int resIDLabel = getActivity().getResources().getIdentifier("scancount_param" + (i + 1) + "_label", "id", getActivity().getPackageName());
@@ -707,7 +710,13 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                         EditText value = rootView.findViewById(resIDValue);
 
                         label.setText(arrayTextBoxLabels[i]);
-                        value.addTextChangedListener(new CustomTextWatcher(Integer.parseInt(arrayTextBoxIndexes[i]), lineID, value));
+                        // = new CustomTextWatcher(Integer.parseInt(arrayTextBoxIndexes[i]), lineID, value);
+                        if( customTextWatcherArray[i] == null ){
+                            customTextWatcherArray[i] = new CustomTextWatcher();
+                            value.addTextChangedListener(customTextWatcherArray[i]);
+                        }
+                        customTextWatcherArray[i].changeSetting(Integer.parseInt(arrayTextBoxIndexes[i]), lineID, value);
+
                         if(i == toplace) {
                             value.setText(SessionClass.getParam("currentPlace"));
                         } else {

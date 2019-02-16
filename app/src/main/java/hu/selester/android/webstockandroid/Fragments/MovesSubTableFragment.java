@@ -81,7 +81,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     private Dialog popup = null;
     public ProgressBar uploadpbar;
     private LinearLayout progressLayout;
-    private TextView progressPercent;
+    private TextView progressPercent, findTvLabel;
     private LinearLayout functLayout;
     private TablePanel tablePanel;
     private int[] headerWidth;
@@ -131,6 +131,8 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         uploadpbar = rootView.findViewById(R.id.movessub_progressBar);
         progressLayout = rootView.findViewById(R.id.movessub_progressLayout);
         progressPercent = rootView.findViewById(R.id.movessub_progresspercent);
+        findTvLabel = rootView.findViewById(R.id.movessub_header_label);
+        findTvLabel.setText(SessionClass.getParam(tranCode + "_Line_TextBox_Find_Text")+":");
         progressLayout.setVisibility(View.GONE);
         SessionClass.setParam("currentPlace","");
         selectBtn = rootView.findViewById(R.id.movessub_selectBtn);
@@ -289,7 +291,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
             }
         });
         if( !SessionClass.getParam("scancount_selectBar").isEmpty() ){
-            findValue.setText( SessionClass.getParam("scancount_selectBar")+SessionClass.getParam("barcodeSuffix") );
+            findValue.setText( SessionClass.getParam("scancount_selectBar") + SessionClass.getParam("barcodeSuffix") );
             SessionClass.setParam("scancount_selectBar","");
         }else {
 

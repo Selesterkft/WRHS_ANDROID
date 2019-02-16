@@ -161,6 +161,7 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
         String terminal = SessionClass.getParam("terminal");
         String pdaid = SessionClass.getParam("pdaid");
         String url = SessionClass.getParam("WSUrl")+"/log_in/"+account+"/"+password+"/"+terminal+"/"+pdaid;
+        Log.i("URL",url);
         JSONObject jsonObject=null;
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
@@ -201,6 +202,11 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
                                         deviceId = telephonyManager.getDeviceId();
                                     }catch (SecurityException e){
                                         e.printStackTrace();
+                                    }
+                                    try{
+                                        SessionClass.setParam("XD",root.getString("XD"));
+                                    }catch (Exception e){
+                                        SessionClass.setParam("XD","0");
                                     }
 
                                     SessionClass.setParam("userid",root.getString("ID"));

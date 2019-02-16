@@ -2,21 +2,21 @@ package hu.selester.android.webstockandroid.Objects;
 
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.widget.EditText;
 
-public class CustomTextWatcher implements TextWatcher {
+public class DefaultTextWatcher implements TextWatcher {
 
-    private String lineID;
-    private int index;
-    private EditText myET;
-
-    public CustomTextWatcher(){
+    public interface TextChangedEvent{
+        public void Changed();
     }
 
-    public void changeSetting(int index, String lineID, EditText myET){
-        this.index = index;
-        this.lineID = lineID;
+    private EditText myET;
+    private TextChangedEvent event;
+
+    public DefaultTextWatcher(EditText myET, TextChangedEvent event){
         this.myET = myET;
+        this.event = event;
     }
 
     @Override
@@ -26,19 +26,17 @@ public class CustomTextWatcher implements TextWatcher {
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-
     }
 
     @Override
     public void afterTextChanged(Editable s) {
+        Log.i("TAG","afterCHANGED");
         int suffixLen = SessionClass.getParam("barcodeSuffix").length();
-        AllLinesData.setItemParams(lineID, (index), s.toString());
         if (s.length() > 3) {
             if (s.toString().substring(s.length() - suffixLen, s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
-                AllLinesData.setItemParams(lineID, (index) , s.toString().substring(0, s.toString().length() - suffixLen));
                 myET.setText(s.toString().substring(0, s.toString().length() - suffixLen));
+                event.Changed();
             }
         }
-        CheckedList.setParamItem(lineID,1);
     }
 }

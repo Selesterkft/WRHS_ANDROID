@@ -159,7 +159,7 @@ public class HelperClass {
     }
 
     public static String isBarcode(String barcode){
-        if(barcode.length()>3){
+        if(barcode.length()>1){
             if(!barcode.isEmpty()) {
                 barcode = barcode.replace(" ","");
                 int suffixLen = SessionClass.getParam("barcodeSuffix").length();
@@ -172,7 +172,6 @@ public class HelperClass {
                             e.printStackTrace();
                         }
                     }
-
                     return bar;
                 }
             }

@@ -91,6 +91,7 @@ public class AllLinesData {
     }
 
     public static void setItemParams(String id, int position, String value){
+        Log.i("TAG", "setItemParams: " + id + ", " + position + ", " + value);
         String[] strArray = params.get(id);
         strArray[position] = value;
         params.put(id,strArray);
@@ -158,6 +159,7 @@ public class AllLinesData {
     }
 
     public  static void setParamsPosition(int checkValuePosition, int insertPosition, String checkData, String insertData){
+        Log.i("TAG", "setParamsPosition: "+checkValuePosition+", "+insertPosition+", "+checkData+", "+insertData);
         for (Map.Entry<String, String[]> entry : params.entrySet()) {
             try {
 
