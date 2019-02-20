@@ -55,6 +55,7 @@ public class CloseLineThread extends Thread {
     }
 
     private void getBarcodesData(){
+        Log.i("TAG","getBarcodesData");
         if(tranCode.charAt(0)=='1') {
             int barcodeCount = 0;
             for (int i = 0; i < data.size(); i++) {
@@ -110,7 +111,7 @@ public class CloseLineThread extends Thread {
                     Toast.makeText(context, "Nincs hálózat, mentés nem történt meg!", Toast.LENGTH_LONG).show();
                 }
             }else{
-                closeLine();
+                getLineIDData();
             }
         }else{
             closeLine();
@@ -118,6 +119,7 @@ public class CloseLineThread extends Thread {
     }
 
     private void getLineIDData(){
+        Log.i("TAG","getLineIDData");
         if(tranCode.charAt(0)=='1') {
             int lineIDCount = 0;
             for (int i = 0; i < data.size(); i++) {
