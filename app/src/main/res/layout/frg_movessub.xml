@@ -178,6 +178,15 @@
                 android:enabled="false"
                 android:text="Mentés"/>
             <ImageButton
+                android:src="@drawable/create_line_44x44"
+                android:layout_weight="3"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:id="@+id/movessub_createBtn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Kiválasztás"/>
+            <ImageButton
                 android:src="@drawable/but_ok_44x44"
                 android:layout_weight="3"
                 android:background="@null"

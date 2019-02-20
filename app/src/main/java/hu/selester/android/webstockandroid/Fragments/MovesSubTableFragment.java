@@ -12,6 +12,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -45,9 +46,11 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Database.Tables.LogTable;
+import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
@@ -64,6 +67,8 @@ import hu.selester.android.webstockandroid.Threads.SaveCheckedDataThread;
 import hu.selester.android.webstockandroid.Threads.SaveDataThread;
 import hu.selester.android.webstockandroid.Threads.SaveAllSessionTemp;
 import hu.selester.android.webstockandroid.Threads.SaveDataThread_All;
+import hu.selester.android.webstockandroid.Threads.SaveDataThread_All_INSERT;
+import hu.selester.android.webstockandroid.Threads.SaveIdSessionTemp;
 
 public class MovesSubTableFragment extends Fragment implements View.OnClickListener, MovesSubViewPager.FragmentLifecycle {
 
@@ -76,8 +81,8 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     private String tranCode;
     private String tranID;
     private String movenum;
-    private int qNeed,qCurrent,qBarcode01;
-    private ImageButton saveDataBtn, lockBtn, selectBtn, flushBtn;
+    private int qNeed,qCurrent,qBarcode01,qMissing,qBarcode,qLineID,qRefLineID;
+    private ImageButton saveDataBtn, lockBtn, selectBtn, flushBtn, createBtn;
     private Dialog popup = null;
     public ProgressBar uploadpbar;
     private LinearLayout progressLayout;
@@ -113,13 +118,16 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         tranID = getArguments().getString("tranid");
         movenum = getArguments().getString("movenum");
         reload = getArguments().getString("reload");
-        qBarcode01 = HelperClass.getArrayPosition("Barcode01", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qBarcode01  = HelperClass.getArrayPosition("Barcode01", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qBarcode    = HelperClass.getArrayPosition("Barcode", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qMissing    = HelperClass.getArrayPosition("Missing_Qty", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qLineID     = HelperClass.getArrayPosition("Line_ID", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qRefLineID  = HelperClass.getArrayPosition("Ref_Line_ID", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         if(SessionClass.getParam(tranCode+"_Detail_TextBox_Needed_Qty_Index").equals("")){
             qNeed = 0;
         }else{
             qNeed = Integer.parseInt(SessionClass.getParam(tranCode+"_Detail_TextBox_Needed_Qty_Index"));
         }
-
         if(SessionClass.getParam(tranCode+"_Detail_TextBox_Current_Qty_Index").equals("")){
             qCurrent = 0;
         }else{
@@ -140,6 +148,13 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         Button findValueBtn = rootView.findViewById(R.id.movessub_header_btn);
         lockBtn = rootView.findViewById(R.id.movessub_lockBtn);
         flushBtn = rootView.findViewById(R.id.movessub_flushBtn);
+        createBtn = rootView.findViewById(R.id.movessub_createBtn);
+        if (tranCode.charAt(0) == '1') {
+            createBtn.setVisibility(View.VISIBLE);
+        }else{
+            createBtn.setVisibility(View.GONE);
+        }
+
         LinearLayout palettBtn = rootView.findViewById(R.id.movessub_palettBtn);
         if( SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").equals("1") ){
             palettBtn.setVisibility(View.VISIBLE);
@@ -153,7 +168,6 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         }else{
             palettBtn.setVisibility(View.GONE);
         }
-
         flushBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -172,6 +186,12 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 }else{
                     Toast.makeText(getContext(),"Hálózati hiba!",Toast.LENGTH_LONG).show();
                 }
+            }
+        });
+        createBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                createLineDialog();
             }
         });
         findValueBtn.setOnClickListener(new View.OnClickListener() {
@@ -446,7 +466,6 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         String terminal = SessionClass.getParam("terminal");
         String pdaid = SessionClass.getParam("pdaid");
         String userid = SessionClass.getParam("userid");
-        final String tranid = tranID;
         String listviewwhere = "ID="+tranID;
         String listviewselect = SessionClass.getParam(tranCode+"_Line_ListView_SELECT");
         String listviewfrom = SessionClass.getParam(tranCode+"_Line_ListView_FROM");
@@ -641,6 +660,19 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         }
     }
 
+    public void saveDataAllInsert(){
+        KeyboardUtils.hideKeyboard(getActivity());
+        try{
+            List<String[]> data = AllLinesData.getAllDataList();
+            if(data.size()>0) {
+                    SaveDataThread_All_INSERT sds = new SaveDataThread_All_INSERT(getContext(), data, tranCode);
+                    sds.run();
+            }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
 
     private void buildDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
@@ -666,6 +698,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     }
 
     private void closeLine(){
+        Log.i("TAG","CLOSELine");
         db.sessionTempDao().deleteAllData();
         SessionClass.setParam("currentLineID","");
         KeyboardUtils.hideKeyboard(getActivity());
@@ -804,6 +837,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
 
     }
 
+
     void closeMovesDialog( final MovesSubTableFragment frg) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Kilépés a feladatból");
@@ -902,6 +936,120 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         });
         popup = builder.create();
         popup.show();
+    }
+
+    void createLineDialog() {
+        try {
+            SessionClass.setParam("currentLineID", tablePanel.getAdapter().getCheckedPosition(0).get(0));
+        }catch (Exception e){
+            SessionClass.setParam("currentLineID", "");
+        }
+        if( !SessionClass.getParam("currentLineID").equals("") ) {
+            Log.i("TAG",""+Long.parseLong( SessionClass.getParam("currentLineID") ));
+            if ( Long.parseLong( SessionClass.getParam("currentLineID") ) < 100000000) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Tételbontás");
+                builder.setMessage("Kérem adja meg a bontandó darabszámot:");
+                View dialogRootView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_numberpicker, null, false);
+                final EditText num = dialogRootView.findViewById(R.id.numberpicker_number);
+                Button add = dialogRootView.findViewById(R.id.numberpicker_number_add);
+                Button minus = dialogRootView.findViewById(R.id.numberpicker_number_minus);
+                num.setText("0");
+                add.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            if( (Integer.valueOf( AllLinesData.getParam(SessionClass.getParam("currentLineID"))[qNeed]) - 1 ) > Integer.valueOf(num.getText().toString()) ) {
+                                num.setText("" + (Integer.valueOf(num.getText().toString()) + 1));
+                            }
+                        } catch (Exception e) {
+                            num.setText("0");
+                        }
+                    }
+                });
+                minus.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            if( 0 < Integer.valueOf(num.getText().toString()) ) {
+                                num.setText("" + (Integer.valueOf(num.getText().toString()) - 1));
+                            }
+                        } catch (Exception e) {
+                            num.setText("0");
+                        }
+                    }
+                });
+                builder.setView(dialogRootView);
+                builder.setPositiveButton("Felbontom", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if( (Integer.valueOf( AllLinesData.getParam(SessionClass.getParam("currentLineID"))[qNeed]) - 1 ) > Integer.valueOf(num.getText().toString()) ) {
+                            int qTo_Place  = HelperClass.getArrayPosition("To_Place", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+
+
+                            Random r = new Random();
+                            int rnd = r.nextInt(99 - 10) + 10;
+                            String[] oldRow = AllLinesData.getParam(SessionClass.getParam("currentLineID"));
+                            int pos = AllLinesData.getRowCount(SessionClass.getParam("currentLineID"));
+                            String[] newRow = new String[oldRow.length];
+
+                            for (int i = 0; i < oldRow.length; i++) {
+                                newRow[i] = oldRow[i];
+                            }
+                            newRow[0] = String.valueOf(10000000 * rnd + Long.parseLong(oldRow[0]));
+                            newRow[qNeed] = num.getText().toString();
+                            newRow[qCurrent] = "0";
+                            newRow[qMissing] = "0";
+                            newRow[qBarcode] = "";
+                            newRow[qTo_Place] = "";
+                            newRow[qRefLineID] = oldRow[qLineID];
+                            oldRow[qNeed] = String.valueOf(Integer.valueOf(oldRow[qNeed]) - Integer.valueOf(num.getText().toString()));
+                            if( Integer.valueOf(oldRow[qNeed]) < Integer.valueOf(oldRow[qCurrent]) ){
+                                oldRow[qCurrent] = oldRow[qNeed];
+                            }
+                            oldRow[qMissing] = String.valueOf( Integer.valueOf(oldRow[qNeed]) - Integer.valueOf(oldRow[qCurrent]) );
+                            List<SessionTemp> st = db.sessionTempDao().getAllData();
+                            for (int i = 0; i < st.size(); i++) {
+                                Log.i("TAG", st.get(i).getId() + " - " + st.get(i).getNum());
+                            }
+                            AllLinesData.insertParam(AllLinesData.getRowCount(oldRow[0]) + 1, newRow[0], newRow);
+                            tablePanel = new TablePanel(getContext(), rootView, R.id.moves_mainSubLayout, headerText, AllLinesData.getAllDataList(), headerWidth);
+                            createTablePanel();
+                            tablePanel.getAdapter().setCheckedArray(AllLinesData.findPosition(SessionClass.getParam("currentLineID")));
+                            tablePanel.smoothScrollToPosition(pos);
+                            CheckedList.setParamItem(oldRow[0], 1);
+                            SaveAllSessionTemp sst = new SaveAllSessionTemp(getContext());
+                            sst.start();
+/*
+                        SaveIdSessionTemp sit = new SaveIdSessionTemp(getContext());
+                        List<Long> ids = new ArrayList<>();
+                        ids.add(Long.parseLong(oldRow[0]));
+                        sit.setId( ids );
+                        sit.start();
+*/
+                            Log.i("TAG", SessionClass.getParam("currentLineID"));
+                        }else{
+                            Toast.makeText(getContext(), "Túl nagy a bontási mennyiség!", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                });
+                builder.setNegativeButton("Mégsem", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        KeyboardUtils.hideKeyboard(getActivity());
+                        dialog.cancel();
+                    }
+                });
+
+                builder.setCancelable(false);
+                builder.show();
+            } else {
+                Toast.makeText(getContext(), "Bontott tételt tovább nem bonthat!", Toast.LENGTH_LONG).show();
+                Log.i("TAG", SessionClass.getParam("currentLineID"));
+            }
+        }else{
+            Toast.makeText(getContext(), "Nincs kiválasztva feladat sor!", Toast.LENGTH_LONG).show();
+        }
     }
 
 

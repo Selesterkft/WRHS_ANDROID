@@ -29,6 +29,36 @@ public class AllLinesData {
         return params;
     }
 
+    public static void insertParam(int num, String id, String[] value){
+        Map<String, String[]> copy = new LinkedHashMap<>(params);
+        params.clear();
+        boolean puted = false;
+        int count = 0;
+        for (Map.Entry<String, String[]> entry : copy.entrySet())
+        {
+            if( num == count){
+                params.put(id,value);
+                puted = true;
+            }
+            params.put(entry.getKey(),entry.getValue());
+            count++;
+        }
+        if( !puted ) params.put(id,value);
+    }
+
+    public static int getRowCount(String id){
+        int count = 0;
+        for (Map.Entry<String, String[]> entry : params.entrySet())
+        {
+            if( id.equals(entry.getKey()) ){
+                return count;
+            }
+            params.put(entry.getKey(),entry.getValue());
+            count++;
+        }
+        return 0;
+    }
+
     public static void setParam(String id, String[] value){
         params.put(id,value);
     }

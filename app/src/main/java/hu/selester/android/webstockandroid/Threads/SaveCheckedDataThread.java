@@ -49,24 +49,27 @@ public class SaveCheckedDataThread extends Thread{
         int count = 0;
         for (Map.Entry<String, Integer> entry : CheckedList.getParam().entrySet()) {
             if (entry.getValue() == 1 || entry.getValue() == 2) {
+
                 if(count < maxCount) {
                     try {
                         String[] data = AllLinesData.getParam(entry.getKey());
-                        String commandString = SessionClass.getParam(data[2] + "_Line_Update_String");
-                        if (tranCode.isEmpty()) tranCode = data[2];
-                        if (headID.isEmpty()) headID = data[3];
-                        commandString = commandString.replace("@TERMINAL", SessionClass.getParam("terminal"));
-                        commandString = commandString.replace("@LINE_ID", data[4]);
-                        commandString = commandString.replace("@TRAN_CODE", data[2]);
-                        for (int j = 0; j < data.length; j++) {
-                            if (data[j] == "null" || data[j] == null) {
-                                commandString = commandString.replace("'@ITEM" + j + "'", "''");
-                            } else {
-                                commandString = commandString.replace("'@ITEM" + j + "'", "'" + data[j] + "'");
+                        if( Long.parseLong( data[0]) <  100000000) {
+                            String commandString = SessionClass.getParam(data[2] + "_Line_Update_String");
+                            if (tranCode.isEmpty()) tranCode = data[2];
+                            if (headID.isEmpty()) headID = data[3];
+                            commandString = commandString.replace("@TERMINAL", SessionClass.getParam("terminal"));
+                            commandString = commandString.replace("@LINE_ID", data[4]);
+                            commandString = commandString.replace("@TRAN_CODE", data[2]);
+                            for (int j = 0; j < data.length; j++) {
+                                if (data[j] == "null" || data[j] == null) {
+                                    commandString = commandString.replace("'@ITEM" + j + "'", "''");
+                                } else {
+                                    commandString = commandString.replace("'@ITEM" + j + "'", "'" + data[j] + "'");
+                                }
                             }
+                            str = str + "[Line" + data[4] + "[comm " + commandString;
+                            CheckedList.setParamItem(entry.getKey(), 2);
                         }
-                        str = str + "[Line" + data[4] + "[comm " + commandString;
-                        CheckedList.setParamItem(entry.getKey(), 2);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

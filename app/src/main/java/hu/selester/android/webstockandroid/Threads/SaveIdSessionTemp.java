@@ -31,6 +31,7 @@ public class SaveIdSessionTemp extends Thread{
     @Override
     public void run() {
         try {
+
             for(int i = 0; i < id.size(); i++ ) {
                 String[] s = AllLinesData.getParam(String.valueOf(id.get(i)));
                 SessionTemp st = db.sessionTempDao().getData(id.get(i));

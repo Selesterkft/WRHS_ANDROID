@@ -769,6 +769,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
 
     private void refreshPlaceCounter(){
         CheckedList.setParamItem(lineID,1);
+        Log.i("TAG",CheckedList.getParam().toString());
         try {
             if (tranCode.charAt(0) == '1') {
                 headerText.setText("Ellenőrzés / " + AllLinesData.getPlaceCount(10, qCurrent, SessionClass.getParam("currentPlace")));

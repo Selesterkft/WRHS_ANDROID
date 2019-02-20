@@ -188,6 +188,10 @@ public class TablePanelAdapter extends RecyclerView.Adapter<TablePanelAdapter.Vi
 
     public void updateData(List<String[]> list){
         this.list = list;
+        this.checkedList = new boolean[list.size()];
+        for(int i = 0; i < list.size(); i++){
+            this.checkedList[i] = false;
+        }
         notifyDataSetChanged();
 
     }
