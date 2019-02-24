@@ -140,7 +140,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         progressLayout = rootView.findViewById(R.id.movessub_progressLayout);
         progressPercent = rootView.findViewById(R.id.movessub_progresspercent);
         findTvLabel = rootView.findViewById(R.id.movessub_header_label);
-        findTvLabel.setText(SessionClass.getParam(tranCode + "_Line_TextBox_Find_Text")+":");
+        findTvLabel.setText(SessionClass.getParam(tranCode + "_Line_TextBox_Find_Text"));
         progressLayout.setVisibility(View.GONE);
         SessionClass.setParam("currentPlace","");
         selectBtn = rootView.findViewById(R.id.movessub_selectBtn);

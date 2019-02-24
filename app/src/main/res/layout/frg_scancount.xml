@@ -23,6 +23,7 @@
         android:id="@+id/scancount_subHeadText1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:background="@color/colorPrimary"
         android:orientation="horizontal"
         android:textColor="@color/whiteColor"
@@ -54,6 +55,7 @@
         android:id="@+id/scancount_subHeadText2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:background="@color/colorPrimary"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -84,6 +86,7 @@
         android:id="@+id/scancount_subHeadText3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:visibility="gone"
         android:orientation="horizontal"
         android:textColor="@color/whiteColor"
         android:background="@color/colorPrimary"
@@ -110,6 +113,68 @@
             android:text="-"
             android:textColor="@color/whiteColor" />
     </LinearLayout>
+    <LinearLayout
+        android:id="@+id/scancount_subHeadText4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="horizontal"
+        android:textColor="@color/whiteColor"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scancount_subHeadText3">
+        <TextView
+            android:id="@+id/scancount_textLabel4"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:text="-:"
+            android:textColor="@color/whiteColor"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/scancount_textValue4"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
+            android:text="-"
+            android:textColor="@color/whiteColor" />
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/scancount_subHeadText5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:orientation="horizontal"
+        android:textColor="@color/whiteColor"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/scancount_subHeadText4">
+        <TextView
+            android:id="@+id/scancount_textLabel5"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:paddingLeft="10dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:text="-:"
+            android:textColor="@color/whiteColor"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/scancount_textValue5"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="5dp"
+            android:text="-"
+            android:textColor="@color/whiteColor" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/linearLayout5"
@@ -123,7 +188,7 @@
         android:paddingBottom="7dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/scancount_subHeadText3">
+        app:layout_constraintTop_toBottomOf="@+id/scancount_subHeadText5">
 
         <TextView
             android:id="@+id/scancount_header_label"

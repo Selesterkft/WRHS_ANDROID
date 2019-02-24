@@ -65,7 +65,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
     private String tranCode, Head_ID;
     private int qNeed,qCurrent,qMissing,qBarcode01,qBarcode02;
     private EditText textDataValue;
-    private String[] arrayTempInt, arrayTempNames, arrayTempType, arrayTextBoxLabels, arrayTextBoxEnableds, arrayTextBoxIndexes, arrayTextBoxSelect;
+    private String[] arrayTempInt, arrayTempNames, arrayTempType, arrayTextBoxLabels, arrayTextBoxEnableds, arrayTextBoxIndexes, arrayTextBoxSelect, arrayLabelTextBox, arrayLabelIndex, arrayLabelSelect;
     private TextView headerText, findTvLabel;
     private LinearLayout subHeadText1, subHeadText2, subHeadText3;
     private boolean newOpenWindow;
@@ -92,6 +92,10 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         arrayTextBoxEnableds = SessionClass.getParam(tranCode + "_Detail_TextBox_Enabled").split(",");
         arrayTextBoxIndexes = SessionClass.getParam(tranCode + "_Detail_TextBox_Index").split(",");
         arrayTextBoxSelect = SessionClass.getParam(tranCode + "_Detail_TextBox_SELECT").split(",");
+
+        arrayLabelTextBox   = SessionClass.getParam(tranCode + "_Detail_Label_Info_Names").split(",");
+        arrayLabelIndex     = SessionClass.getParam(tranCode + "_Detail_Label_Info_Index").split(",");
+        arrayLabelSelect    = SessionClass.getParam(tranCode + "_Detail_Label_Info_SELECT").split(",");
 
         newOpenWindow = true;
         try {
@@ -587,7 +591,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                         AllLinesData.setItemParams(lineID, qMissing, "" + ((itemCount + 1) - Integer.parseInt(AllLinesData.getParam(lineID)[qNeed])));
                     }
                 }
-            } else {
             }
             counter.setText("1");
 
@@ -693,6 +696,20 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 int toplace = -1;
                 if (tranCode.charAt(0) == '1') {
                      toplace = Arrays.asList(arrayTextBoxSelect).indexOf("To_Place");
+
+                }
+                for (int i = 0; i < arrayLabelIndex.length; i++) {
+                    int resIDLayer = getActivity().getResources().getIdentifier("scancount_subHeadText" + (i+1) , "id", getActivity().getPackageName());
+                    int resIDLabel = getActivity().getResources().getIdentifier("scancount_textLabel" + (i+1) , "id", getActivity().getPackageName());
+                    LinearLayout layer = rootView.findViewById(resIDLayer);
+                    TextView label = rootView.findViewById(resIDLabel);
+                    layer.setVisibility(View.VISIBLE);
+                    if( arrayLabelTextBox.length > i && arrayLabelTextBox[i] != null){
+                        label.setText(arrayLabelTextBox[i]);
+                    }else{
+                        label.setText("");
+                    }
+
 
                 }
                 for (int i = 0; i < arrayTextBoxIndexes.length; i++) {
