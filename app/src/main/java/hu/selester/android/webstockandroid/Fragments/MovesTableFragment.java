@@ -65,7 +65,6 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
         rootView = inflater.inflate(R.layout.frg_moves, container, false);
         tranCode = getArguments().getInt("tranCode");
         SessionClass.setParam("tranCode",String.valueOf(tranCode));
-        if(SessionClass.getParam(tranCode + "_Detail_Button_IsVisible") == null){SessionClass.setParam(tranCode + "_Detail_Button_IsVisible","");}
         ImageButton selectBtn = rootView.findViewById(R.id.moves_selectBtn);
         selectBtn.setOnClickListener(this);
         ImageButton selectBtn1 = rootView.findViewById(R.id.moves_selectBtn1);
@@ -78,6 +77,9 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
             }
         });
         AllLinesData.delParams();
+
+
+        //Log.i("TAG",""+SessionClass.getParam("breakBtn")+" - "+SessionClass.getParam("collectionBtn"));
 
         if(!SessionClass.getParam(tranCode+"_Head_ListView_SELECT").isEmpty()) SessionClass.setParam(tranCode+"_Head_ListView_SELECT",SessionClass.getParam(tranCode+"_Head_ListView_SELECT").replace(" ",""));
         // ---------------------------- Header --------------------------------
@@ -227,7 +229,7 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
                 break;
             case R.id.moves_selectBtn1:
                 if(tablePanel.getAdapter().getCheckedPosition(1) != null && tablePanel.getAdapter().getCheckedPosition(1).size()>0){
-                    if( SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").equals("1") ){
+                    if( SessionClass.getParam("collectionBtn").equals("1") ){
                         f = new MovesSubViewPager();
                     }else{
                         f = new MovesSubTableFragment();

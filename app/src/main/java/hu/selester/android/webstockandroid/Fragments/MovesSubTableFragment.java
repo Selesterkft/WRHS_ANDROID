@@ -149,14 +149,20 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         lockBtn = rootView.findViewById(R.id.movessub_lockBtn);
         flushBtn = rootView.findViewById(R.id.movessub_flushBtn);
         createBtn = rootView.findViewById(R.id.movessub_createBtn);
-        if (tranCode.charAt(0) == '1') {
+        if (SessionClass.getParam("breakBtn").equals("1")) {
             createBtn.setVisibility(View.VISIBLE);
+            createBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    createLineDialog();
+                }
+            });
         }else{
             createBtn.setVisibility(View.GONE);
         }
 
         LinearLayout palettBtn = rootView.findViewById(R.id.movessub_palettBtn);
-        if( SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").equals("1") ){
+        if( SessionClass.getParam("collectionBtn").equals("1") ){
             palettBtn.setVisibility(View.VISIBLE);
             palettBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -188,12 +194,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 }
             }
         });
-        createBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                createLineDialog();
-            }
-        });
+
         findValueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -316,6 +317,8 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         }else {
 
         }
+        KeyboardUtils.hideKeyboard(getActivity());
+        KeyboardUtils.hideKeyboardFrom(getContext(),rootView);
         return rootView;
     }
 
@@ -407,7 +410,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     }
 
     private void loadScanCount(String id) {
-        if( SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").equals("1") ){
+        if( SessionClass.getParam("collectionBtn").equals("1") ){
             if (AllLinesData.getParam(id)[qBarcode01].equals("")) {
                 collectDialog(id);
             }else{
@@ -462,6 +465,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     }
 
     private void refreshData(){
+
         new ChangeStatusThread(getContext(),"PDA_CHECKING", tranCode, tranID,this).start();
         String terminal = SessionClass.getParam("terminal");
         String pdaid = SessionClass.getParam("pdaid");
@@ -713,7 +717,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     public void closeFragment(){
         KeyboardUtils.hideKeyboard(getActivity());
 
-        if(SessionClass.getParam( tranCode+"_Detail_Button_IsVisible").equals("1") ){
+        if(SessionClass.getParam("collectionBtn").equals("1") ){
             ((MovesSubViewPager)getParentFragment()).closeFragment();
         }else{
             getFragmentManager().popBackStack();
@@ -768,6 +772,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                     if (s.length() > 3) {
                         if (s.toString().substring(s.length() - SessionClass.getParam("barcodeSuffix").length(), s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
                             KeyboardUtils.hideKeyboard(getActivity());
+                            KeyboardUtils.hideKeyboardFrom(getContext(),rootView);
                             SessionClass.setParam("currentPlace", s.toString().substring(0, s.toString().length() - SessionClass.getParam("barcodeSuffix").length()));
                             loadScanCount(id);
                             popup.dismiss();
@@ -910,6 +915,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 if (s.length() > 3) {
                     if (s.toString().substring(s.length() - SessionClass.getParam("barcodeSuffix").length(), s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
                         KeyboardUtils.hideKeyboard(getActivity());
+                        KeyboardUtils.hideKeyboardFrom(getContext(),rootView);
                         SessionClass.setParam("currentCollect", s.toString().substring(0, s.toString().length() - SessionClass.getParam("barcodeSuffix").length()));
                         loadScanCount_now(id);
                         popup.dismiss();
@@ -1000,8 +1006,8 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                             newRow[qNeed] = num.getText().toString();
                             newRow[qCurrent] = "0";
                             newRow[qMissing] = "0";
-                            newRow[qBarcode] = "";
-                            newRow[qTo_Place] = "";
+                            if( qBarcode > -1) newRow[qBarcode] = "";
+                            if( qTo_Place > -1) newRow[qTo_Place] = "";
                             newRow[qRefLineID] = oldRow[qLineID];
                             oldRow[qNeed] = String.valueOf(Integer.valueOf(oldRow[qNeed]) - Integer.valueOf(num.getText().toString()));
                             if( Integer.valueOf(oldRow[qNeed]) < Integer.valueOf(oldRow[qCurrent]) ){

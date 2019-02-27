@@ -262,6 +262,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             e.printStackTrace();
             Toast.makeText(getContext(),"ERROR SCANCOUNT 001",Toast.LENGTH_LONG).show();
         }
+        KeyboardUtils.hideKeyboard(getActivity());
         //HelperClass.loadTempSession(getContext());
         return rootView;
     }
@@ -313,6 +314,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 if (s.length() > 3) {
                     if (s.toString().substring(s.length() - SessionClass.getParam("barcodeSuffix").length(), s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
                         KeyboardUtils.hideKeyboard(getActivity());
+                        KeyboardUtils.hideKeyboardFrom(getContext(),rootView);
                         getTextDataValue3.setText(s.toString().substring(0, s.toString().length() - SessionClass.getParam("barcodeSuffix").length()));
                         SessionClass.setParam("currentCollect",s.toString().substring(0, s.toString().length() - SessionClass.getParam("barcodeSuffix").length()));
                         AllLinesData.setItemParams(lineID, qBarcode01, s.toString().substring(0, s.toString().length() - SessionClass.getParam("barcodeSuffix").length()) );
@@ -648,7 +650,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 });
             }*/
 
-            if( SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").equals("1") ){
+            if( SessionClass.getParam("collectionBtn").equals("1") ){
                 textDataValue1.addTextChangedListener(new TextWatcher() {
                     @Override
                     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -732,7 +734,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                             customTextWatcherArray[i] = new CustomTextWatcher();
                             value.addTextChangedListener(customTextWatcherArray[i]);
                         }
-                        customTextWatcherArray[i].changeSetting(Integer.parseInt(arrayTextBoxIndexes[i]), lineID, value);
+                        customTextWatcherArray[i].changeSetting(getActivity(), Integer.parseInt(arrayTextBoxIndexes[i]), lineID, value);
 
                         if(i == toplace) {
                             value.setText(SessionClass.getParam("currentPlace"));

@@ -32,6 +32,7 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
+import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
@@ -41,6 +42,9 @@ import hu.selester.android.webstockandroid.Threads.LoadEANDatasThread;
 public class MainMenuFragment extends Fragment {
 
     private SelesterDatabase db;
+    private int qBreak, qCollection;
+    private String[] arrayBtnVisibility;
+
 
     @Nullable
     @Override
@@ -293,10 +297,18 @@ public class MainMenuFragment extends Fragment {
                 String tranID = sharedPref.getString("whrs_selexped_tranID","");
                 String tranCode = sharedPref.getString("whrs_selexped_tranCode","");
                 String movenum = sharedPref.getString("whrs_selexped_movenum","");
+
+                arrayBtnVisibility = SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").split(",");
+                qBreak  = HelperClass.getArrayPosition("break", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+                qCollection  = HelperClass.getArrayPosition("collection", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+
+                if( qBreak > -1 ){ SessionClass.setParam("breakBtn", arrayBtnVisibility[qBreak]); } else { SessionClass.setParam("breakBtn", "0" ); }
+                if( qCollection > -1 ){ SessionClass.setParam("collectionBtn", arrayBtnVisibility[qCollection]); } else { SessionClass.setParam("collectionBtn", "0" ); }
+
                 Fragment f;
                 FragmentTransaction ft;
                 Bundle b;
-                if( SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").equals("1") ) {
+                if( SessionClass.getParam("collectionBtn").equals("1") ) {
                     f = new MovesSubViewPager();
                 }else{
                     f = new MovesSubTableFragment();
