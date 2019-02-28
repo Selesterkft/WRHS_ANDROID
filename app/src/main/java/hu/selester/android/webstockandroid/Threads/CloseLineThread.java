@@ -191,9 +191,12 @@ public class CloseLineThread extends Thread {
         String str = "";
         for (int i = 0; i < data.size(); i++) {
             if (Long.parseLong(data.get(i)[0]) > 100000000) {
-                if( data.get(i)[qBarcode].equals("") ){
-                    if( barcodeList.get(barcodeCounter) != null ) data.get(i)[qBarcode] = barcodeList.get(barcodeCounter);
-                    barcodeCounter++;
+                if( qBarcode > -1 ) {
+                    if (data.get(i)[qBarcode].equals("")) {
+                        if (barcodeList.get(barcodeCounter) != null)
+                            data.get(i)[qBarcode] = barcodeList.get(barcodeCounter);
+                        barcodeCounter++;
+                    }
                 }
                 data.get(i)[qLineID] = lineIDList.get(lineIDCounter);
                 lineIDCounter++;
