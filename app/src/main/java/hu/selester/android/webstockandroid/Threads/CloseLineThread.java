@@ -56,59 +56,64 @@ public class CloseLineThread extends Thread {
 
     private void getBarcodesData(){
         Log.i("TAG","getBarcodesData");
-        if(tranCode.charAt(0)=='1') {
-            int barcodeCount = 0;
-            for (int i = 0; i < data.size(); i++) {
-                if (Long.parseLong(data.get(i)[0]) > 100000000 && data.get(i)[qBarcode].equals("")) {
-                    barcodeCount++;
+        if( SessionClass.getParam("breakBtn").equals("1") )  {
+            if(qBarcode>-1) {
+
+                int barcodeCount = 0;
+                for (int i = 0; i < data.size(); i++) {
+                    if (Long.parseLong(data.get(i)[0]) > 100000000 && data.get(i)[qBarcode].equals("")) {
+                        barcodeCount++;
+                    }
                 }
-            }
-            if( barcodeCount > 0 ) {
-                RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
-                String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_getNewBarcode/" + SessionClass.getParam("terminal") + "/" + barcodeCount;
-                Log.i("URL", url);
-                if (HelperClass.isOnline(context)) {
-                    JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
-                        @Override
-                        public void onResponse(JSONObject response) {
-                            try {
-                                String rootText = response.getString("WRHS_PDA_getNewBarcodeResult");
+                if (barcodeCount > 0) {
+                    RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
+                    String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_getNewBarcode/" + SessionClass.getParam("terminal") + "/" + barcodeCount;
+                    Log.i("URL", url);
+                    if (HelperClass.isOnline(context)) {
+                        JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
                                 try {
-                                    JSONObject jsonObject = new JSONObject(rootText);
-                                    Toast.makeText(context, jsonObject.getString("ERROR_TEXT"), Toast.LENGTH_LONG).show();
-                                } catch (Exception e) {
-                                    JSONArray jsonArray = new JSONArray(rootText);
-                                    barcodeList.clear();
-                                    for (int i = 0; i < jsonArray.length(); i++) {
-                                        barcodeList.add(jsonArray.getJSONObject(i).getString("Barcode"));
+                                    String rootText = response.getString("WRHS_PDA_getNewBarcodeResult");
+                                    try {
+                                        JSONObject jsonObject = new JSONObject(rootText);
+                                        Toast.makeText(context, jsonObject.getString("ERROR_TEXT"), Toast.LENGTH_LONG).show();
+                                    } catch (Exception e) {
+                                        JSONArray jsonArray = new JSONArray(rootText);
+                                        barcodeList.clear();
+                                        for (int i = 0; i < jsonArray.length(); i++) {
+                                            barcodeList.add(jsonArray.getJSONObject(i).getString("Barcode"));
+                                        }
                                     }
+                                    if (barcodeList != null && barcodeList.size() > 0) {
+                                        getLineIDData();
+                                    } else {
+                                        Toast.makeText(context, "Nem megfelelő barcode kiosztás, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
+                                    }
+
+                                } catch (JSONException e) {
+                                    Toast.makeText(context, "Adatok áttöltése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
+                                    e.printStackTrace();
                                 }
-                                if (barcodeList != null && barcodeList.size() > 0) {
-                                    getLineIDData();
-                                } else {
-                                    Toast.makeText(context, "Nem megfelelő barcode kiosztás, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
+
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if (error != null) {
+                                    Toast.makeText(context, "Adatok áttöltése sikertelen, hálózati hiba!", Toast.LENGTH_LONG).show();
+                                    error.printStackTrace();
                                 }
-
-                            } catch (JSONException e) {
-                                Toast.makeText(context, "Adatok áttöltése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
-                                e.printStackTrace();
                             }
-
-
-                        }
-                    }, new Response.ErrorListener() {
-                        @Override
-                        public void onErrorResponse(VolleyError error) {
-                            if (error != null) {
-                                Toast.makeText(context, "Adatok áttöltése sikertelen, hálózati hiba!", Toast.LENGTH_LONG).show();
-                                error.printStackTrace();
-                            }
-                        }
-                    });
-                    jr.setRetryPolicy(new DefaultRetryPolicy(50000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-                    rq.add(jr);
+                        });
+                        jr.setRetryPolicy(new DefaultRetryPolicy(50000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                        rq.add(jr);
+                    } else {
+                        Toast.makeText(context, "Nincs hálózat, mentés nem történt meg!", Toast.LENGTH_LONG).show();
+                    }
                 } else {
-                    Toast.makeText(context, "Nincs hálózat, mentés nem történt meg!", Toast.LENGTH_LONG).show();
+                    getLineIDData();
                 }
             }else{
                 getLineIDData();
@@ -120,7 +125,7 @@ public class CloseLineThread extends Thread {
 
     private void getLineIDData(){
         Log.i("TAG","getLineIDData");
-        if(tranCode.charAt(0)=='1') {
+        if( SessionClass.getParam("breakBtn").equals("1") ) {
             int lineIDCount = 0;
             for (int i = 0; i < data.size(); i++) {
                 if (Long.parseLong(data.get(i)[0]) > 100000000) {

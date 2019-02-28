@@ -43,11 +43,11 @@ public class SaveDataThread_All_INSERT extends Thread {
 
     @Override
     public void run() {
-
+        createInsertData();
     }
 
     private void createInsertData(){
-        if(tranCode.charAt(0)=='1') {
+        if( SessionClass.getParam("breakBtn").equals("1") ) {
             int barcodeCount = 0;
             int qBarcode = HelperClass.getArrayPosition("Barcode", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
             for (int i = 0; i < data.size(); i++) {

@@ -55,7 +55,8 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
     private int tranCode;
     private String[] headerText;
     private ProgressDialog pd;
-
+    private int qBreak, qCollection;
+    private String[] arrayBtnVisibility;
 
     @Nullable
     @Override
@@ -78,6 +79,12 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
         });
         AllLinesData.delParams();
 
+        arrayBtnVisibility = SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").split(",");
+        qBreak  = HelperClass.getArrayPosition("break", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+        qCollection  = HelperClass.getArrayPosition("collection", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+
+        if( qBreak > -1 ){ SessionClass.setParam("breakBtn", arrayBtnVisibility[qBreak]); } else { SessionClass.setParam("breakBtn", "0" ); }
+        if( qCollection > -1 ){ SessionClass.setParam("collectionBtn", arrayBtnVisibility[qCollection]); } else { SessionClass.setParam("collectionBtn", "0" ); }
 
         //Log.i("TAG",""+SessionClass.getParam("breakBtn")+" - "+SessionClass.getParam("collectionBtn"));
 
