@@ -150,7 +150,7 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
         ver = rootView.findViewById(R.id.login_version);
 
         ver.setText("Verzió: "+BuildConfig.VERSION_NAME);
-
+        KeyboardUtils.hideKeyboard(getActivity());
         return rootView;
     }
 

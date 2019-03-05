@@ -90,7 +90,7 @@ public class HelperClass {
 
     public static String addCalendar(String calText, int addDay){
         String dateToIncr = calText;
-        String dt="";
+        String dt = "";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd");
         Calendar c = Calendar.getInstance();
         try {

@@ -95,7 +95,7 @@ public class TablePanelAdapter extends RecyclerView.Adapter<TablePanelAdapter.Vi
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View rootView = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_tablepanel,parent,false);
+        View rootView = LayoutInflater.from(context).inflate(R.layout.row_tablepanel,parent,false);
         LinearLayout tableRootLayout = rootView.findViewById(R.id.tablepanel_rootLayout);
         if(tablePanelSetting.getOnRowClickListener() != null) tableRootLayout.setOnClickListener(tablePanelSetting.getOnRowClickListener());
         if(tablePanelSetting.isCheckable()){

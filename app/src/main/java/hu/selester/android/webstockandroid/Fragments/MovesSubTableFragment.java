@@ -2,6 +2,7 @@ package hu.selester.android.webstockandroid.Fragments;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -19,6 +20,8 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -772,7 +775,6 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                     if (s.length() > 3) {
                         if (s.toString().substring(s.length() - SessionClass.getParam("barcodeSuffix").length(), s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
                             KeyboardUtils.hideKeyboard(getActivity());
-                            KeyboardUtils.hideKeyboardFrom(getContext(),rootView);
                             SessionClass.setParam("currentPlace", s.toString().substring(0, s.toString().length() - SessionClass.getParam("barcodeSuffix").length()));
                             loadScanCount(id);
                             popup.dismiss();

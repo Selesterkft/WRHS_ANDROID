@@ -1,6 +1,7 @@
 package hu.selester.android.webstockandroid.Fragments;
 
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -18,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -35,6 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
+import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
 import hu.selester.android.webstockandroid.Dialogs.MessageDialog;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
@@ -46,6 +49,7 @@ import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.Threads.SaveCheckedDataThread;
 import hu.selester.android.webstockandroid.Threads.SaveIdSessionTemp;
+import mobil.selester.wheditbox.WHEditBox;
 
 public class ScanCountFragment extends Fragment implements View.OnClickListener{
 
@@ -73,6 +77,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
     private int def;
     private boolean dialogActive = false;
     private int dataCounter;
+    private WHEditBox[] whEditBoxes;
     private CustomTextWatcher[] customTextWatcherArray = new CustomTextWatcher[8];
 
     @Nullable
@@ -81,6 +86,9 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         ActiveFragment.setFragment(this);
         lineID = getArguments().getString("lineID");
         tranCode = getArguments().getString("tranCode");
+        WHEditBox.activity = getActivity();
+        WHEditBox.suffix = SessionClass.getParam("barcodeSuffix");
+
         qBarcode01 = HelperClass.getArrayPosition("Barcode01", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qBarcode02 = HelperClass.getArrayPosition("Barcode02", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         CheckedList.setParamItem(lineID,1);
@@ -277,10 +285,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         {
             public boolean onKey(View v, int keyCode, KeyEvent event)
             {
-                if (event.getAction() == KeyEvent.ACTION_DOWN)
-                {
-                    switch (keyCode)
-                    {
+                if (event.getAction() == KeyEvent.ACTION_DOWN) {
+                    switch (keyCode) {
                         case KeyEvent.KEYCODE_DPAD_CENTER:
                         case KeyEvent.KEYCODE_ENTER:
                             KeyboardUtils.hideKeyboard(getActivity());
@@ -314,7 +320,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 if (s.length() > 3) {
                     if (s.toString().substring(s.length() - SessionClass.getParam("barcodeSuffix").length(), s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
                         KeyboardUtils.hideKeyboard(getActivity());
-                        KeyboardUtils.hideKeyboardFrom(getContext(),rootView);
                         getTextDataValue3.setText(s.toString().substring(0, s.toString().length() - SessionClass.getParam("barcodeSuffix").length()));
                         SessionClass.setParam("currentCollect",s.toString().substring(0, s.toString().length() - SessionClass.getParam("barcodeSuffix").length()));
                         AllLinesData.setItemParams(lineID, qBarcode01, s.toString().substring(0, s.toString().length() - SessionClass.getParam("barcodeSuffix").length()) );
@@ -326,19 +331,19 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         builder.setPositiveButton("IGEN", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                KeyboardUtils.hideKeyboard(getActivity());
                 getTextDataValue3.setText(eanET.getText());
                 SessionClass.setParam("currentCollect",eanET.getText().toString());
                 AllLinesData.setItemParams(lineID, qBarcode01, eanET.getText().toString());
                 if( eanET.getText().toString().equals("") ) AllLinesData.setItemParams(lineID, qBarcode02, "");
-                dialog.cancel();
+                KeyboardUtils.hideKeyboard(getActivity());
+                dialog.dismiss();
             }
         });
         builder.setNegativeButton("NEM", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 KeyboardUtils.hideKeyboard(getActivity());
-                dialog.cancel();
+                dialog.dismiss();
             }
         });
         popup = builder.create();
@@ -711,9 +716,9 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                     }else{
                         label.setText("");
                     }
-
-
                 }
+                whEditBoxes = new WHEditBox[arrayTextBoxIndexes.length - 1];
+                CustomTextWatcher[] customTextWatcherArray = new CustomTextWatcher[arrayTextBoxIndexes.length - 1];
                 for (int i = 0; i < arrayTextBoxIndexes.length; i++) {
                     int resIDLayer = getActivity().getResources().getIdentifier("scancount_param" + (i + 1) + "_layer", "id", getActivity().getPackageName());
                     int resIDLabel = getActivity().getResources().getIdentifier("scancount_param" + (i + 1) + "_label", "id", getActivity().getPackageName());
@@ -726,29 +731,35 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                     }
                     if(i > 0) {
                         int resIDValue = getActivity().getResources().getIdentifier("scancount_param" + (i + 1) + "_value", "id", getActivity().getPackageName());
-                        EditText value = rootView.findViewById(resIDValue);
-
+                        //WHEditBox value = rootView.findViewById(resIDValue);
+                        whEditBoxes[i-1] = rootView.findViewById(resIDValue);
+                        whEditBoxes[i-1].setOnDetectBarcodeListener(new WHEditBox.OnDetectBarcodeListener() {
+                            @Override
+                            public void OnDetectBarcode() { }
+                        });
                         label.setText(arrayTextBoxLabels[i]);
-                        // = new CustomTextWatcher(Integer.parseInt(arrayTextBoxIndexes[i]), lineID, value);
-                        if( customTextWatcherArray[i] == null ){
-                            customTextWatcherArray[i] = new CustomTextWatcher();
-                            value.addTextChangedListener(customTextWatcherArray[i]);
+
+                        if( customTextWatcherArray[i-1] == null ){
+                            customTextWatcherArray[i-1] = new CustomTextWatcher();
+                            whEditBoxes[i-1].EDText.addTextChangedListener(customTextWatcherArray[i-1]);
                         }
-                        customTextWatcherArray[i].changeSetting(getActivity(), Integer.parseInt(arrayTextBoxIndexes[i]), lineID, value);
+                        customTextWatcherArray[i-1].changeSetting(getActivity(), Integer.parseInt(arrayTextBoxIndexes[i]), lineID, whEditBoxes[i-1].EDText);
+
 
                         if(i == toplace) {
-                            value.setText(SessionClass.getParam("currentPlace"));
+                            whEditBoxes[i-1].EDText.setText(SessionClass.getParam("currentPlace"));
                         } else {
-                            value.setText(AllLinesData.getParam(lineID)[Integer.parseInt(arrayTextBoxIndexes[i])]);
+                            whEditBoxes[i-1].EDText.setText(AllLinesData.getParam(lineID)[Integer.parseInt(arrayTextBoxIndexes[i])]);
                         }
-
                     }
+                }
+                for (int i = 0; i < arrayTextBoxIndexes.length-2; i++) {
+                    whEditBoxes[i].setNextFocus(whEditBoxes[i+1].EDText);
                 }
             }catch (Exception e){
                 e.printStackTrace();
                 Toast.makeText(getContext(),"Hiba a művelet közben!",Toast.LENGTH_LONG).show();
             }
-
             refreshPlaceCounter();
         }catch (Exception e){
             e.printStackTrace();

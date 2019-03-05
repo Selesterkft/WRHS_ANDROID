@@ -337,14 +337,19 @@
                     android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
                     android:text="Param4" />
-                <EditText
+                <mobil.selester.wheditbox.WHEditBox
                     android:id="@+id/scancount_param2_value"
+                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:textSize="15sp"
-                    android:paddingLeft="5dp"
-                    android:background="@drawable/logintext_et_shape_round" />
+                    app:backgroundStyle="@drawable/logintext_et_shape_round"
+                    app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+                    app:setDelBtn="true"
+                    app:innerPadding="4dp"
+                    app:textSize="14sp"
+                    app:writeType="ClickDialog"
+
+                    />
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/scancount_param3_layer"
@@ -362,14 +367,19 @@
                     android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
                     android:text="Param4" />
-                <EditText
+                <mobil.selester.wheditbox.WHEditBox
                     android:id="@+id/scancount_param3_value"
+                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:textSize="15sp"
-                    android:paddingLeft="5dp"
-                    android:background="@drawable/logintext_et_shape_round" />
+                    app:backgroundStyle="@drawable/logintext_et_shape_round"
+                    app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+                    app:setDelBtn="true"
+                    app:innerPadding="4dp"
+                    app:textSize="14sp"
+                    app:writeType="ClickDialog"
+
+                    />
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/scancount_param4_layer"
@@ -387,14 +397,19 @@
                     android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
                     android:text="Param5" />
-                <EditText
+                <mobil.selester.wheditbox.WHEditBox
                     android:id="@+id/scancount_param4_value"
+                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:textSize="15sp"
-                    android:paddingLeft="5dp"
-                    android:background="@drawable/logintext_et_shape_round" />
+                    app:backgroundStyle="@drawable/logintext_et_shape_round"
+                    app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+                    app:setDelBtn="true"
+                    app:innerPadding="4dp"
+                    app:textSize="14sp"
+                    app:writeType="ClickDialog"
+
+                    />
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/scancount_param5_layer"
@@ -412,14 +427,19 @@
                     android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
                     android:text="Param6" />
-                <EditText
+                <mobil.selester.wheditbox.WHEditBox
                     android:id="@+id/scancount_param5_value"
+                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:textSize="15sp"
-                    android:paddingLeft="5dp"
-                    android:background="@drawable/logintext_et_shape_round" />
+                    app:backgroundStyle="@drawable/logintext_et_shape_round"
+                    app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+                    app:setDelBtn="true"
+                    app:innerPadding="4dp"
+                    app:textSize="14sp"
+                    app:writeType="ClickDialog"
+
+                    />
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/scancount_param6_layer"
@@ -437,14 +457,19 @@
                     android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
                     android:text="Param7" />
-                <EditText
+                <mobil.selester.wheditbox.WHEditBox
                     android:id="@+id/scancount_param6_value"
+                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:textSize="15sp"
-                    android:paddingLeft="5dp"
-                    android:background="@drawable/logintext_et_shape_round" />
+                    app:backgroundStyle="@drawable/logintext_et_shape_round"
+                    app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+                    app:setDelBtn="true"
+                    app:innerPadding="4dp"
+                    app:textSize="14sp"
+                    app:writeType="ClickDialog"
+
+                    />
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/scancount_param7_layer"
@@ -462,13 +487,19 @@
                     android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
                     android:text="Param8" />
-                <EditText
+                <mobil.selester.wheditbox.WHEditBox
                     android:id="@+id/scancount_param7_value"
+                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="5dp"
-                    android:background="@drawable/logintext_et_shape_round" />
+                    app:backgroundStyle="@drawable/logintext_et_shape_round"
+                    app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+                    app:setDelBtn="true"
+                    app:innerPadding="4dp"
+                    app:textSize="14sp"
+                    app:writeType="ClickDialog"
+
+                    />
             </LinearLayout>
             <LinearLayout
                 android:id="@+id/scancount_param8_layer"
@@ -486,13 +517,18 @@
                     android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
                     android:text="Param8" />
-                <EditText
+                <mobil.selester.wheditbox.WHEditBox
                     android:id="@+id/scancount_param8_value"
+                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:paddingLeft="5dp"
-                    android:background="@drawable/logintext_et_shape_round" />
+                    app:backgroundStyle="@drawable/logintext_et_shape_round"
+                    app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+                    app:setDelBtn="true"
+                    app:innerPadding="4dp"
+                    app:textSize="14sp"
+                    app:writeType="ClickDialog"
+                    />
             </LinearLayout>
 
             <LinearLayout
