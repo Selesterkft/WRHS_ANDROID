@@ -149,7 +149,12 @@ public class AllLinesData {
         for (Map.Entry<String, String[]> entry : params.entrySet()) {
             String value = entry.getValue()[placeNum];
             try {
-                valueCount = Integer.parseInt(entry.getValue()[curValuePosition]);
+                if(curValuePosition == 99999){
+                    valueCount = 1;
+                }else{
+                    valueCount = Integer.parseInt(entry.getValue()[curValuePosition]);
+                }
+
             }catch (Exception e){
                 e.printStackTrace();
             }

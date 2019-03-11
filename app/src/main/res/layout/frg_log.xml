@@ -30,38 +30,45 @@
             android:src="@drawable/but_cancel_44x44"
             android:background="@null"
             android:scaleType="fitCenter"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="4dp"
             android:id="@+id/log_exit"
             android:layout_width="55dp"
             android:layout_height="match_parent"
             android:text="Kilépés"/>
         <Button
             android:scaleType="fitCenter"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="4dp"
             android:id="@+id/log_query_all"
-            android:layout_width="75dp"
+            android:layout_width="60dp"
             android:layout_height="match_parent"
             android:text="Mind"/>
         <Button
             android:scaleType="fitCenter"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="4dp"
             android:id="@+id/log_query_m"
-            android:layout_width="55dp"
+            android:layout_width="45dp"
             android:layout_height="match_parent"
             android:text="M"/>
         <Button
             android:scaleType="fitCenter"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="4dp"
             android:id="@+id/log_query_w"
-            android:layout_width="55dp"
+            android:layout_width="45dp"
             android:layout_height="match_parent"
             android:text="W"/>
         <Button
             android:scaleType="fitCenter"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="4dp"
             android:id="@+id/log_query_e"
-            android:layout_width="55dp"
+            android:layout_width="45dp"
             android:layout_height="match_parent"
             android:text="E"/>
+        <Button
+            android:scaleType="fitCenter"
+            android:layout_marginStart="4dp"
+            android:id="@+id/log_query_delall"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:text="Összes törlés"/>
     </LinearLayout>
 </LinearLayout>

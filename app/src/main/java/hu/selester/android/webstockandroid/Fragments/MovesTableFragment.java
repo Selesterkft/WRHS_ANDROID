@@ -79,13 +79,25 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
         });
         AllLinesData.delParams();
 
-        arrayBtnVisibility = SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").split(",");
-        qBreak  = HelperClass.getArrayPosition("break", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
-        qCollection  = HelperClass.getArrayPosition("collection", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+        if(SessionClass.getParam(tranCode + "_Detail_Button_IsVisible") != null) {
+            arrayBtnVisibility = SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").split(",");
+            qBreak = HelperClass.getArrayPosition("break", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+            qCollection = HelperClass.getArrayPosition("collection", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
 
-        if( qBreak > -1 ){ SessionClass.setParam("breakBtn", arrayBtnVisibility[qBreak]); } else { SessionClass.setParam("breakBtn", "0" ); }
-        if( qCollection > -1 ){ SessionClass.setParam("collectionBtn", arrayBtnVisibility[qCollection]); } else { SessionClass.setParam("collectionBtn", "0" ); }
-
+            if (qBreak > -1) {
+                SessionClass.setParam("breakBtn", arrayBtnVisibility[qBreak]);
+            } else {
+                SessionClass.setParam("breakBtn", "0");
+            }
+            if (qCollection > -1) {
+                SessionClass.setParam("collectionBtn", arrayBtnVisibility[qCollection]);
+            } else {
+                SessionClass.setParam("collectionBtn", "0");
+            }
+        }else{
+            SessionClass.setParam("breakBtn", "0");
+            SessionClass.setParam("collectionBtn", "0");
+        }
         //Log.i("TAG",""+SessionClass.getParam("breakBtn")+" - "+SessionClass.getParam("collectionBtn"));
 
         if(!SessionClass.getParam(tranCode+"_Head_ListView_SELECT").isEmpty()) SessionClass.setParam(tranCode+"_Head_ListView_SELECT",SessionClass.getParam(tranCode+"_Head_ListView_SELECT").replace(" ",""));

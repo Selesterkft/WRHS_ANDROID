@@ -1,6 +1,7 @@
 package hu.selester.android.webstockandroid.Database.Daos;
 
 import android.arch.persistence.room.Dao;
+import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 
@@ -19,7 +20,7 @@ import hu.selester.android.webstockandroid.Database.Tables.LogTable;
 @Dao
 public interface LogDao {
 
-    @Query("Select * from LogTable order by date desc,time desc")
+    @Query("Select  * from LogTable order by date desc,time desc LIMIT 4000")
     List<LogTable> getAllLog();
 
     @Query("Select * from LogTable where type = 'M' order by date desc,time desc")
@@ -33,5 +34,8 @@ public interface LogDao {
 
     @Insert
     void addLog(LogTable lt);
+
+    @Query("Delete from LogTable where id > 0")
+    void deleteAll();
 
 }

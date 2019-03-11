@@ -19,6 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import hu.selester.android.webstockandroid.Database.SelesterDatabase;
+import hu.selester.android.webstockandroid.Database.Tables.LogTable;
 import hu.selester.android.webstockandroid.Fragments.MovesSubTableFragment;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
@@ -33,6 +35,7 @@ public class SaveCheckedDataThread extends Thread{
     private Boolean mainSave;
     private int maxCount = 100;
     private List<String[]> datas;
+    private SelesterDatabase db;
 
     public SaveCheckedDataThread( Context context) {
         this.context = context;
@@ -41,12 +44,14 @@ public class SaveCheckedDataThread extends Thread{
 
     @Override
     public void run() {
-
+        db = SelesterDatabase.getDatabase(context);
         datas = AllLinesData.getAllDataList();
         String str="";
         String tranCode = "";
         String headID = "";
         int count = 0;
+        Log.i("TAG","SaveCheckedDataThread");
+        //LogTable log = new LogTable(LogTable.LogType_Message,"SaveCheckedThread","","LOGUSER",null,null);
         for (Map.Entry<String, Integer> entry : CheckedList.getParam().entrySet()) {
             if (entry.getValue() == 1 || entry.getValue() == 2) {
 
@@ -68,10 +73,12 @@ public class SaveCheckedDataThread extends Thread{
                                 }
                             }
                             str = str + "[Line" + data[4] + "[comm " + commandString;
+                            //log.addNewMessageLine("[Line" + data[4] + "[comm " + commandString);
                             CheckedList.setParamItem(entry.getKey(), 2);
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
+                        db.logDao().addLog(new LogTable(LogTable.LogType_Error,"SaveCheckedThread",e.getMessage(),"LOGUSER",null,null));
                     }
                     count++;
                 }else{
@@ -79,7 +86,9 @@ public class SaveCheckedDataThread extends Thread{
                 }
             }
             System.out.println("Key = " + entry.getKey() + ", Value = " + entry.getValue());
+            //db.logDao().addLog(log);
         }
+
         if( !str.isEmpty() ) {
 
             RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
@@ -121,8 +130,8 @@ public class SaveCheckedDataThread extends Thread{
                         } catch (JSONException e) {
                             e.printStackTrace();
                             CheckedList.setSetChecked(1);
-                            if (mainSave)
-                                Toast.makeText(context, "Adatok áttöltése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
+                            if (mainSave) Toast.makeText(context, "Adatok áttöltése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
+                            db.logDao().addLog(new LogTable(LogTable.LogType_Error,"SaveCheckedThread",e.getMessage(),"LOGUSER",null,null));
                         }
 
 
@@ -140,6 +149,8 @@ public class SaveCheckedDataThread extends Thread{
                 });
                 jr.setRetryPolicy(new DefaultRetryPolicy(50000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
                 rq.add(jr);
+            }else{
+                CheckedList.setSetChecked(1);
             }
         }
     }

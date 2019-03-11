@@ -18,10 +18,12 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
     private Context context;
     private List<LogTable> dataList;
 
+
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
         public TextView type;
         public TextView message;
+        public TextView details;
         public TextView userDateTime;
 
         public ViewHolder(View itemView) {
@@ -42,13 +44,15 @@ public class LogListAdapter extends RecyclerView.Adapter<LogListAdapter.ViewHold
         vh.message = rootView.findViewById(R.id.row_log_msg);
         vh.userDateTime = rootView.findViewById(R.id.row_log_user_datetime);
         vh.type = rootView.findViewById(R.id.row_log_type);
+        vh.details= rootView.findViewById(R.id.row_log_desc);
         return vh;
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
         holder.type.setText(dataList.get(position).getType());
-        holder.message.setText(dataList.get(position).getMessage());
+        holder.message.setText(dataList.get(position).getShortmessage());
+        holder.details.setText(dataList.get(position).getMessage());
         holder.userDateTime.setText(dataList.get(position).getUser()+" - "+dataList.get(position).getDate()+" "+dataList.get(position).getTime());
     }
 

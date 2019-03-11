@@ -188,9 +188,14 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         lockBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i("TAG", "CHECKEDList: "+CheckedList.getSizeOfChecked());
                 if(HelperClass.isOnline(getContext())) {
                     if (v.isClickable()) {
-                        closeLine();
+                        if( CheckedList.getSizeOfChecked() == 0 ) {
+                            closeDialog();
+                        }else{
+                            notSaveAll();
+                        }
                     }
                 }else{
                     Toast.makeText(getContext(),"Hálózati hiba!",Toast.LENGTH_LONG).show();
@@ -296,6 +301,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 tablePanel.getAdapter().setCheckedArray(AllLinesData.findPosition(SessionClass.getParam("currentLineID")));
                 tablePanel.smoothScrollToPosition(AllLinesData.findPosition(SessionClass.getParam("currentLineID")));
             }catch(Exception e){
+                db.logDao().addLog(new LogTable(LogTable.LogType_Error,"MovesSubTableFragment",e.getMessage(),"LOGUSER",null,null));
                 e.printStackTrace();
             }
         }
@@ -348,6 +354,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                         }
                     }catch(Exception e){
                         e.printStackTrace();
+                        db.logDao().addLog(new LogTable(LogTable.LogType_Error,"MovesSubTableFragment",e.getMessage(),"LOGUSER",null,null));
                         Toast.makeText(getContext(),"Hiba a működés közben (1001)", Toast.LENGTH_LONG).show();
                     }
                 }
@@ -520,6 +527,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                     sst.start();
                     createTablePanel();
                 } catch (JSONException e) {
+                    db.logDao().addLog(new LogTable(LogTable.LogType_Error,"MovesSubTableFragment",e.getMessage(),"LOGUSER",null,null));
                     e.printStackTrace();
                 }
                 pd.dismiss();
@@ -583,6 +591,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                     if (Integer.parseInt(rowData.get(rowCount)[qCurrent]) == Integer.parseInt(rowData.get(rowCount)[qNeed])) { rowSetting.setBackColor(R.color.productRowOKBack); } else
                     if (Integer.parseInt(rowData.get(rowCount)[qCurrent]) < Integer.parseInt(rowData.get(rowCount)[qNeed])) { rowSetting.setBackColor(R.color.productRowPHBack); }
                 }catch (Exception e){
+                    db.logDao().addLog(new LogTable(LogTable.LogType_Error,"MovesSubTableFragment",e.getMessage(),"LOGUSER",null,null));
                     e.printStackTrace();
                 }
             }else{
@@ -627,6 +636,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 Toast.makeText(getContext(),"Nincs feltöltendő adat!",Toast.LENGTH_LONG).show();
             }
         }catch(Exception e){
+            db.logDao().addLog(new LogTable(LogTable.LogType_Error,"MovesSubTableFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
         }
     }
@@ -663,6 +673,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 Toast.makeText(getContext(),"Nincs feltöltendő adat!",Toast.LENGTH_LONG).show();
             }
         }catch(Exception e){
+            db.logDao().addLog(new LogTable(LogTable.LogType_Error,"MovesSubTableFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
         }
     }
@@ -676,6 +687,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                     sds.run();
             }
         }catch(Exception e){
+            db.logDao().addLog(new LogTable(LogTable.LogType_Error,"MovesSubTableFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
         }
     }
@@ -699,6 +711,42 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 saveData();
+            }
+        });
+        builder.show();
+    }
+
+    private void closeDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Biztos, hogy lezárja a feladatot!");
+        builder.setMessage("Lezárás után a feladat eltűnik a feladatlistából és áttöltődik a rendszerbe!");
+        builder.setNegativeButton("mégsem", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                dialog.cancel();
+            }
+        });
+        builder.setPositiveButton("rendben", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                closeLine();
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+    private void notSaveAll(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Lezárás nem lehetséges!");
+        builder.setMessage("Vannak még módosított, de le nem mentett sorok a rendszerben!");
+        builder.setNegativeButton("rendben", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                dialog.cancel();
             }
         });
         builder.show();
@@ -856,7 +904,6 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 if (tranCode.charAt(0) == '1') mode = "Áruátvétel";
                 if (tranCode.charAt(0) == '2') mode = "Árukiadás";
                 if (tranCode.charAt(0) == '5') mode = "Szedés";
-                db.logDao().addLog(new LogTable("M", "Feladat eldobása ( " + mode + ": " + movenum + " )", SessionClass.getParam("account"), HelperClass.getCurrentDate(), HelperClass.getCurrentTime()));
                 db.sessionTempDao().deleteAllData();
                 SessionClass.setParam("currentLineID", "");
                 KeyboardUtils.hideKeyboard(getActivity());

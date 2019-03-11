@@ -22,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.lang.reflect.Array;
@@ -34,6 +35,7 @@ import java.util.Set;
 import hu.selester.android.webstockandroid.Adapters.CollectListAdapter;
 import hu.selester.android.webstockandroid.AsyncTask.LoadingParams;
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
+import hu.selester.android.webstockandroid.Database.Tables.LogTable;
 import hu.selester.android.webstockandroid.Database.Tables.PalettTable;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
@@ -42,6 +44,7 @@ import hu.selester.android.webstockandroid.Objects.CheckedList;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.Threads.SaveAllSessionTemp;
+import hu.selester.android.webstockandroid.Threads.SaveCheckedDataThread;
 import hu.selester.android.webstockandroid.Threads.SaveIdSessionTemp;
 
 public class PalettCollectFragment extends Fragment implements LoadingParams.AsyncResponse{
@@ -51,6 +54,7 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
     private AppCompatEditText barcodeET1, barcodeET2;
     private ListView palettList;
     private List<String> dataList = new ArrayList<>();
+    private TextView headerText;
     private int qBarcode01, qBarcode02, tranCode;
     private CollectListAdapter collectListAdapter;
     private SelesterDatabase db;
@@ -71,6 +75,7 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
         tranCode = Integer.parseInt(SessionClass.getParam("tranCode"));
         qBarcode01 = HelperClass.getArrayPosition("Barcode01", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qBarcode02 = HelperClass.getArrayPosition("Barcode02", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        headerText = rootView.findViewById(R.id.palett_textView);
         barcodeET1 = rootView.findViewById(R.id.palett_barcode1);
         barcodeET2 = rootView.findViewById(R.id.palett_barcode2);
         nextBtn = rootView.findViewById(R.id.movessub_header_btn);
@@ -115,6 +120,7 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
                         barcodeET1.requestFocus();
                         dataList = AllLinesData.getParamsPosition(qBarcode02, qBarcode01, barcodeET2.getText().toString());
                         if( dataList.size() > 0 ) ((CollectListAdapter) palettList.getAdapter()).updateItems(dataList);
+                        headerText.setText("Összeredelés / " + AllLinesData.getPlaceCount(qBarcode02, 99999, barcodeET2.getText().toString()) );
                     }
                 }
             }
@@ -138,7 +144,7 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
                     }else{
                         ((CollectListAdapter) palettList.getAdapter()).clearItems();
                     }
-
+                    headerText.setText("Összeredelés / " + AllLinesData.getPlaceCount(qBarcode02, 99999, barcodeET2.getText().toString()) );
                 }
             }
         });
@@ -156,6 +162,7 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
                             barcodeET1.requestFocus();
                             dataList = AllLinesData.getParamsPosition(qBarcode02, qBarcode01, barcodeET2.getText().toString());
                             if( dataList.size() > 0 ) ((CollectListAdapter) palettList.getAdapter()).updateItems(dataList);
+                            headerText.setText("Összeredelés / " + AllLinesData.getPlaceCount(qBarcode02, 99999, barcodeET2.getText().toString()) );
                             return true;
                         default:
                             break;
@@ -257,7 +264,6 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
                         LoadingParams lp = new LoadingParams(this, pd, qBarcode02, qBarcode01, barcodeET2.getText().toString() );
                         lp.execute();
                     }
-
                     if (!locked) {
                         barcodeET2.setText("");
                         barcodeET2.requestFocus();
@@ -268,13 +274,13 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
                     }
                 }
             }catch (Exception e){
+                db.logDao().addLog(new LogTable(LogTable.LogType_Error,"PalettCollectFragment",e.getMessage(),"LOGUSER",null,null));
                 e.printStackTrace();
             }
         }else{
             Toast.makeText(getContext(), "Nincs ilyen gyűjtő létrehozva!", Toast.LENGTH_LONG).show();
             barcodeET1.setText( "" );
         }
-
     }
 
     @Override
@@ -294,6 +300,8 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
         SaveIdSessionTemp savePalett = new SaveIdSessionTemp(getContext());
         savePalett.setId(dataIDSList);
         savePalett.start();
+        headerText.setText("Összeredelés / " + AllLinesData.getPlaceCount(qBarcode02, 99999, barcodeET2.getText().toString()) );
+        new SaveCheckedDataThread(getContext()).start();
     }
 
     void findThisCollectDialog() {
@@ -309,6 +317,5 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
             }
         });
         builder.show();
-
     }
 }

@@ -37,6 +37,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
+import hu.selester.android.webstockandroid.Database.Tables.LogTable;
 import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
 import hu.selester.android.webstockandroid.Dialogs.MessageDialog;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
@@ -267,6 +268,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             });
             newOpenWindow = false;
         }catch (Exception e){
+            db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
             Toast.makeText(getContext(),"ERROR SCANCOUNT 001",Toast.LENGTH_LONG).show();
         }
@@ -407,6 +409,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             }
             refreshPlaceCounter();
         }catch (Exception e){
+            db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
             Toast.makeText(getContext(),"ERROR SCANCOUNT 002",Toast.LENGTH_LONG).show();
         }
@@ -418,6 +421,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             if (!isBar.isEmpty()) findValue.setText(isBar + SessionClass.getParam("barcodeSuffix"));
             refreshPlaceCounter();
         }catch (Exception e){
+            db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
             Toast.makeText(getContext(),"ERROR SCANCOUNT 003",Toast.LENGTH_LONG).show();
         }
@@ -498,6 +502,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                         refreshPlaceCounter();
                     }
                 } catch (Exception e) {
+                    db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
                     e.printStackTrace();
                     Toast.makeText(getContext(), "ERROR SCANCOUNT 004", Toast.LENGTH_LONG).show();
                 }
@@ -757,11 +762,13 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                     whEditBoxes[i].setNextFocus(whEditBoxes[i+1].EDText);
                 }
             }catch (Exception e){
+                db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
                 e.printStackTrace();
                 Toast.makeText(getContext(),"Hiba a művelet közben!",Toast.LENGTH_LONG).show();
             }
             refreshPlaceCounter();
         }catch (Exception e){
+            db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
             Toast.makeText(getContext(),"ERROR SCANCOUNT 005",Toast.LENGTH_LONG).show();
         }
@@ -778,6 +785,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                     .setBarcodeImageEnabled(true)
                     .initiateScan();
         }catch (Exception e){
+            db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
             Toast.makeText(getContext(),"ERROR SCANCOUNT 006",Toast.LENGTH_LONG).show();
         }
@@ -805,9 +813,14 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 headerText.setText("Ellenőrzés / " + AllLinesData.getPlaceCount(10, qCurrent, SessionClass.getParam("currentPlace")));
             } else if (tranCode.charAt(0) == '5') {
                 headerText.setText("Ellenőrzés / " + AllLinesData.getAllCurrentCount(qCurrent));
+            }else if (tranCode.charAt(0) == '2') {
+                if( SessionClass.getParam("collectionBtn").equals("1") ){
+                    headerText.setText("Ellenőrzés / " + AllLinesData.getPlaceCount(qBarcode01, qCurrent, getTextDataValue3.getText().toString() ));
+                }
             }
             saveDBDatas();
         }catch (Exception e){
+            db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
             Toast.makeText(getContext(),"ERROR SCANCOUNT 007",Toast.LENGTH_LONG).show();
         }

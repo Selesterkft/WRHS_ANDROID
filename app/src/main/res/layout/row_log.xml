@@ -3,28 +3,38 @@
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:paddingRight="10dp"
-    android:paddingTop="10dp">
+    android:paddingTop="3dp">
 
     <TextView
         android:id="@+id/row_log_type"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:text="W"
         android:textSize="20dp"
         android:textStyle="bold"
-        android:layout_gravity="center_vertical"
+        android:layout_gravity="top"
         android:gravity="center"
+        android:textColor="@color/whiteColor"
+        android:background="@color/colorPrimary"
         />
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingLeft="4dp"
         android:orientation="vertical">
         <TextView
             android:id="@+id/row_log_msg"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14dp"
+            android:textStyle="bold"
+            android:textSize="12dp"
             android:text="Hiba lezárása"/>
+        <TextView
+            android:id="@+id/row_log_desc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="10dp"
+            android:text="Hiba leírása"/>
         <TextView
             android:gravity="left"
             android:id="@+id/row_log_user_datetime"

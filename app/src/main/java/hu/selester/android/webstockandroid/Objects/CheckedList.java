@@ -46,6 +46,17 @@ public class CheckedList {
         }
     }
 
+
+    public static int getSizeOfChecked(){
+        int count = 0;
+        for (Map.Entry<String, Integer> entry : CheckedList.getParam().entrySet()) {
+            if( param.get(entry.getKey()) != 0 ){
+                count++;
+            }
+        }
+        return count;
+    }
+
     public static void toLogString(){
         for (Map.Entry<String, Integer> entry : CheckedList.getParam().entrySet()) {
             Log.i("TAG",entry.getKey()+" - "+entry.getValue());

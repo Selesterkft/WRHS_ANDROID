@@ -43,6 +43,9 @@ import com.android.volley.toolbox.JsonRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.File;
+import java.util.Calendar;
+import java.util.Date;
+
 import hu.selester.android.webstockandroid.AsyncTask.DownloadNewVersion;
 import hu.selester.android.webstockandroid.BuildConfig;
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
@@ -217,7 +220,6 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
                                     SharedPreferences sharedPref = getActivity().getPreferences(getContext().MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPref.edit();
                                     editor.putString("whrs_selexped_account", accountEt.getText().toString());
-                                    db.logDao().addLog(new LogTable("M","Bejelentkezés", SessionClass.getParam("account"), HelperClass.getCurrentDate(), HelperClass.getCurrentTime() ));
                                     editor.commit();
 
                                     //ToneGenerator toneGen1 = new ToneGenerator(AudioManager.STREAM_MUSIC, 100);

@@ -23,6 +23,8 @@ import org.w3c.dom.Text;
 import java.util.HashMap;
 import java.util.List;
 
+import hu.selester.android.webstockandroid.Database.SelesterDatabase;
+import hu.selester.android.webstockandroid.Database.Tables.LogTable;
 import hu.selester.android.webstockandroid.Fragments.MovesSubTableFragment;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
@@ -36,6 +38,7 @@ public class SaveDataThread extends Thread {
     private Context context;
     private int fromNum,toNum;
     private MovesSubTableFragment frg;
+    private SelesterDatabase db;
 
     public SaveDataThread(Context context, List<String[]> data, MovesSubTableFragment frg, int fromNum, int toNum){
         this.data = data;
@@ -48,12 +51,15 @@ public class SaveDataThread extends Thread {
     @Override
     public void run() {
         //CheckedList.toLogString();
+        db = SelesterDatabase.getDatabase(context);
+        LogTable log = new LogTable(LogTable.LogType_Message,"SaveDataThread","","LOGUSER",null,null);
         String str="";
+        Log.i("TAG","SaveDataThread");
         for(int i=fromNum; i<toNum; i++ ){
             int x = CheckedList.getParamItem(data.get(i)[0]);
             if(x == 1 || x == 2){
                 if( Long.parseLong( data.get(i)[0] ) < 100000000 ) {
-                    String commandString = SessionClass.getParam(data.get(i)[2] + "_Line_Insert_String");
+                    String commandString = SessionClass.getParam(data.get(i)[2] + "_Line_Update_String");
                     commandString = commandString.replace("@TERMINAL", SessionClass.getParam("terminal"));
                     commandString = commandString.replace("@LINE_ID", data.get(i)[4]);
                     commandString = commandString.replace("@TRAN_CODE", data.get(i)[2]);
@@ -65,10 +71,12 @@ public class SaveDataThread extends Thread {
                         }
                     }
                     str = str + "[Line" + data.get(i)[4] + "[comm " + commandString;
+                    log.addNewMessageLine("[Line" + data.get(i)[4] + "[comm " + commandString);
                     CheckedList.setParamItem(data.get(i)[0], 2);
                 }
             }
         }
+        db.logDao().addLog(log);
         Log.i("SAVE DATA THREAD",str);
         RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
         String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_SaveLineData_ByGroup";
@@ -112,7 +120,9 @@ public class SaveDataThread extends Thread {
                         frg.stopProgress();
                         CheckedList.setSetChecked(1);
                         Toast.makeText(context, "Adatok áttöltése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
+                        db.logDao().addLog(new LogTable(LogTable.LogType_Error,"SaveDataThread",e.getMessage(),"LOGUSER",null,null));
                         e.printStackTrace();
+
                     }
 
 
@@ -122,6 +132,7 @@ public class SaveDataThread extends Thread {
                 public void onErrorResponse(VolleyError error) {
                     frg.stopProgress();
                     CheckedList.setSetChecked(1);
+                    db.logDao().addLog(new LogTable(LogTable.LogType_Error,"SaveDataThread",error.getMessage(),"LOGUSER",null,null));
                     if (error != null) {
                         Toast.makeText(context, "Adatok áttöltése sikertelen, hálózati hiba!", Toast.LENGTH_LONG).show();
                         error.printStackTrace();
