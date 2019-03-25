@@ -78,69 +78,71 @@ public class SaveDataThread extends Thread {
         }
         db.logDao().addLog(log);
         Log.i("SAVE DATA THREAD",str);
-        RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
-        String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_SaveLineData_ByGroup";
-        HashMap<String,String> map = new HashMap<>();
-        map.put("Terminal",SessionClass.getParam("terminal"));
-        map.put("User_id",SessionClass.getParam("userid"));
-        map.put("Table_Name",SessionClass.getParam(data.get(0)[2]+"_Line_ListView_FROM"));
-        map.put("PDA_ID","123");
-        map.put("Tran_code",data.get(0)[2]);
-        map.put("Head_ID",data.get(0)[3]);
-        map.put("cmd",str);
-        if(HelperClass.isOnline(context)) {
-            JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
-                @Override
-                public void onResponse(JSONObject response) {
-                    try {
-                        frg.stopProgress();
-                        String rootText = response.getString("WRHS_PDA_SaveLineData_ByGroupResult");
-                        JSONObject jsonObject = new JSONObject(rootText);
-                        String rtext = jsonObject.getString("ERROR_CODE");
-                        if (!rtext.isEmpty()) {
-                            if (rtext.equals("-1")) {
-                                if (frg.uploadpbar.getMax() == frg.uploadpbar.getProgress()) {
-                                    Toast.makeText(context, "Adatok áttöltése sikeresen megtörtént!", Toast.LENGTH_LONG).show();
-                                    CheckedList.setSetChecked(0);
+        if( !str.equals("") ){
+            RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
+            String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_SaveLineData_ByGroup";
+            HashMap<String,String> map = new HashMap<>();
+            map.put("Terminal",SessionClass.getParam("terminal"));
+            map.put("User_id",SessionClass.getParam("userid"));
+            map.put("Table_Name",SessionClass.getParam(data.get(0)[2]+"_Line_ListView_FROM"));
+            map.put("PDA_ID","123");
+            map.put("Tran_code",data.get(0)[2]);
+            map.put("Head_ID",data.get(0)[3]);
+            map.put("cmd",str);
+            if(HelperClass.isOnline(context)) {
+                JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        try {
+                            frg.stopProgress();
+                            String rootText = response.getString("WRHS_PDA_SaveLineData_ByGroupResult");
+                            JSONObject jsonObject = new JSONObject(rootText);
+                            String rtext = jsonObject.getString("ERROR_CODE");
+                            if (!rtext.isEmpty()) {
+                                if (rtext.equals("-1")) {
+                                    if (frg.uploadpbar.getMax() == frg.uploadpbar.getProgress()) {
+                                        Toast.makeText(context, "Adatok áttöltése sikeresen megtörtént!", Toast.LENGTH_LONG).show();
+                                        CheckedList.setSetChecked(0);
+                                    }
+                                } else {
+                                    CheckedList.setSetChecked(1);
+                                    frg.stopProgress();
+                                    Toast.makeText(context, "Adatok áttöltése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
                                 }
+
                             } else {
-                                CheckedList.setSetChecked(1);
                                 frg.stopProgress();
+                                CheckedList.setSetChecked(1);
                                 Toast.makeText(context, "Adatok áttöltése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
                             }
 
-                        } else {
+
+                        } catch (JSONException e) {
                             frg.stopProgress();
                             CheckedList.setSetChecked(1);
                             Toast.makeText(context, "Adatok áttöltése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
+                            db.logDao().addLog(new LogTable(LogTable.LogType_Error, "SaveDataThread", e.getMessage(), "LOGUSER", null, null));
+                            e.printStackTrace();
+
                         }
 
 
-                    } catch (JSONException e) {
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
                         frg.stopProgress();
                         CheckedList.setSetChecked(1);
-                        Toast.makeText(context, "Adatok áttöltése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
-                        db.logDao().addLog(new LogTable(LogTable.LogType_Error,"SaveDataThread",e.getMessage(),"LOGUSER",null,null));
-                        e.printStackTrace();
-
+                        db.logDao().addLog(new LogTable(LogTable.LogType_Error, "SaveDataThread", error.getMessage(), "LOGUSER", null, null));
+                        if (error != null) {
+                            Toast.makeText(context, "Adatok áttöltése sikertelen, hálózati hiba!", Toast.LENGTH_LONG).show();
+                            error.printStackTrace();
+                        }
                     }
-
-
-                }
-            }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    frg.stopProgress();
-                    CheckedList.setSetChecked(1);
-                    db.logDao().addLog(new LogTable(LogTable.LogType_Error,"SaveDataThread",error.getMessage(),"LOGUSER",null,null));
-                    if (error != null) {
-                        Toast.makeText(context, "Adatok áttöltése sikertelen, hálózati hiba!", Toast.LENGTH_LONG).show();
-                        error.printStackTrace();
-                    }
-                }
-            });
-            jr.setRetryPolicy(new DefaultRetryPolicy(50000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
-            rq.add(jr);
+                });
+                jr.setRetryPolicy(new DefaultRetryPolicy(50000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                rq.add(jr);
+            }
         }else{
             frg.stopProgress();
             CheckedList.setSetChecked(1);

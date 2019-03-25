@@ -2,6 +2,7 @@ package hu.selester.android.webstockandroid.Fragments;
 
 
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -32,7 +33,6 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
-import hu.selester.android.webstockandroid.Database.Tables.LogTable;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
@@ -45,14 +45,17 @@ public class MainMenuFragment extends Fragment {
     private SelesterDatabase db;
     private int qBreak, qCollection;
     private String[] arrayBtnVisibility;
-
+    private boolean settingLoded;
+    private ProgressDialog pd;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        settingLoded =false;
         View rootView = inflater.inflate(R.layout.frg_mainmenu,container,false);
         db = SelesterDatabase.getDatabase(getContext());
         int size = db.sessionTempDao().getDataSize();
+        pd = HelperClass.loadingDialogOn(getActivity());
         if(size > 0){
             buildReloadDialog();
         }
@@ -61,14 +64,14 @@ public class MainMenuFragment extends Fragment {
                 SessionClass.setParam("barcodeSuffix", db.systemDao().getValue("barcodeSuffix"));
             }
         }
-
+        SessionClass.setParam("XD","1");
         if( SessionClass.getParam("XD").equals("1")){
             Button cdBtn = rootView.findViewById(R.id.menu_cdBtn);
             cdBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //Fragment f = new TreeViewFragment();
-                    Fragment f = new CrossDockSelectFragment();
+                    Fragment f = new XD_SelectFragment();
                     FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                     ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
                     ft.replace(R.id.fragments,f);
@@ -249,10 +252,13 @@ public class MainMenuFragment extends Fragment {
                                 }
                             }
                         }
+                        pd.dismiss();
                     }else{
+                        pd.dismiss();
                         buildErrorDialog();
                     }
                 } catch (JSONException e) {
+                    pd.dismiss();
                     buildErrorDialog();
                     e.printStackTrace();
                 }
@@ -262,6 +268,7 @@ public class MainMenuFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if(error != null){
+                    pd.dismiss();
                     buildErrorDialog();
                     error.printStackTrace();
                 }

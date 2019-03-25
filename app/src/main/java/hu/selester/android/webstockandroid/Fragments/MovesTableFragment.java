@@ -63,6 +63,7 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         CheckedList.clearAllData();
         SessionClass.setParam("TreeViewSearchText","");
+        pd = HelperClass.loadingDialogOn(getActivity());
         rootView = inflater.inflate(R.layout.frg_moves, container, false);
         tranCode = getArguments().getInt("tranCode");
         SessionClass.setParam("tranCode",String.valueOf(tranCode));
@@ -83,7 +84,6 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
             arrayBtnVisibility = SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").split(",");
             qBreak = HelperClass.getArrayPosition("break", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
             qCollection = HelperClass.getArrayPosition("collection", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
-
             if (qBreak > -1) {
                 SessionClass.setParam("breakBtn", arrayBtnVisibility[qBreak]);
             } else {
@@ -137,7 +137,6 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
         url = url.replace(" ","");
         Log.i("URL",url);
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
-        pd = HelperClass.loadingDialogOn(getActivity());
         JsonRequest<JSONObject> jr = new  JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -159,8 +158,9 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
 
                 } catch (JSONException e) {
                     e.printStackTrace();
+                    pd.dismiss();
                 }
-                pd.dismiss();
+
             }
         }, new Response.ErrorListener() {
             @Override
@@ -217,6 +217,7 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
         });
         tablePanel.setTablePanelSetting(tps);
         tablePanel.createTablePanel();
+        pd.dismiss();
     }
 
     @Override

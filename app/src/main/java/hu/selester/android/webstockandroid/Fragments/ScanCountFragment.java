@@ -68,7 +68,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
     private View rootView;
     private ArrayList<String> inBar;
     private String tranCode, Head_ID;
-    private int qNeed,qCurrent,qMissing,qBarcode01,qBarcode02;
+    private int qNeed,qCurrent,qMissing,qBarcode01,qBarcode02,qTo_Place;
     private EditText textDataValue;
     private String[] arrayTempInt, arrayTempNames, arrayTempType, arrayTextBoxLabels, arrayTextBoxEnableds, arrayTextBoxIndexes, arrayTextBoxSelect, arrayLabelTextBox, arrayLabelIndex, arrayLabelSelect;
     private TextView headerText, findTvLabel;
@@ -92,6 +92,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
 
         qBarcode01 = HelperClass.getArrayPosition("Barcode01", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qBarcode02 = HelperClass.getArrayPosition("Barcode02", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qTo_Place  = HelperClass.getArrayPosition("To_Place", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         CheckedList.setParamItem(lineID,1);
         dataCounter = 0;
         si = savedInstanceState;
@@ -610,8 +611,13 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
 
             TextView textValue1 = rootView.findViewById(R.id.scancount_textValue1);
             textValue1.setText(AllLinesData.getParam(lineID)[Integer.parseInt(labelIndex[0])]);
+
             TextView textValue2 = rootView.findViewById(R.id.scancount_textValue2);
-            textValue2.setText(AllLinesData.getParam(lineID)[Integer.parseInt(labelIndex[1])]);
+            if (labelIndex.length > 1) {
+                textValue2.setText(AllLinesData.getParam(lineID)[Integer.parseInt(labelIndex[1])]);
+            }else{
+                textValue2.setVisibility(View.GONE);
+            }
 
             TextView textValue3 = rootView.findViewById(R.id.scancount_textValue3);
             if (labelIndex.length > 2) {
@@ -805,12 +811,13 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         }
     }
 
+
     private void refreshPlaceCounter(){
         CheckedList.setParamItem(lineID,1);
         Log.i("TAG",CheckedList.getParam().toString());
         try {
             if (tranCode.charAt(0) == '1') {
-                headerText.setText("Ellenőrzés / " + AllLinesData.getPlaceCount(10, qCurrent, SessionClass.getParam("currentPlace")));
+                headerText.setText("Ellenőrzés / " + AllLinesData.getPlaceCount(qTo_Place, qCurrent, SessionClass.getParam("currentPlace")));
             } else if (tranCode.charAt(0) == '5') {
                 headerText.setText("Ellenőrzés / " + AllLinesData.getAllCurrentCount(qCurrent));
             }else if (tranCode.charAt(0) == '2') {

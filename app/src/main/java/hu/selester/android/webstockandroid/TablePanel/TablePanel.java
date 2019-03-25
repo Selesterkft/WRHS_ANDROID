@@ -255,6 +255,7 @@ public class TablePanel {
         this.widths = widths;
         this.headerText = headerText;
         this.dataList = dataList;
+        Log.i("TAG","DATAList: " + dataList.size());
         columnCount = widths.length;
         this.tablePanelSetting = new TablePanelSetting();
         rowSetting = new ArrayList<>();

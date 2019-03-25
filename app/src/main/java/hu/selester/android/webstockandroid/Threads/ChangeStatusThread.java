@@ -38,55 +38,57 @@ public class ChangeStatusThread extends Thread{
 
     @Override
     public void run() {
-        RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
-        String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_setStatus";
-        HashMap<String,String> map = new HashMap<>();
-        map.put("Terminal",SessionClass.getParam("terminal"));
-        map.put("User_id",SessionClass.getParam("userid"));
-        map.put("PDA_ID","123");
-        map.put("Tran_code",tranCode);
-        map.put("where","ID=" + tranID);
-        map.put("NewStatus",status);
-        Log.i("URL",url);
-        JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                try {
-                    String rootText=response.getString("WRHS_PDA_setStatusResult");
-                    JSONObject jsonObject = new JSONObject(rootText);
-                    String rtext = jsonObject.getString("ERROR_CODE");
-                    if(!rtext.isEmpty()){
-                        if(rtext.equals("-1")){
-                            //Toast.makeText(context,"Státusz váltása sikeres: "+status+"!",Toast.LENGTH_LONG).show();
-                            if(status.equals("PDA")){
-                                new DeleteTempThread(context,tranCode,f).start();
-                            }
-                        }else{
+        if(tranCode.charAt(0)!='3') {
+            RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
+            String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_setStatus";
+            HashMap<String, String> map = new HashMap<>();
+            map.put("Terminal", SessionClass.getParam("terminal"));
+            map.put("User_id", SessionClass.getParam("userid"));
+            map.put("PDA_ID", "123");
+            map.put("Tran_code", tranCode);
+            map.put("where", "ID=" + tranID);
+            map.put("NewStatus", status);
+            Log.i("URL", url);
+            JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    try {
+                        String rootText = response.getString("WRHS_PDA_setStatusResult");
+                        JSONObject jsonObject = new JSONObject(rootText);
+                        String rtext = jsonObject.getString("ERROR_CODE");
+                        if (!rtext.isEmpty()) {
+                            if (rtext.equals("-1")) {
+                                //Toast.makeText(context,"Státusz váltása sikeres: "+status+"!",Toast.LENGTH_LONG).show();
+                                if (status.equals("PDA")) {
+                                    new DeleteTempThread(context, tranCode, f).start();
+                                }
+                            } else {
 
-                            Toast.makeText(context,"Státusz váltása sikertelen, kérem jelezze a Selesternek!",Toast.LENGTH_LONG).show();
+                                Toast.makeText(context, "Státusz váltása sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
+                            }
+
+                        } else {
+                            Toast.makeText(context, "Státusz váltása sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
                         }
 
-                    }else{
-                        Toast.makeText(context,"Státusz váltása sikertelen, kérem jelezze a Selesternek!",Toast.LENGTH_LONG).show();
+
+                    } catch (JSONException e) {
+                        Toast.makeText(context, "Státusz váltása sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
                     }
 
 
-                } catch (JSONException e) {
-                    Toast.makeText(context,"Státusz váltása sikertelen, kérem jelezze a Selesternek!",Toast.LENGTH_LONG).show();
-                    e.printStackTrace();
                 }
-
-
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                if(error!=null){
-                    Toast.makeText(context,"Státusz váltása sikertelen, hálózati hiba!",Toast.LENGTH_LONG).show();
-                    error.printStackTrace();
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    if (error != null) {
+                        Toast.makeText(context, "Státusz váltása sikertelen, hálózati hiba!", Toast.LENGTH_LONG).show();
+                        error.printStackTrace();
+                    }
                 }
-            }
-        });
-        rq.add(jr);
+            });
+            rq.add(jr);
+        }
     }
 }

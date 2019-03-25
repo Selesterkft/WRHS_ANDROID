@@ -3,6 +3,8 @@ package hu.selester.android.webstockandroid.Helper;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipDescription;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.media.MediaPlayer;
@@ -347,5 +349,16 @@ public class HelperClass {
             return -1;
         }
     }
+
+    public static void setDrag(View view){
+        ClipData.Item item = new ClipData.Item((CharSequence) view.getTag());
+        String[] mimeTypes = {ClipDescription.MIMETYPE_TEXT_PLAIN};
+        ClipData data = new ClipData(view.getTag().toString(), mimeTypes, item);
+        View.DragShadowBuilder shadowBuilder = new View.DragShadowBuilder(view);
+        view.startDrag(data, shadowBuilder, view, 0);
+        view.setVisibility(View.INVISIBLE);
+
+    }
+
 
 }

@@ -84,7 +84,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     private String tranCode;
     private String tranID;
     private String movenum;
-    private int qNeed,qCurrent,qBarcode01,qMissing,qBarcode,qLineID,qRefLineID;
+    private int qNeed,qCurrent,qBarcode01,qMissing,qBarcode,qLineID,qRefLineID,qEvidNum,qTo_Place;
     private ImageButton saveDataBtn, lockBtn, selectBtn, flushBtn, createBtn;
     private Dialog popup = null;
     public ProgressBar uploadpbar;
@@ -94,10 +94,12 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     private TablePanel tablePanel;
     private int[] headerWidth;
     private String[] headerText;
-    private String reload;
+    private String reload, listFrom;
     private SelesterDatabase db;
     private ProgressDialog pd;
     private boolean closeMovesDialogRun;
+    private String resultText;
+    private List<String[]> rowTempData = new ArrayList<>();
 
     public static MovesSubTableFragment getInstance(Bundle args){
         MovesSubTableFragment f = new MovesSubTableFragment();
@@ -126,6 +128,8 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         qMissing    = HelperClass.getArrayPosition("Missing_Qty", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qLineID     = HelperClass.getArrayPosition("Line_ID", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qRefLineID  = HelperClass.getArrayPosition("Ref_Line_ID", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qEvidNum  = HelperClass.getArrayPosition("EvidNum", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qTo_Place  = HelperClass.getArrayPosition("To_Place", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         if(SessionClass.getParam(tranCode+"_Detail_TextBox_Needed_Qty_Index").equals("")){
             qNeed = 0;
         }else{
@@ -136,6 +140,8 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         }else{
             qCurrent = Integer.parseInt(SessionClass.getParam(tranCode+"_Detail_TextBox_Current_Qty_Index"));
         }
+
+        //Log.i("TAG",""+qCurrent+" - "+qNeed+" - "+qMissing);
         findRow = Integer.parseInt(SessionClass.getParam(tranCode+"_Line_TextBox_Find_Index"));
         rootView = inflater.inflate(R.layout.frg_movessub, container, false);
         functLayout = rootView.findViewById(R.id.movessub_tableRoot);
@@ -215,7 +221,14 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 if(HelperClass.isOnline(getContext())) {
                     KeyboardUtils.hideKeyboard(getActivity());
                     findValue.setText("");
-                    tablePanel.getAdapter().updateData(AllLinesData.getAllDataList());
+
+                    if (tranCode.charAt(0) == '3') {
+                        rowTempData = AllLinesData.getGroupByParam(qEvidNum, qNeed);
+                    }else{
+                        rowTempData = AllLinesData.getAllDataList();
+                    }
+
+                    tablePanel.getAdapter().updateData(rowTempData);
                 }else{
                     Toast.makeText(getContext(),"Hálózati hiba!",Toast.LENGTH_LONG).show();
                 }
@@ -271,6 +284,13 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
 
         findRow = Integer.parseInt(SessionClass.getParam(tranCode+"_Line_TextBox_Find_Index"));
         int size = db.sessionTempDao().getDataSize();
+
+        if (tranCode.charAt(0) == '3') {
+            rowTempData = AllLinesData.getGroupByParam(qEvidNum, qNeed);
+        }else{
+            rowTempData = AllLinesData.getAllDataList();
+        }
+
         if(reload != null && reload.equals("1") && size > 0){
             HelperClass.reloadTempSession(getContext(), columnName.length);
             Bundle b = new Bundle();
@@ -282,13 +302,13 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
             SharedPreferences sharedPref = getActivity().getPreferences(getContext().MODE_PRIVATE);
             String line = sharedPref.getString("whrs_selexped_currentLineID","");
             SessionClass.setParam("currentLineID",line);
-            tablePanel = new TablePanel(getContext(), rootView, R.id.moves_mainSubLayout, headerText, AllLinesData.getAllDataList(), headerWidth);
+            tablePanel = new TablePanel(getContext(), rootView, R.id.moves_mainSubLayout, headerText, rowTempData, headerWidth);
             createTablePanel();
         }else {
             if (AllLinesData.getLinesCount() > 0) {
                 new SaveCheckedDataThread(getContext()).start();
                 //CheckedList.toLogString();
-                tablePanel = new TablePanel(getContext(), rootView, R.id.moves_mainSubLayout, headerText, AllLinesData.getAllDataList(), headerWidth);
+                tablePanel = new TablePanel(getContext(), rootView, R.id.moves_mainSubLayout, headerText, rowTempData, headerWidth);
                 createTablePanel();
             } else {
 
@@ -475,7 +495,6 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     }
 
     private void refreshData(){
-
         new ChangeStatusThread(getContext(),"PDA_CHECKING", tranCode, tranID,this).start();
         String terminal = SessionClass.getParam("terminal");
         String pdaid = SessionClass.getParam("pdaid");
@@ -483,8 +502,15 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         String listviewwhere = "ID="+tranID;
         String listviewselect = SessionClass.getParam(tranCode+"_Line_ListView_SELECT");
         String listviewfrom = SessionClass.getParam(tranCode+"_Line_ListView_FROM");
-        String listvieworderby = SessionClass.getParam(tranCode+"_Line_ListView_ORDER_BY");;
-        String url = SessionClass.getParam("WSUrl")+"/getTaskLines/"+terminal+"/"+userid+"/"+pdaid+"/"+listviewselect+"/"+listviewfrom+"/"+listviewwhere+"/"+listvieworderby+"/"+tranCode;
+        String listvieworderby = SessionClass.getParam(tranCode+"_Line_ListView_ORDER_BY");
+        String url;
+        if(tranCode.charAt(0)=='3') {
+            url = SessionClass.getParam("WSUrl")+"/WRHS_PDA_XD_getTask/" + terminal + "/" + userid + "/" + tranID + "/" + pdaid + "/" + listviewselect + "/" + listviewfrom + "/nothing/" + listvieworderby;
+            resultText = "WRHS_PDA_XD_getTaskResult";
+        }else{
+            url = SessionClass.getParam("WSUrl")+"/getTaskLines/"+terminal+"/"+userid+"/"+pdaid+"/"+listviewselect+"/"+listviewfrom+"/"+listviewwhere+"/"+listvieworderby+"/"+tranCode;
+            resultText = "getTaskLinesResult";
+        }
         Log.i("URL",url);
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
         JSONObject jsonObject=null;
@@ -495,7 +521,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 try {
                     AllLinesData.delParams();
                     List<String[]> tl = new ArrayList<>();
-                    String rootText=response.getString("getTaskLinesResult");
+                    String rootText=response.getString(resultText);
                     JSONArray jsonArray = new JSONArray(rootText);
                     for(int i=0;i<jsonArray.length();i++){
                         JSONObject jsonObj = jsonArray.getJSONObject(i);
@@ -509,13 +535,22 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                                 if( columnName[j].equals("To_Place") || columnName[j].equals("Barcode01") || columnName[j].equals("Barcode02")) {
                                     dataText[j] = "";
                                 }
+                                if( columnName[j].equals("Needed_Qty") || columnName[j].equals("Current_Qty")) {
+                                    dataText[j] = "0";
+                                }
                             }
                         }
                         Log.i("TAG", Arrays.toString(dataText));
                         AllLinesData.setParam(dataText[0],dataText);
                         tl.add(dataText);
                     }
-                    tablePanel = new TablePanel(getContext(), rootView, R.id.moves_mainSubLayout, headerText, tl,headerWidth);
+                    if (tranCode.charAt(0) == '3') {
+                        rowTempData = AllLinesData.getGroupByParam(qEvidNum, qNeed);
+                    }else{
+                        rowTempData = AllLinesData.getAllDataList();
+                    }
+
+                    tablePanel = new TablePanel(getContext(), rootView, R.id.moves_mainSubLayout, headerText, rowTempData,headerWidth);
                     SharedPreferences sharedPref = getActivity().getPreferences(getContext().MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putString("whrs_selexped_tranID", tranID);
@@ -582,8 +617,12 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
             }
         });
         List<TablePanel.RowSetting> rowSettingsList = new ArrayList<>();
-
-        List<String[]> rowData = AllLinesData.getAllDataList();
+        List<String[]> rowData;
+        if (tranCode.charAt(0) == '3') {
+            rowData = AllLinesData.getGroupByParam(qEvidNum, qNeed);
+        }else{
+            rowData = AllLinesData.getAllDataList();
+        }
         for(int rowCount=0; rowCount<rowData.size(); rowCount++){
             TablePanel.RowSetting rowSetting = tablePanel.getRowSettingInstance();
             if (!rowData.get(rowCount)[qCurrent].equals("0")){
@@ -779,7 +818,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
 
     void placeDialog(final String id) {
         AllLinesData.toStringLog();
-        if (AllLinesData.getParam(id)[10].equals("") || AllLinesData.getParam(id)[10].isEmpty()) {
+        if (AllLinesData.getParam(id)[qTo_Place].equals("") || AllLinesData.getParam(id)[qTo_Place].isEmpty()) {
             KeyboardUtils.showKeyboard(getActivity());
             AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
             View v = getLayoutInflater().inflate(R.layout.dialog_place_number, null);
@@ -854,7 +893,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
             popup.setTitle("Rakhely megadása");
             popup.show();
         } else {
-            SessionClass.setParam("currentPlace", AllLinesData.getParam(id)[10]);
+            SessionClass.setParam("currentPlace", AllLinesData.getParam(id)[qTo_Place]);
             KeyboardUtils.hideKeyboard(getActivity());
             loadScanCount(id);
         }
@@ -903,11 +942,16 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 String mode = "";
                 if (tranCode.charAt(0) == '1') mode = "Áruátvétel";
                 if (tranCode.charAt(0) == '2') mode = "Árukiadás";
+                if (tranCode.charAt(0) == '3') mode = "CrossDock";
                 if (tranCode.charAt(0) == '5') mode = "Szedés";
                 db.sessionTempDao().deleteAllData();
                 SessionClass.setParam("currentLineID", "");
                 KeyboardUtils.hideKeyboard(getActivity());
-                new ChangeStatusThread(getContext(), "PDA", tranCode, tranID, frg).start();
+                if(tranCode.charAt(0)=='3') {
+                    getActivity().getSupportFragmentManager().popBackStack();
+                }else {
+                    new ChangeStatusThread(getContext(), "PDA", tranCode, tranID, frg).start();
+                }
             }
         });
         builder.setNegativeButton("Nem lépek ki", new DialogInterface.OnClickListener() {
@@ -1068,7 +1112,14 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                                 Log.i("TAG", st.get(i).getId() + " - " + st.get(i).getNum());
                             }
                             AllLinesData.insertParam(AllLinesData.getRowCount(oldRow[0]) + 1, newRow[0], newRow);
-                            tablePanel = new TablePanel(getContext(), rootView, R.id.moves_mainSubLayout, headerText, AllLinesData.getAllDataList(), headerWidth);
+
+                            if (tranCode.charAt(0) == '3') {
+                                rowTempData = AllLinesData.getGroupByParam(qEvidNum, qNeed);
+                            }else{
+                                rowTempData = AllLinesData.getAllDataList();
+                            }
+
+                            tablePanel = new TablePanel(getContext(), rootView, R.id.moves_mainSubLayout, headerText, rowTempData, headerWidth);
                             createTablePanel();
                             tablePanel.getAdapter().setCheckedArray(AllLinesData.findPosition(SessionClass.getParam("currentLineID")));
                             tablePanel.smoothScrollToPosition(pos);

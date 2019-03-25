@@ -157,7 +157,7 @@
     <LinearLayout
         android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="80dp"
         android:paddingBottom="6dp"
         android:orientation="horizontal">
         <ImageButton

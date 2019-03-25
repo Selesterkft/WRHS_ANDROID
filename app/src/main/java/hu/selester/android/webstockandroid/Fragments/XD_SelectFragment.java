@@ -4,16 +4,15 @@ import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -34,12 +33,16 @@ import hu.selester.android.webstockandroid.Objects.DefaultTextWatcher;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 
-public class CrossDockSelectFragment extends Fragment {
+public class XD_SelectFragment extends Fragment {
 
     private View rootView;
     private ProgressDialog pd;
     private TextView licencNum, sumWeight, sumCount;
     private EditText rampNum, orderId;
+    private ImageView exitBtn, searchBtn, nextBtn;
+    private int qBreak, qCollection;
+    private String[] arrayBtnVisibility;
+    private boolean selected;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -50,11 +53,15 @@ public class CrossDockSelectFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        selected = false;
         rootView = inflater.inflate(R.layout.frg_crossdockselect, container, false);
         licencNum = rootView.findViewById(R.id.cd_licencenum);
         sumCount = rootView.findViewById(R.id.cd_sumcount);
         sumWeight = rootView.findViewById(R.id.cd_sumweight);
         orderId = rootView.findViewById(R.id.cd_orderid);
+        exitBtn = rootView.findViewById(R.id.cd_exit);
+        searchBtn = rootView.findViewById(R.id.cd_search_icon);
+        nextBtn =  rootView.findViewById(R.id.cd_next);
         orderId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,12 +81,24 @@ public class CrossDockSelectFragment extends Fragment {
                 return false;
             }
         });
+        nextBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                setRampNum();
+            }
+        });
         orderId.addTextChangedListener(new DefaultTextWatcher(orderId, new DefaultTextWatcher.TextChangedEvent() {
             @Override
             public void Changed() {
                 getTaskData();
             }
         }));
+        exitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
         rampNum = rootView.findViewById(R.id.cd_rampnum);
         rampNum.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,11 +124,29 @@ public class CrossDockSelectFragment extends Fragment {
                 setRampNum();
             }
         }));
-        getTaskData();
+        searchBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                getTaskData();
+            }
+        });
         return rootView;
     }
 
     private void setRampNum() {
+        Fragment f = new MovesSubTableFragment();
+        //Fragment f = new XD_ItemParametersFragment();
+        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+        Bundle b = new Bundle();
+        b.putString("tranid", orderId.getText().toString());
+        b.putString("movenum", "");
+        b.putString("tranCode", "31");
+        b.putString("reload", "0");
+        f.setArguments(b);
+        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+        ft.replace(R.id.fragments, f);
+        ft.addToBackStack("app");
+        ft.commit();
     }
 
     void getTaskData(){
@@ -153,5 +190,26 @@ public class CrossDockSelectFragment extends Fragment {
         });
         jr.setRetryPolicy(new DefaultRetryPolicy(50000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         rq.add(jr);
+        String tranCode = "31";
+        if(SessionClass.getParam(tranCode + "_Detail_Button_IsVisible") != null) {
+            arrayBtnVisibility = SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").split(",");
+            qBreak = HelperClass.getArrayPosition("break", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+            qCollection = HelperClass.getArrayPosition("collection", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+
+            if (qBreak > -1) {
+                SessionClass.setParam("breakBtn", arrayBtnVisibility[qBreak]);
+            } else {
+                SessionClass.setParam("breakBtn", "0");
+            }
+            if (qCollection > -1) {
+                SessionClass.setParam("collectionBtn", arrayBtnVisibility[qCollection]);
+            } else {
+                SessionClass.setParam("collectionBtn", "0");
+            }
+        }else{
+            SessionClass.setParam("breakBtn", "0");
+            SessionClass.setParam("collectionBtn", "0");
+        }
+
     }
 }

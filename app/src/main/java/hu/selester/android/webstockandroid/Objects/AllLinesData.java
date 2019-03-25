@@ -321,6 +321,28 @@ public class AllLinesData {
         return false;
     }
 
+    public static List<String[]> getGroupByParam(int qGroupBy, int sumItemId){
+        Map<String, String[]> newParams = new LinkedHashMap<>();
+        Log.i("TAG","MAP size: "+params.size());
+        for (Map.Entry<String, String[]> entry : params.entrySet()) {
+            if( newParams.get(entry.getValue()[qGroupBy]) == null ){
+                newParams.put(entry.getValue()[qGroupBy],entry.getValue());
+            }else{
+                try {
+                    entry.getValue()[sumItemId] = String.valueOf( Integer.parseInt(entry.getValue()[sumItemId]) + Integer.parseInt(entry.getValue()[sumItemId]) );
+                    newParams.put(entry.getValue()[qGroupBy], entry.getValue());
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
 
+            }
+
+        }
+        String str="";
+        for (Map.Entry<String, String[]> entry : newParams.entrySet()) {
+            Log.i("MAP_LIST",entry.getKey() + " : " + Arrays.toString(entry.getValue()));
+        }
+        return new ArrayList<>(newParams.values());
+    }
 
 }
