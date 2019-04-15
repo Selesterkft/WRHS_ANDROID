@@ -72,7 +72,6 @@ public class TablePanelAdapter extends RecyclerView.Adapter<TablePanelAdapter.Vi
         if(tranCode != null) {
             try {
                 if (SessionClass.getParam("tranCode") != null && !SessionClass.getParam("tranCode").equals("")) {
-                    Log.i("TAG", "" + tranCode + "_Detail_TextBox_Needed_Qty_Index");
                     if (SessionClass.getParam(tranCode + "_Detail_TextBox_Needed_Qty_Index").equals("")) {
                         qNeed = 0;
                     } else {
@@ -101,7 +100,6 @@ public class TablePanelAdapter extends RecyclerView.Adapter<TablePanelAdapter.Vi
         if(tablePanelSetting.isCheckable()){
             CheckBox checkBox = new CheckBox(context);
             checkBox.setId(R.dimen.tablepanel_row_checkBox);
-            Log.i("TAG","CREATE CHECKBOX");
             if(tablePanelSetting.getOnRowClickListener() != null) checkBox.setOnClickListener(tablePanelSetting.getOnRowClickListener());
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
 

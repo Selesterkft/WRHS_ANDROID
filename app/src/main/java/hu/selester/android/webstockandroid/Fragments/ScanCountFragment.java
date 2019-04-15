@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +47,7 @@ import hu.selester.android.webstockandroid.Objects.ActiveFragment;
 import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.CheckedList;
 import hu.selester.android.webstockandroid.Objects.CustomTextWatcher;
+import hu.selester.android.webstockandroid.Objects.InsertedList;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.Threads.SaveCheckedDataThread;
@@ -230,6 +232,22 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             TextView textLabel1 = rootView.findViewById(R.id.scancount_textLabel1);
             TextView textLabel2 = rootView.findViewById(R.id.scancount_textLabel2);
             TextView textLabel3 = rootView.findViewById(R.id.scancount_textLabel3);
+            ImageView takePhotoBtn = rootView.findViewById(R.id.scancount_photo);
+            LinearLayout marBtn = rootView.findViewById(R.id.scancount_mar);
+
+            if( SessionClass.getParam("takePhotoBtn").equals("1") ){
+                takePhotoBtn.setVisibility(View.VISIBLE);
+                takePhotoBtn.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        SessionClass.setParam("selectLineID",lineID);
+                        getActivity().getSupportFragmentManager().beginTransaction().add(R.id.fragments, new PhotoFragment()).addToBackStack("app").commit();
+                    }
+                });
+            } else { takePhotoBtn.setVisibility(View.GONE); }
+            if( SessionClass.getParam("marBtn").equals("1") ){ marBtn.setVisibility(View.VISIBLE); } else { marBtn.setVisibility(View.GONE); }
+
+
             getTextDataValue3 = rootView.findViewById(R.id.scancount_data3_value);
             String[] labelArray = (SessionClass.getParam(tranCode + "_Detail_Label_Info_Names")).split(",", -1);
             textLabel1.setText(labelArray[0]);
@@ -249,7 +267,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             addBtn.setOnClickListener(this);
 
             findValue.addTextChangedListener(textWatcher);
-            Button goBackBtn = rootView.findViewById(R.id.scancount_goback);
+            ImageView goBackBtn = rootView.findViewById(R.id.scancount_exit);
             goBackBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -814,7 +832,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
 
     private void refreshPlaceCounter(){
         CheckedList.setParamItem(lineID,1);
-        Log.i("TAG",CheckedList.getParam().toString());
         try {
             if (tranCode.charAt(0) == '1') {
                 headerText.setText("Ellenőrzés / " + AllLinesData.getPlaceCount(qTo_Place, qCurrent, SessionClass.getParam("currentPlace")));

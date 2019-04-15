@@ -2,7 +2,10 @@
 <android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingDefaultResource"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <TextView
         android:id="@+id/scancount_headertext"
@@ -21,13 +24,13 @@
 
     <LinearLayout
         android:id="@+id/scancount_subHeadText1"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:background="@color/colorPrimary"
         android:orientation="horizontal"
         android:textColor="@color/whiteColor"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/layout_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scancount_headertext">
 
@@ -53,12 +56,12 @@
 
     <LinearLayout
         android:id="@+id/scancount_subHeadText2"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:background="@color/colorPrimary"
         android:orientation="horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/layout_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scancount_subHeadText1">
 
@@ -84,13 +87,13 @@
 
     <LinearLayout
         android:id="@+id/scancount_subHeadText3"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:orientation="horizontal"
         android:textColor="@color/whiteColor"
         android:background="@color/colorPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/layout_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scancount_subHeadText2">
         <TextView
@@ -115,13 +118,13 @@
     </LinearLayout>
     <LinearLayout
         android:id="@+id/scancount_subHeadText4"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:orientation="horizontal"
         android:textColor="@color/whiteColor"
         android:background="@color/colorPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/layout_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scancount_subHeadText3">
         <TextView
@@ -146,13 +149,13 @@
     </LinearLayout>
     <LinearLayout
         android:id="@+id/scancount_subHeadText5"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:visibility="gone"
         android:orientation="horizontal"
         android:textColor="@color/whiteColor"
         android:background="@color/colorPrimary"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/layout_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scancount_subHeadText4">
         <TextView
@@ -178,7 +181,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout5"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_margin="10dp"
         android:layout_marginStart="8dp"
@@ -186,7 +189,7 @@
         android:layout_marginEnd="8dp"
         android:orientation="horizontal"
         android:paddingBottom="7dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/layout_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/scancount_subHeadText5">
 
@@ -221,10 +224,10 @@
     </LinearLayout>
 
     <ScrollView
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout6"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/layout_back"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
 
@@ -598,65 +601,79 @@
         </LinearLayout>
 
     </ScrollView>
+    <LinearLayout
+        android:id="@+id/layout_back"
+        android:layout_width="70dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/colorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/scancount_headertext"/>
 
     <LinearLayout
-        android:id="@+id/linearLayout6"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout7"
+        android:id="@+id/scancount_mar"
+        android:layout_width="70dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center_horizontal|bottom"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
+        app:layout_constraintBottom_toTopOf="@id/scancount_photo">
         <Button
             android:id="@+id/scancount_removeBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:backgroundTint="@color/secondColor"
             android:text="-"
             android:textColor="@color/whiteColor"
-            android:textSize="42sp" />
+            android:textSize="30sp" />
 
         <EditText
             android:id="@+id/scancount_count"
-            android:layout_width="80dp"
-            android:layout_height="match_parent"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:gravity="center"
             android:inputType="number"
-            android:maxLines="1"
+            android:textColor="@color/whiteColor"
+            android:backgroundTint="@color/whiteColor"
             android:text="1"
             android:textSize="28dp"
             android:textStyle="bold" />
 
         <Button
             android:id="@+id/scancount_addBtn"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
             android:backgroundTint="@color/secondColor"
             android:text="+"
             android:textColor="@color/whiteColor"
-            android:textSize="42sp" />
+            android:textSize="30sp" />
     </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linearLayout7"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <ImageButton
+        android:src="@drawable/but_photo_44x44"
+        android:background="@null"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        android:id="@+id/scancount_photo"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="5dp"
+        android:text="ElDOBÁS"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-
-        <Button
-            android:id="@+id/scancount_goback"
-            android:layout_width="wrap_content"
-
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:backgroundTint="@color/secondColor"
-            android:text="Vissza"
-            android:textColor="@color/whiteColor" />
-    </LinearLayout>
+        app:layout_constraintBottom_toTopOf="@id/scancount_exit" android:layout_marginBottom="5dp" />
+    <ImageButton
+        android:src="@drawable/but_cancel_44x44"
+        android:background="@null"
+        android:padding="0dp"
+        android:scaleType="fitCenter"
+        android:id="@+id/scancount_exit"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="5dp"
+        android:text="ElDOBÁS"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent" android:layout_marginBottom="5dp" />
 
 </android.support.constraint.ConstraintLayout>

@@ -1,10 +1,12 @@
 package hu.selester.android.webstockandroid.Fragments;
 
 import android.app.ProgressDialog;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
@@ -26,9 +29,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
+import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.DefaultTextWatcher;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
@@ -37,12 +48,14 @@ public class XD_SelectFragment extends Fragment {
 
     private View rootView;
     private ProgressDialog pd;
-    private TextView licencNum, sumWeight, sumCount;
+    private TextView licencNum, sumWeight, sumCount, fp_text, fromPlaceTV;
     private EditText rampNum, orderId;
     private ImageView exitBtn, searchBtn, nextBtn;
     private int qBreak, qCollection;
     private String[] arrayBtnVisibility;
     private boolean selected;
+    private String tranCode;
+    String fromPlaces = "";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,15 +66,20 @@ public class XD_SelectFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        selected = false;
-        rootView = inflater.inflate(R.layout.frg_crossdockselect, container, false);
+        tranCode  = String.valueOf(getArguments().getInt("tranCode",0));
+        selected  = false;
+        rootView  = inflater.inflate(R.layout.frg_crossdockselect, container, false);
         licencNum = rootView.findViewById(R.id.cd_licencenum);
-        sumCount = rootView.findViewById(R.id.cd_sumcount);
+        sumCount  = rootView.findViewById(R.id.cd_sumcount);
         sumWeight = rootView.findViewById(R.id.cd_sumweight);
-        orderId = rootView.findViewById(R.id.cd_orderid);
-        exitBtn = rootView.findViewById(R.id.cd_exit);
+        orderId   = rootView.findViewById(R.id.cd_orderid);
+        exitBtn   = rootView.findViewById(R.id.cd_exit);
         searchBtn = rootView.findViewById(R.id.cd_search_icon);
-        nextBtn =  rootView.findViewById(R.id.cd_next);
+        nextBtn   =  rootView.findViewById(R.id.cd_next);
+
+        fp_text =  rootView.findViewById(R.id.cp_fp_text);
+        fromPlaceTV =  rootView.findViewById(R.id.cd_fp);
+        AllLinesData.clearDatas();
         orderId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -71,7 +89,6 @@ public class XD_SelectFragment extends Fragment {
         orderId.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View v, int keyCode, KeyEvent event) {
-                Log.i("TAG", keyCode + " - " + KeyEvent.KEYCODE_ENTER);
                 if (event.getAction()!=KeyEvent.ACTION_DOWN) return true;
                 if(keyCode == KeyEvent.KEYCODE_ENTER){
                     getTaskData();
@@ -81,6 +98,10 @@ public class XD_SelectFragment extends Fragment {
                 return false;
             }
         });
+        orderId.setText("");
+        rootView.findViewById(R.id.cd_datacontainer).setVisibility(View.GONE);
+        rootView.findViewById(R.id.textInputLayout3).setVisibility(View.GONE);
+
         nextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,6 +114,7 @@ public class XD_SelectFragment extends Fragment {
                 getTaskData();
             }
         }));
+        orderId.requestFocus();
         exitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -134,19 +156,25 @@ public class XD_SelectFragment extends Fragment {
     }
 
     private void setRampNum() {
-        Fragment f = new MovesSubTableFragment();
-        //Fragment f = new XD_ItemParametersFragment();
-        FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-        Bundle b = new Bundle();
-        b.putString("tranid", orderId.getText().toString());
-        b.putString("movenum", "");
-        b.putString("tranCode", "31");
-        b.putString("reload", "0");
-        f.setArguments(b);
-        ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-        ft.replace(R.id.fragments, f);
-        ft.addToBackStack("app");
-        ft.commit();
+        if( rootView.findViewById(R.id.textInputLayout3).getVisibility() == View.VISIBLE && !rampNum.getText().toString().equals("") ) {
+            Fragment f = new MovesSubTableFragment();
+            //Fragment f = new XD_ItemParametersFragment();
+            FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
+            Bundle b = new Bundle();
+            SessionClass.setParam("ORD_NUM", orderId.getText().toString());
+            b.putString("tranid", orderId.getText().toString());
+            b.putString("movenum", "");
+            b.putString("tranCode", tranCode);
+            b.putString("reload", "0");
+            f.setArguments(b);
+            ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
+            ft.replace(R.id.fragments, f);
+            ft.addToBackStack("app");
+            KeyboardUtils.hideKeyboard(getActivity());
+            ft.commit();
+        }else{
+            Toast.makeText(getContext(),"Nincs rámpaszám meghatározva!",Toast.LENGTH_LONG).show();
+        }
     }
 
     void getTaskData(){
@@ -155,7 +183,12 @@ public class XD_SelectFragment extends Fragment {
         String userid = SessionClass.getParam("userid");
         //String ordid = "1116323141";
         String ordid = orderId.getText().toString();
-        String url = SessionClass.getParam("WSUrl")+"/WRHS_PDA_XD_getTask/" + terminal + "/" + userid + "/" + ordid + "/" + pdaid + "/License_Num,Weight,Pcs/WRHS_PDA_XD_INSTRUCTIONS/nothing/ord_num";
+        String url;
+        if( tranCode.charAt(0)=='3') {
+            url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_XD_getTask/" + terminal + "/" + userid + "/" + ordid + "/" + tranCode + "/" + pdaid + "/License_Num,Weight,Needed_Qty/WRHS_PDA_XD_INSTRUCTIONS/nothing/ord_num";
+        }else{
+            url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_XD_getTask/" + terminal + "/" + userid + "/" + ordid + "/" + tranCode + "/" + pdaid + "/License_Num,Weight,Needed_Qty,from_Place/WRHS_PDA_XD_INSTRUCTIONS/nothing/from_place";
+        }
         Log.i("URL",url);
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
         pd = HelperClass.loadingDialogOn(getActivity());
@@ -167,14 +200,39 @@ public class XD_SelectFragment extends Fragment {
                     JSONArray jsonArray = new JSONArray(rootText);
                     int colli = 0;
                     int w = 0;
+                    Set<String> fp = new HashSet<>();
                     for(int i=0; i < jsonArray.length(); i++){
                         w += jsonArray.getJSONObject(i).getInt("Weight");
-                        colli += jsonArray.getJSONObject(i).getInt("Pcs");
+                        colli += jsonArray.getJSONObject(i).getInt("Needed_Qty");
+                        if( tranCode.charAt(0) == '4' ) {
+                            if (!jsonArray.getJSONObject(i).getString("from_Place").equals("")) {
+                                fp.add(jsonArray.getJSONObject(i).getString("from_Place"));
+
+                            }
+                        }
+                    }
+
+                    if( tranCode.charAt(0) == '4' ) {
+                        fromPlaces = Arrays.toString( fp.toArray() );
+                        Log.i("TAG",fromPlaces);
+                        fp_text.setVisibility(View.VISIBLE);
+                        fromPlaceTV.setVisibility(View.VISIBLE);
+                        fromPlaces = fromPlaces.substring(1,fromPlaces.length()-1);
+                        fromPlaceTV.setText(fromPlaces);
+                    } else {
+                        fp_text.setVisibility(View.GONE);
+                        fromPlaceTV.setVisibility(View.GONE);
                     }
                     licencNum.setText(jsonArray.getJSONObject(0).getString("License_Num"));
                     sumCount.setText("" + colli + " colli");
                     sumWeight.setText("" + w + " kg");
+                    rootView.findViewById(R.id.cd_datacontainer).setVisibility(View.VISIBLE);
+                    rootView.findViewById(R.id.textInputLayout3).setVisibility(View.VISIBLE);
+                    rampNum.setText("");
+                    rampNum.requestFocus();
+                    KeyboardUtils.hideKeyboard(getActivity());
                 } catch (JSONException e) {
+                    Toast.makeText(getContext(),"Nincs adat ehhez a feladatkódhoz!",Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
                 pd.dismiss();
@@ -190,7 +248,6 @@ public class XD_SelectFragment extends Fragment {
         });
         jr.setRetryPolicy(new DefaultRetryPolicy(50000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         rq.add(jr);
-        String tranCode = "31";
         if(SessionClass.getParam(tranCode + "_Detail_Button_IsVisible") != null) {
             arrayBtnVisibility = SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").split(",");
             qBreak = HelperClass.getArrayPosition("break", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
@@ -210,6 +267,5 @@ public class XD_SelectFragment extends Fragment {
             SessionClass.setParam("breakBtn", "0");
             SessionClass.setParam("collectionBtn", "0");
         }
-
     }
 }

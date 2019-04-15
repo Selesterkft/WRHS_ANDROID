@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingDefaultResource"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -25,7 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="40dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="10dp"
         android:layout_marginEnd="40dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,8 +37,12 @@
             android:id="@+id/cd_orderid"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:text="1116323141"
+            android:text=""
             android:hint="Feladat kódja"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:ellipsize="end"
             android:textAlignment="center"
             android:textSize="22sp" />
     </android.support.design.widget.TextInputLayout>
@@ -102,6 +108,30 @@
             app:layout_constraintTop_toTopOf="@+id/textView5" />
 
         <TextView
+            android:id="@+id/cp_fp_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:text="Tárhely:"
+            android:textSize="18sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView5" />
+
+        <TextView
+            android:id="@+id/cd_fp"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:text="0001"
+            android:layout_marginEnd="5dp"
+            android:textSize="18sp"
+            app:layout_constraintStart_toEndOf="@+id/textView5"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/cp_fp_text" />
+
+
+        <TextView
             android:id="@+id/textView8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -110,7 +140,7 @@
             android:text="Összmennyiség:"
             android:textSize="18sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textView5" />
+            app:layout_constraintTop_toBottomOf="@id/cd_fp" />
 
         <TextView
             android:id="@+id/cd_sumcount"
@@ -162,6 +192,10 @@
             android:layout_height="match_parent"
             android:hint="Rámpaszám"
             android:textAlignment="center"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:scrollHorizontally="true"
+            android:ellipsize="end"
             android:textSize="22sp" />
     </android.support.design.widget.TextInputLayout>
 

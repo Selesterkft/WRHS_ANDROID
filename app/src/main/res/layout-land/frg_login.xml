@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingDefaultResource"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/login_back">
+    <LinearLayout
+        android:id="@+id/headerLayout"
+        android:layout_width="300dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical|center_horizontal"
+        android:orientation="vertical"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <TextView
+            android:id="@+id/textView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="Üdvözöljük"
+            android:textColor="@color/whiteColor"
+            android:shadowColor="@color/blackColor"
+            style="@style/login_text_shadow"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.502"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:shadowColor="@color/blackColor"
+            style="@style/login_text_shadow"
+            android:gravity="center"
+            android:text="A Selester Kft. által biztosított Selexped alkalmazás minden funkciójának eléréséhez először be kell jelentkeznie."
+            android:textColor="@color/whiteColor"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView4" />
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toEndOf="@id/headerLayout"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="70dp">
+
+        <RelativeLayout
+            android:id="@+id/login_ed_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+            <ImageView
+                android:id="@+id/login_logo"
+                android:layout_width="65dp"
+                android:layout_height="65dp"
+                android:layout_marginLeft="40dp"
+                android:src="@drawable/login_logo_btn"
+                android:elevation="10dp"/>
+
+            <EditText
+                android:id="@+id/login_account"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="12dp"
+                android:elevation="5dp"
+                android:background="@drawable/logintext_et_shape"
+                android:ems="10"
+                android:gravity="center"
+                android:hint="@string/accountText"
+                android:inputType="textPersonName"
+                android:textColor="@color/blackColor"
+                android:textSize="15sp"
+                 />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/login_password_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@+id/login_ed_layout">
+            <ImageView
+                android:id="@+id/show_hide_password"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_alignRight="@+id/login_password"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/password_show_eye"
+                android:elevation="10dp"/>
+            <EditText
+                android:id="@+id/login_password"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/logintext_et_shape"
+                android:ems="10"
+                android:gravity="center"
+                android:hint="@string/passwordText"
+                android:inputType="textPassword"
+                android:textColor="@color/blackColor"
+                android:textSize="15sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                />
+        </RelativeLayout>
+        <RelativeLayout
+            android:id="@+id/login_btn_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@+id/login_password_layout">
+            <ImageView
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_marginLeft="40dp"
+                android:src="@drawable/login_logo_btn"
+                android:elevation="10dp"
+                android:visibility="gone"/>
+            <Button
+                android:id="@+id/login_btn"
+                android:elevation="5dp"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/login_btn_shape"
+                android:text="@string/belepes"
+                android:textColor="@color/whiteColor"
+                android:tooltipText="PROBA" >
+
+
+            </Button>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/login_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/login_btn_layout" />
+
+        <ImageView
+            android:id="@+id/login_settingBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="8dp"
+            android:contentDescription="@string/loginsetting"
+            android:src="@drawable/settings_icon"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/login_btn_layout" />
+
+        <TextView
+            android:id="@+id/login_version"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="24dp"
+            android:layout_marginStart="24dp"
+            android:gravity="center"
+            android:textColor="@color/ltGrayColor"
+            android:text="Verzió: 1.0"
+            android:textSize="14sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+    </ScrollView>
+</android.support.constraint.ConstraintLayout>

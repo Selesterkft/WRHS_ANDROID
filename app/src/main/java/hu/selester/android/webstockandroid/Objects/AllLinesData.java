@@ -73,8 +73,7 @@ public class AllLinesData {
 
     public static void toStringLog(){
         String str="";
-        for (Map.Entry<String, String[]> entry : params.entrySet())
-        {
+        for (Map.Entry<String, String[]> entry : params.entrySet()) {
             Log.i("MAP_LIST",entry.getKey() + " : " + Arrays.toString(entry.getValue()));
         }
     }
@@ -116,12 +115,22 @@ public class AllLinesData {
         return hit;
     }
 
+    public static List<String[]> findItemsFromMap(String find, int itemNum) {
+        List<String[]> result = new ArrayList<>();
+        for (Map.Entry<String, String[]> entry : params.entrySet()) {
+            String value = entry.getValue()[itemNum];
+            if (value.equals(find)) {
+                result.add(entry.getValue());
+            }
+        }
+        return result;
+    }
+
     public static List<String[]> getAllDataList(){
         return new ArrayList<String[]>(params.values());
     }
 
     public static void setItemParams(String id, int position, String value){
-        Log.i("TAG", "setItemParams: " + id + ", " + position + ", " + value);
         String[] strArray = params.get(id);
         strArray[position] = value;
         params.put(id,strArray);
@@ -194,7 +203,6 @@ public class AllLinesData {
     }
 
     public  static void setParamsPosition(int checkValuePosition, int insertPosition, String checkData, String insertData){
-        Log.i("TAG", "setParamsPosition: "+checkValuePosition+", "+insertPosition+", "+checkData+", "+insertData);
         for (Map.Entry<String, String[]> entry : params.entrySet()) {
             try {
 
@@ -321,28 +329,48 @@ public class AllLinesData {
         return false;
     }
 
-    public static List<String[]> getGroupByParam(int qGroupBy, int sumItemId){
+    public static List<String[]> getGroupByParam(int qGroupBy, int sumItemId, int currentId, int missingId){
         Map<String, String[]> newParams = new LinkedHashMap<>();
-        Log.i("TAG","MAP size: "+params.size());
         for (Map.Entry<String, String[]> entry : params.entrySet()) {
+            String[] data = new String[entry.getValue().length];
+            for(int i=0 ; i< entry.getValue().length ;i++){
+                data[i] = entry.getValue()[i];
+            }
             if( newParams.get(entry.getValue()[qGroupBy]) == null ){
-                newParams.put(entry.getValue()[qGroupBy],entry.getValue());
+                newParams.put(entry.getValue()[qGroupBy], data);
             }else{
                 try {
-                    entry.getValue()[sumItemId] = String.valueOf( Integer.parseInt(entry.getValue()[sumItemId]) + Integer.parseInt(entry.getValue()[sumItemId]) );
-                    newParams.put(entry.getValue()[qGroupBy], entry.getValue());
+                    data[sumItemId] = String.valueOf( Integer.parseInt(newParams.get(entry.getValue()[qGroupBy])[sumItemId]) + Integer.parseInt(entry.getValue()[sumItemId]) );
+                    data[currentId] = String.valueOf( Integer.parseInt(newParams.get(entry.getValue()[qGroupBy])[currentId]) + Integer.parseInt(entry.getValue()[currentId]) );
+                    data[missingId] = String.valueOf( Integer.parseInt(data[sumItemId]) - Integer.parseInt(data[currentId]) );
+                    newParams.put(entry.getValue()[qGroupBy], data);
                 }catch (Exception e){
                     e.printStackTrace();
                 }
-
             }
+        }
 
-        }
-        String str="";
-        for (Map.Entry<String, String[]> entry : newParams.entrySet()) {
-            Log.i("MAP_LIST",entry.getKey() + " : " + Arrays.toString(entry.getValue()));
-        }
         return new ArrayList<>(newParams.values());
+    }
+
+    public static void clearDatas(){
+        params.clear();
+    }
+
+    public static void delRow(String key){
+        params.remove(key);
+    }
+
+    public static Map<String,String> getItemsCol(int key, int qEvidNum, String evidNum){
+        Map<String,String> result = new LinkedHashMap<>();
+        for (Map.Entry<String, String[]> entry : params.entrySet()) {
+            if( !entry.getValue()[key].equals("") ){
+                if( entry.getValue()[qEvidNum].equals(evidNum) ) {
+                    result.put(entry.getValue()[key], "1");
+                }
+            }
+        }
+        return result;
     }
 
 }

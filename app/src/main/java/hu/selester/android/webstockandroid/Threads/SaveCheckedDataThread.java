@@ -27,6 +27,7 @@ import hu.selester.android.webstockandroid.Helper.MySingleton;
 import hu.selester.android.webstockandroid.Objects.ActiveFragment;
 import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.CheckedList;
+import hu.selester.android.webstockandroid.Objects.InsertedList;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 
 public class SaveCheckedDataThread extends Thread{
@@ -35,22 +36,28 @@ public class SaveCheckedDataThread extends Thread{
     private Boolean mainSave;
     private int maxCount = 100;
     private List<String[]> datas;
+    private int qLineID, qRefLineID, qHeadID;
+    private String tranCode;
     private SelesterDatabase db;
 
     public SaveCheckedDataThread( Context context) {
         this.context = context;
         this.mainSave = false;
+        tranCode    = SessionClass.getParam("tranCode");
+        qLineID     = HelperClass.getArrayPosition("Line_ID",       SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qRefLineID  = HelperClass.getArrayPosition("Ref_Line_ID",   SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qHeadID     = HelperClass.getArrayPosition("Head_ID",       SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+
     }
 
     @Override
     public void run() {
+        Log.i("TAG", "SaveCheckedData");
         db = SelesterDatabase.getDatabase(context);
         datas = AllLinesData.getAllDataList();
         String str="";
-        String tranCode = "";
         String headID = "";
         int count = 0;
-        Log.i("TAG","SaveCheckedDataThread");
         //LogTable log = new LogTable(LogTable.LogType_Message,"SaveCheckedThread","","LOGUSER",null,null);
         for (Map.Entry<String, Integer> entry : CheckedList.getParam().entrySet()) {
             if (entry.getValue() == 1 || entry.getValue() == 2) {
@@ -58,13 +65,16 @@ public class SaveCheckedDataThread extends Thread{
                 if(count < maxCount) {
                     try {
                         String[] data = AllLinesData.getParam(entry.getKey());
-                        if( Long.parseLong( data[0]) <  100000000) {
-                            String commandString = SessionClass.getParam(data[2] + "_Line_Update_String");
-                            if (tranCode.isEmpty()) tranCode = data[2];
-                            if (headID.isEmpty()) headID = data[3];
+                        if( !InsertedList.isInsert(data[0]) ) {
+                            String commandString = SessionClass.getParam(tranCode + "_Line_Update_String");
+                            if( tranCode.charAt(0) != '3' && tranCode.charAt(0) != '4' ) {
+                                headID = data[qHeadID];
+                            }else{
+                                headID = "0";
+                            }
                             commandString = commandString.replace("@TERMINAL", SessionClass.getParam("terminal"));
-                            commandString = commandString.replace("@LINE_ID", data[4]);
-                            commandString = commandString.replace("@TRAN_CODE", data[2]);
+                            commandString = commandString.replace("@LINE_ID", data[qLineID]);
+                            commandString = commandString.replace("@TRAN_CODE",tranCode);
                             for (int j = 0; j < data.length; j++) {
                                 if (data[j] == "null" || data[j] == null) {
                                     commandString = commandString.replace("'@ITEM" + j + "'", "''");
@@ -72,7 +82,7 @@ public class SaveCheckedDataThread extends Thread{
                                     commandString = commandString.replace("'@ITEM" + j + "'", "'" + data[j] + "'");
                                 }
                             }
-                            str = str + "[Line" + data[4] + "[comm " + commandString;
+                            str = str + "[Line" + data[qLineID] + "[comm " + commandString;
                             //log.addNewMessageLine("[Line" + data[4] + "[comm " + commandString);
                             CheckedList.setParamItem(entry.getKey(), 2);
                         }

@@ -36,6 +36,9 @@ import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
+import hu.selester.android.webstockandroid.Objects.AllLinesData;
+import hu.selester.android.webstockandroid.Objects.CheckedList;
+import hu.selester.android.webstockandroid.Objects.InsertedList;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.Threads.LoadEANDatasThread;
@@ -43,7 +46,7 @@ import hu.selester.android.webstockandroid.Threads.LoadEANDatasThread;
 public class MainMenuFragment extends Fragment {
 
     private SelesterDatabase db;
-    private int qBreak, qCollection;
+    private int qBreak, qCollection, qTakePhoto, qMAR;
     private String[] arrayBtnVisibility;
     private boolean settingLoded;
     private ProgressDialog pd;
@@ -52,6 +55,7 @@ public class MainMenuFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         settingLoded =false;
+
         View rootView = inflater.inflate(R.layout.frg_mainmenu,container,false);
         db = SelesterDatabase.getDatabase(getContext());
         int size = db.sessionTempDao().getDataSize();
@@ -59,27 +63,15 @@ public class MainMenuFragment extends Fragment {
         if(size > 0){
             buildReloadDialog();
         }
+
         if( db.systemDao().getValue("barcodeSuffix")!=null) {
             if( !db.systemDao().getValue("barcodeSuffix").equals("") ) {
                 SessionClass.setParam("barcodeSuffix", db.systemDao().getValue("barcodeSuffix"));
             }
         }
-        SessionClass.setParam("XD","1");
-        if( SessionClass.getParam("XD").equals("1")){
-            Button cdBtn = rootView.findViewById(R.id.menu_cdBtn);
-            cdBtn.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    //Fragment f = new TreeViewFragment();
-                    Fragment f = new XD_SelectFragment();
-                    FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
-                    ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
-                    ft.replace(R.id.fragments,f);
-                    ft.addToBackStack("app");
-                    ft.commit();
-                }
-            });
-        }
+        AllLinesData.delParams();
+        InsertedList.clearAll();
+        CheckedList.clearAllData();
         Button tasksBtn = rootView.findViewById(R.id.menu_tasksBtn);
         tasksBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -248,6 +240,7 @@ public class MainMenuFragment extends Fragment {
                                     Log.i("Settings",key + ": " + value);
                                     SessionClass.setParam(key, value);
                                 } catch (JSONException e) {
+                                    HelperClass.messageBox(getActivity(),"Beállítások betöltése","Hiba a beállítás paramétertek betöltésekor",HelperClass.ERROR);
                                     // Something went wrong!
                                 }
                             }
@@ -255,11 +248,13 @@ public class MainMenuFragment extends Fragment {
                         pd.dismiss();
                     }else{
                         pd.dismiss();
-                        buildErrorDialog();
+                        HelperClass.messageBox(getActivity(),"Beállítások betöltése","Tranzakciós beállítások nem érvényesek!",HelperClass.ERROR);
+                        //buildErrorDialog();
                     }
                 } catch (JSONException e) {
                     pd.dismiss();
-                    buildErrorDialog();
+                    HelperClass.messageBox(getActivity(),"Beállítások betöltése","Tranzakciós beállítások nem érvényesek!",HelperClass.ERROR);
+                    //buildErrorDialog();
                     e.printStackTrace();
                 }
 
@@ -269,7 +264,8 @@ public class MainMenuFragment extends Fragment {
             public void onErrorResponse(VolleyError error) {
                 if(error != null){
                     pd.dismiss();
-                    buildErrorDialog();
+                    HelperClass.messageBox(getActivity(),"Beállítások betöltése","Tranzakciós beállítások nem érvényesek!",HelperClass.ERROR);
+                    //buildErrorDialog();
                     error.printStackTrace();
                 }
             }
@@ -302,16 +298,25 @@ public class MainMenuFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 SharedPreferences sharedPref = getActivity().getPreferences(getContext().MODE_PRIVATE);
-                String tranID = sharedPref.getString("whrs_selexped_tranID","");
+                String tranID   = sharedPref.getString("whrs_selexped_tranID","");
                 String tranCode = sharedPref.getString("whrs_selexped_tranCode","");
-                String movenum = sharedPref.getString("whrs_selexped_movenum","");
-
-                arrayBtnVisibility = SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").split(",");
-                qBreak  = HelperClass.getArrayPosition("break", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
-                qCollection  = HelperClass.getArrayPosition("collection", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
-
-                if( qBreak > -1 ){ SessionClass.setParam("breakBtn", arrayBtnVisibility[qBreak]); } else { SessionClass.setParam("breakBtn", "0" ); }
-                if( qCollection > -1 ){ SessionClass.setParam("collectionBtn", arrayBtnVisibility[qCollection]); } else { SessionClass.setParam("collectionBtn", "0" ); }
+                String movenum  = sharedPref.getString("whrs_selexped_movenum","");
+                if(SessionClass.getParam(tranCode + "_Detail_Button_IsVisible") != null) {
+                    arrayBtnVisibility  = SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").split(",");
+                    qBreak              = HelperClass.getArrayPosition("break", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+                    qCollection         = HelperClass.getArrayPosition("collection", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+                    qTakePhoto          = HelperClass.getArrayPosition("photo", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+                    qMAR                = HelperClass.getArrayPosition("ManualAddRemove", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+                    if( qBreak > -1 )       { SessionClass.setParam("breakBtn", arrayBtnVisibility[qBreak]); } else { SessionClass.setParam("breakBtn", "0" ); }
+                    if( qCollection > -1 )  { SessionClass.setParam("collectionBtn", arrayBtnVisibility[qCollection]); } else { SessionClass.setParam("collectionBtn", "0" ); }
+                    if( qTakePhoto > -1 )   { SessionClass.setParam("takePhotoBtn", arrayBtnVisibility[qTakePhoto]); } else { SessionClass.setParam("takePhotoBtn", "0" ); }
+                    if( qMAR > -1 )         { SessionClass.setParam("marBtn", arrayBtnVisibility[qMAR]); } else { SessionClass.setParam("marBtn", "0" ); }
+                }else{
+                    SessionClass.setParam("breakBtn", "0");
+                    SessionClass.setParam("collectionBtn", "0");
+                    SessionClass.setParam("takePhotoBtn", "0");
+                    SessionClass.setParam("marBtn", "0");
+                }
 
                 Fragment f;
                 FragmentTransaction ft;

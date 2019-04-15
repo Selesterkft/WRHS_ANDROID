@@ -57,6 +57,7 @@ public class DeleteTempThread extends Thread{
                     String rtext = jsonObject.getString("ERROR_CODE");
                     if(!rtext.isEmpty()){
                         if(rtext.equals("-1")){
+                            db.sessionTempDao().deleteAllData();
                             Toast.makeText(context,"Ideiglenes adatok törlése sikeres!",Toast.LENGTH_LONG).show();
                             f.closeFragment();
                         }else{

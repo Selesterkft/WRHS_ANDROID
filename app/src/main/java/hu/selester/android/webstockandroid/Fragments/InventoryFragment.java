@@ -431,8 +431,11 @@ public class InventoryFragment extends Fragment {
                         WHListLoaded = true;
                         loadVirtWHData();
                     } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(getContext(), "Hiba a raktár törzs betöltésekor!", Toast.LENGTH_LONG).show();
+                        if(getContext() != null) {
+                            e.printStackTrace();
+                            HelperClass.messageBox(getActivity(),"Vak leltár","Hiba a raktár törzs betöltésekor!",HelperClass.ERROR);
+                            //Toast.makeText(getContext(), "Hiba a raktár törzs betöltésekor!", Toast.LENGTH_LONG).show();
+                        }
                     }
                 }
             }, new Response.ErrorListener() {
@@ -441,12 +444,14 @@ public class InventoryFragment extends Fragment {
                     if (error != null) {
                         error.printStackTrace();
                     }
-                    Toast.makeText(getContext(), "Hiba a raktár törzs betöltésekor!", Toast.LENGTH_LONG).show();
+                    HelperClass.messageBox(getActivity(),"Vak leltár","Hiba a raktár törzs betöltésekor!",HelperClass.ERROR);
+                    //Toast.makeText(getContext(), "Hiba a raktár törzs betöltésekor!", Toast.LENGTH_LONG).show();
                 }
             });
             rq.add(jr);
         } else {
-            Toast.makeText(getContext(), "Nincs hálózat az eszközön!", Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Vak leltár","Nincs hálózat az eszközön!",HelperClass.ERROR);
+            //Toast.makeText(getContext(), "Nincs hálózat az eszközön!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -479,7 +484,8 @@ public class InventoryFragment extends Fragment {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(getContext(), "Hiba a virtuális raktár törzs betöltésekor!", Toast.LENGTH_LONG).show();
+                        HelperClass.messageBox(getActivity(),"Vak leltár","Hiba a virtuális raktár törzs betöltésekor!",HelperClass.ERROR);
+                        //Toast.makeText(getContext(), "Hiba a virtuális raktár törzs betöltésekor!", Toast.LENGTH_LONG).show();
                     }
                 }
             }, new Response.ErrorListener() {
@@ -488,12 +494,14 @@ public class InventoryFragment extends Fragment {
                     if (error != null) {
                         error.printStackTrace();
                     }
-                    Toast.makeText(getContext(), "Hiba a virtuális raktár törzs betöltésekor!", Toast.LENGTH_LONG).show();
+                    HelperClass.messageBox(getActivity(),"Vak leltár","Hiba a virtuális raktár törzs betöltésekor!",HelperClass.ERROR);
+                    //Toast.makeText(getContext(), "Hiba a virtuális raktár törzs betöltésekor!", Toast.LENGTH_LONG).show();
                 }
             });
             rq.add(jr);
         } else {
-            Toast.makeText(getContext(), "Nincs hálózat az eszközön!", Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Vak leltár","Nincs hálózat az eszközön!",HelperClass.ERROR);
+            //Toast.makeText(getContext(), "Nincs hálózat az eszközön!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -526,7 +534,8 @@ public class InventoryFragment extends Fragment {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(getContext(), "Hiba a bérlő törzs betöltésekor!", Toast.LENGTH_LONG).show();
+                        HelperClass.messageBox(getActivity(),"Vak leltár","Hiba a bérlő törzs betöltésekor!",HelperClass.ERROR);
+                        //Toast.makeText(getContext(), "Hiba a bérlő törzs betöltésekor!", Toast.LENGTH_LONG).show();
                     }
                 }
             }, new Response.ErrorListener() {
@@ -535,12 +544,14 @@ public class InventoryFragment extends Fragment {
                     if (error != null) {
                         error.printStackTrace();
                     }
-                    Toast.makeText(getContext(), "Hiba a bérlő törzs betöltésekor!", Toast.LENGTH_LONG).show();
+                    HelperClass.messageBox(getActivity(),"Vak leltár","Hiba a bérlő törzs betöltésekor!",HelperClass.ERROR);
+                    //Toast.makeText(getContext(), "Hiba a bérlő törzs betöltésekor!", Toast.LENGTH_LONG).show();
                 }
             });
             rq.add(jr);
         } else {
-            Toast.makeText(getContext(), "Nincs hálózat az eszközön!", Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Vak leltár","Nincs hálózat az eszközön!",HelperClass.ERROR);
+            //Toast.makeText(getContext(), "Nincs hálózat az eszközön!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -578,7 +589,8 @@ public class InventoryFragment extends Fragment {
 
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(getContext(), "Hiba a bérlő törzs betöltésekor!", Toast.LENGTH_LONG).show();
+                        HelperClass.messageBox(getActivity(),"Vak leltár","Hiba a bérlő törzs betöltésekor!",HelperClass.ERROR);
+                        //Toast.makeText(getContext(), "Hiba a bérlő törzs betöltésekor!", Toast.LENGTH_LONG).show();
                     }
                 }
             }, new Response.ErrorListener() {
@@ -587,12 +599,14 @@ public class InventoryFragment extends Fragment {
                     if (error != null) {
                         error.printStackTrace();
                     }
-                    Toast.makeText(getContext(), "Hiba a bérlő törzs betöltésekor!", Toast.LENGTH_LONG).show();
+                    HelperClass.messageBox(getActivity(),"Vak leltár","Hiba a bérlő törzs betöltésekor!",HelperClass.ERROR);
+                    //Toast.makeText(getContext(), "Hiba a bérlő törzs betöltésekor!", Toast.LENGTH_LONG).show();
                 }
             });
             rq.add(jr);
         } else {
-            Toast.makeText(getContext(), "Nincs hálózat az eszközön!", Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Vak leltár","Hiba a bérlő törzs betöltésekor!",HelperClass.ERROR);
+            //Toast.makeText(getContext(), "Nincs hálózat az eszközön!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -605,10 +619,12 @@ public class InventoryFragment extends Fragment {
                 loadLocsControl();
                 KeyboardUtils.hideKeyboard(getActivity());
             }else{
-                Toast.makeText(getContext(), "Nincs meghatározva a rakhely!", Toast.LENGTH_LONG).show();
+                HelperClass.messageBox(getActivity(),"Vak leltár","Nincs meghatározva a rakhely!",HelperClass.ERROR);
+                //Toast.makeText(getContext(), "Nincs meghatározva a rakhely!", Toast.LENGTH_LONG).show();
             }
         }else{
-            Toast.makeText(getContext(), "Nincs kiválasztva a raktár!", Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Vak leltár","Nincs kiválasztva a raktár!",HelperClass.ERROR);
+            //Toast.makeText(getContext(), "Nincs kiválasztva a raktár!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -617,7 +633,8 @@ public class InventoryFragment extends Fragment {
             loadGoodFromBarcode();
             KeyboardUtils.hideKeyboard(getActivity());
         }else{
-            Toast.makeText(getContext(), "Nincs kiválasztva a cikk!", Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Vak leltár","Nincs kiválasztva a cikk!",HelperClass.ERROR);
+            //Toast.makeText(getContext(), "Nincs kiválasztva a cikk!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -657,7 +674,8 @@ public class InventoryFragment extends Fragment {
                         }
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Toast.makeText(getContext(), "Hiba a paraméterek betöltésekor!", Toast.LENGTH_LONG).show();
+                        HelperClass.messageBox(getActivity(),"Vak leltár","Hiba a paraméterek betöltésekor!",HelperClass.ERROR);
+                        //Toast.makeText(getContext(), "Hiba a paraméterek betöltésekor!", Toast.LENGTH_LONG).show();
                     }
                 }
             }, new Response.ErrorListener() {
@@ -666,12 +684,14 @@ public class InventoryFragment extends Fragment {
                     if (error != null) {
                         error.printStackTrace();
                     }
-                    Toast.makeText(getContext(), "Hiba a paraméterek betöltésekor!", Toast.LENGTH_LONG).show();
+                    HelperClass.messageBox(getActivity(),"Vak leltár","Hiba a paraméterek betöltésekor!",HelperClass.ERROR);
+                    //Toast.makeText(getContext(), "Hiba a paraméterek betöltésekor!", Toast.LENGTH_LONG).show();
                 }
             });
             rq.add(jr);
         } else {
-            Toast.makeText(getContext(), "Nincs hálózat az eszközön!", Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Vak leltár","Nincs hálózat az eszközön!",HelperClass.ERROR);
+            //Toast.makeText(getContext(), "Nincs hálózat az eszközön!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -698,7 +718,8 @@ public class InventoryFragment extends Fragment {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "Hiba a betöltésekor!", Toast.LENGTH_LONG).show();
+                    HelperClass.messageBox(getActivity(),"Vak leltár","Hiba a betöltésekor!",HelperClass.ERROR);
+                    //Toast.makeText(getContext(), "Hiba a betöltésekor!", Toast.LENGTH_LONG).show();
                 }
             }
         }, new Response.ErrorListener() {
@@ -707,7 +728,8 @@ public class InventoryFragment extends Fragment {
                 if (error != null) {
                     error.printStackTrace();
                 }
-                Toast.makeText(getContext(), "Hiba a paraméterek betöltésekor!", Toast.LENGTH_LONG).show();
+                HelperClass.messageBox(getActivity(),"Vak leltár","Hiba a paraméterek betöltésekor!",HelperClass.ERROR);
+                //Toast.makeText(getContext(), "Hiba a paraméterek betöltésekor!", Toast.LENGTH_LONG).show();
             }
         });
         rq.add(jr);
@@ -742,13 +764,16 @@ public class InventoryFragment extends Fragment {
                                 Toast.makeText(getContext(), "Adatok mentése megtörtént!", Toast.LENGTH_LONG).show();
                                 refreshData();
                             } else {
-                                Toast.makeText(getContext(), "Adatok mentése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
+                                HelperClass.messageBox(getActivity(),"Vak leltár","Adatok mentése sikertelen, kérem jelezze a Selesternek!",HelperClass.ERROR);
+                                //Toast.makeText(getContext(), "Adatok mentése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
                             }
                         } else {
-                            Toast.makeText(getContext(), "Adatok mentése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
+                            HelperClass.messageBox(getActivity(),"Vak leltár","Adatok mentése sikertelen, kérem jelezze a Selesternek!",HelperClass.ERROR);
+                            //Toast.makeText(getContext(), "Adatok mentése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
                         }
                     } catch (JSONException e) {
-                        Toast.makeText(getContext(), "Adatok mentése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
+                        HelperClass.messageBox(getActivity(),"Vak leltár","Adatok mentése sikertelen, kérem jelezze a Selesternek!",HelperClass.ERROR);
+                        //Toast.makeText(getContext(), "Adatok mentése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
                 }
@@ -756,7 +781,8 @@ public class InventoryFragment extends Fragment {
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     if (error != null) {
-                        Toast.makeText(getContext(), "Adatok mentése sikertelen, hálózati hiba!", Toast.LENGTH_LONG).show();
+                        HelperClass.messageBox(getActivity(),"Vak leltár","Adatok mentése sikertelen, kérem jelezze a Selesternek!",HelperClass.ERROR);
+                        //Toast.makeText(getContext(), "Adatok mentése sikertelen, hálózati hiba!", Toast.LENGTH_LONG).show();
                         error.printStackTrace();
                     }
                 }

@@ -38,7 +38,7 @@ public class ChangeStatusThread extends Thread{
 
     @Override
     public void run() {
-        if(tranCode.charAt(0)!='3') {
+        if(tranCode.charAt(0)!='3' && tranCode.charAt(0)!='4') {
             RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
             String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_setStatus";
             HashMap<String, String> map = new HashMap<>();

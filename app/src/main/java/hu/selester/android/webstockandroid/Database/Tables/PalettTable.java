@@ -5,6 +5,7 @@ import android.arch.persistence.room.PrimaryKey;
 
 @Entity
 public class PalettTable {
+
     @PrimaryKey(autoGenerate = true)
     private int id;
     private String palett;
@@ -37,5 +38,14 @@ public class PalettTable {
 
     public void setCollect(String collect) {
         this.collect = collect;
+    }
+
+    @Override
+    public String toString() {
+        return "PalettTable{" +
+                "  id=" + id +
+                ", palett='" + palett + '\'' +
+                ", collect='" + collect + '\'' +
+                '}';
     }
 }

@@ -63,6 +63,8 @@ import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
+import mobil.selester.wheditbox.WHEditBox;
+
 import android.app.AlertDialog.Builder;
 
 import static hu.selester.android.webstockandroid.R.color.secondColor;
@@ -72,8 +74,8 @@ public class ChkBarcodeFragment extends Fragment {
 
     private TextView errorTv;
     private EditText barcodeEt;
-    private Button bar1Btn;
-    private Button bar2Btn;
+    private WHEditBox bar1Btn;
+    private WHEditBox bar2Btn;
     private ImageButton editable1;
     private ImageButton lock;
     private Button endChk;
@@ -200,109 +202,83 @@ public class ChkBarcodeFragment extends Fragment {
         lock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            if (bar1Btn.getText().toString().equals(getResources().getString(R.string.buttonLabel))) {
-                Toast.makeText(getActivity(), "Nincs kiválasztva az eredeti vonalkód!", Toast.LENGTH_LONG).show();
+            if (bar1Btn.EDText.getText().toString().equals(getResources().getString(R.string.buttonLabel))) {
+                HelperClass.messageBox(getActivity(),"Barcode ellenőrzés","Nincs kiválasztva az eredeti vonalkód!",HelperClass.ERROR);
+                //Toast.makeText(getActivity(), "Nincs kiválasztva az eredeti vonalkód!", Toast.LENGTH_LONG).show();
             } else {
                 if (bar1Btn.isEnabled()) {
                     lock.setImageDrawable(getResources().getDrawable(R.drawable.lock_on));
                     bar1Btn.setEnabled(false);
-                    bar2Btn.performClick();
+                    bar2Btn.EDText.requestFocus();
                     resultImage.setImageResource(0);
                     resultText.setText("");
 
                 } else {
                     lock.setImageDrawable(getResources().getDrawable(R.drawable.lock_off));
                     bar1Btn.setEnabled(true);
-                    bar1Btn.performClick();
-                    bar1Btn.setText(getResources().getString(R.string.buttonLabel));
-                    bar2Btn.setText(getResources().getString(R.string.buttonLabel));
+                    bar1Btn.EDText.requestFocus();
+                    bar1Btn.EDText.setHint(getResources().getString(R.string.buttonLabel));
+                    bar2Btn.EDText.setHint(getResources().getString(R.string.buttonLabel));
                 }
             }
             }
         });
+        WHEditBox.suffix = SessionClass.getParam("barcodeSuffix");
+        WHEditBox.activity = getActivity();
+
         bar1Btn = rootView.findViewById(R.id.barcode1);
-        bar1Btn.setText(getResources().getString(R.string.buttonLabel));
+        bar1Btn.EDText.setHint(getResources().getString(R.string.buttonLabel));
         bar2Btn = rootView.findViewById(R.id.barcode2);
-        bar2Btn.setText(getResources().getString(R.string.buttonLabel));
-
-        barcodeEt.requestFocus();
-        barcodeEt.addTextChangedListener(new TextWatcher() {
+        bar2Btn.EDText.setHint(getResources().getString(R.string.buttonLabel));
+        bar2Btn.setOnDetectBarcodeListener(new WHEditBox.OnDetectBarcodeListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (!barcodeEt.getText().toString().equals("")) {
-                    barcodeEt.requestFocus();
-                    String isBar = HelperClass.isBarcode(s.toString());
-                    if (activeButton == 2) {
-                        if(trimBarcode2){
-                            try {
-                                int x = Integer.parseInt(trimET22.getText().toString());
-                                if(x>isBar.length()){ x=isBar.length(); }
-                                Toast.makeText(getContext(),isBar,Toast.LENGTH_LONG).show();
-                                isBar = isBar.substring(Integer.parseInt(trimET12.getText().toString())-1, x);
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }
-                        bar2Btn.setText(isBar);
-                        checkBarcodes();
-                        bar1Btn.performClick();
-                    } else {
-                        if(trimBarcode1){
-                            try {
-                                int x = Integer.parseInt(trimET21.getText().toString());
-                                if(x>isBar.length()){ x=isBar.length(); }
-                                Toast.makeText(getContext(),isBar,Toast.LENGTH_LONG).show();
-                                isBar = isBar.substring(Integer.parseInt(trimET11.getText().toString())-1, x);
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                        }
-                        bar1Btn.setText(isBar);
-                        bar2Btn.setText(getResources().getString(R.string.buttonLabel));
-                        bar2Btn.performClick();
-                        resultImage.setImageResource(0);
-                        resultText.setText("");
-                    }
-                    barcodeEt.setText("");
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
+            public void OnDetectBarcode() {
+                bar1Btn.EDText.setHint(getResources().getString(R.string.buttonLabel));
+                resultImage.setImageResource(0);
+                resultText.setText("");
+                bar1Btn.EDText.performClick();
             }
         });
-        bar1Btn.setOnClickListener(new View.OnClickListener() {
+
+        bar1Btn.setOnDetectBarcodeListener(new WHEditBox.OnDetectBarcodeListener() {
+            @Override
+            public void OnDetectBarcode() {
+                bar2Btn.EDText.performClick();
+                checkBarcodes();
+            }
+        });
+
+        bar1Btn.EDText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (bar1Btn.isEnabled()) {
+                if (bar1Btn.EDText.isEnabled()) {
                     activeButton = 1;
                     bar1Btn.setBackgroundColor(Color.YELLOW);
-                    bar1Btn.setTextColor(Color.BLACK);
+                    bar1Btn.EDText.setTextColor(Color.BLACK);
                     bar2Btn.setBackgroundColor(getResources().getColor(R.color.secondColor));
-                    bar2Btn.setTextColor(Color.WHITE);
+                    bar2Btn.EDText.setTextColor(Color.WHITE);
+                    bar1Btn.EDText.requestFocus();
 
                 }
             }
         });
-        bar2Btn.setOnClickListener(new View.OnClickListener() {
+        bar2Btn.EDText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (bar1Btn.getText().toString().equals(getResources().getString(R.string.buttonLabel))) {
-                    Toast.makeText(getActivity(), "Nincs kiválasztva az eredeti vonalkód!", Toast.LENGTH_LONG).show();
+                if (bar1Btn.EDText.getText().toString().equals(getResources().getString(R.string.buttonLabel))) {
+                    HelperClass.messageBox(getActivity(),"Barcode ellenőrzés","Nincs kiválasztva az eredeti vonalkód!",HelperClass.ERROR);
+                    //Toast.makeText(getActivity(), "Nincs kiválasztva az eredeti vonalkód!", Toast.LENGTH_LONG).show();
                 } else {
                     activeButton = 2;
                     bar2Btn.setBackgroundColor(Color.YELLOW);
-                    bar2Btn.setTextColor(Color.BLACK);
+                    bar2Btn.EDText.setTextColor(Color.BLACK);
                     bar1Btn.setBackgroundColor(getResources().getColor(R.color.secondColor));
-                    bar1Btn.setTextColor(Color.WHITE);
+                    bar1Btn.EDText.setTextColor(Color.WHITE);
+                    bar2Btn.EDText.requestFocus();
                 }
             }
         });
-        bar1Btn.performClick();
+        bar2Btn.EDText.performClick();
         return rootView;
     }
 
@@ -328,10 +304,10 @@ public class ChkBarcodeFragment extends Fragment {
                             e.printStackTrace();
                         }
                     }
-                    bar1Btn.setText(edtext);
+                    bar1Btn.EDText.setText(edtext);
                     bar2Btn.performClick();
 
-                    bar2Btn.setText(getResources().getString(R.string.buttonLabel));
+                    bar2Btn.EDText.setHint(getResources().getString(R.string.buttonLabel));
                     resultImage.setImageResource(0);
                     resultText.setText("");
 
@@ -345,7 +321,7 @@ public class ChkBarcodeFragment extends Fragment {
                             e.printStackTrace();
                         }
                     }
-                    bar2Btn.setText(edtext);
+                    bar2Btn.EDText.setText(edtext);
                     checkBarcodes();
                     bar1Btn.performClick();
                 }
@@ -415,20 +391,21 @@ public class ChkBarcodeFragment extends Fragment {
 
     void checkBarcodes() {
         KeyboardUtils.hideKeyboard(getActivity());
-        String prodid = db.productDataDAO().getBarcodeProd(bar1Btn.getText().toString());
+        String prodid = db.productDataDAO().getBarcodeProd(bar1Btn.EDText.getText().toString());
         String[] barCodes = db.productDataDAO().getProdBarcode(prodid);
-        if (bar1Btn.getText().toString().equals(bar2Btn.getText().toString())) {
+
+        if (bar1Btn.EDText.getText().toString().equals(bar2Btn.EDText.getText().toString())) {
 
             // DateFormat df = new SimpleDateFormat("MMddyyyyHHmmss");
             DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss");
             Date currentTime = Calendar.getInstance().getTime();
             String reportDate = df.format(currentTime);
-            db.eansDao().setEansData(new EansTable(counter, bar1Btn.getText().toString(), bar2Btn.getText().toString(), "'" + reportDate + "'"));
+            db.eansDao().setEansData(new EansTable(counter, bar1Btn.EDText.getText().toString(), bar2Btn.EDText.getText().toString(), "'" + reportDate + "'"));
             counter = counter + 1;
             resultImage.setImageResource(R.drawable.accept);
             resultText.setText("Vonalkód rendben!");
         } else {
-            if (Arrays.asList(barCodes).contains(bar2Btn.getText().toString())) {
+            if (Arrays.asList(barCodes).contains(bar2Btn.EDText.getText().toString())) {
                 resultImage.setImageResource(R.drawable.accept);
                 resultText.setText("Vonalkód rendben!");
             } else {
@@ -468,17 +445,19 @@ public class ChkBarcodeFragment extends Fragment {
                             Toast.makeText(getContext(),"Adatok áttöltése sikeres!!",Toast.LENGTH_LONG).show();
                             getFragmentManager().popBackStack();
                         }else{
-
-                            Toast.makeText(getContext(),"Adatok áttöltése sikertelen, kérem jelezze a Selesternek!",Toast.LENGTH_LONG).show();
+                            HelperClass.messageBox(getActivity(),"Barcode ellenőrzés","Adatok áttöltése sikertelen, kérem jelezze a Selesternek!",HelperClass.ERROR);
+                            //Toast.makeText(getContext(),"Adatok áttöltése sikertelen, kérem jelezze a Selesternek!",Toast.LENGTH_LONG).show();
                         }
 
                     }else{
-                        Toast.makeText(getContext(),"Adatok áttöltése sikertelen, kérem jelezze a Selesternek!",Toast.LENGTH_LONG).show();
+                        HelperClass.messageBox(getActivity(),"Barcode ellenőrzés","Adatok áttöltése sikertelen, kérem jelezze a Selesternek!",HelperClass.ERROR);
+                        //Toast.makeText(getContext(),"Adatok áttöltése sikertelen, kérem jelezze a Selesternek!",Toast.LENGTH_LONG).show();
                     }
 
 
                 } catch (JSONException e) {
-                    Toast.makeText(getContext(),"Adatok áttöltése sikertelen, kérem jelezze a Selesternek!",Toast.LENGTH_LONG).show();
+                    HelperClass.messageBox(getActivity(),"Barcode ellenőrzés","Adatok áttöltése sikertelen, kérem jelezze a Selesternek!",HelperClass.ERROR);
+                    //Toast.makeText(getContext(),"Adatok áttöltése sikertelen, kérem jelezze a Selesternek!",Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
 
@@ -488,7 +467,8 @@ public class ChkBarcodeFragment extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if(error!=null){
-                    Toast.makeText(getContext(),"Adatok áttöltése sikertelen, hálózati hiba!",Toast.LENGTH_LONG).show();
+                    HelperClass.messageBox(getActivity(),"Barcode ellenőrzés","Adatok áttöltése sikertelen, kérem jelezze a Selesternek!",HelperClass.ERROR);
+                    //Toast.makeText(getContext(),"Adatok áttöltése sikertelen, hálózati hiba!",Toast.LENGTH_LONG).show();
                     error.printStackTrace();
                 }
             }
@@ -515,7 +495,6 @@ public class ChkBarcodeFragment extends Fragment {
         IntentResult result= IntentIntegrator.parseActivityResult(requestCode,resultCode,data);
         if(result!=null){
             if(result.getContents()==null){
-                Log.i("TAG","ERROR");
             }else{
                 barcodeEt.setText(result.getContents()+SessionClass.getParam("barcodeSuffix"));
             }

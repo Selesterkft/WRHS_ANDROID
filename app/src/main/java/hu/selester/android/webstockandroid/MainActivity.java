@@ -3,6 +3,7 @@ package hu.selester.android.webstockandroid;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -41,13 +42,20 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        db = SelesterDatabase.getDatabase(this);
+        int orientation = 0;
+        if( db.systemDao().getValue("orientation") != null && !db.systemDao().getValue("orientation").equals("") ) {
+            orientation = Integer.parseInt(db.systemDao().getValue("orientation"));
+        }
+        if( orientation == 1 ){
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        }else{
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+        }
         Fragment f=new LoginFragment();
         FragmentManager fm = getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         ft.add(R.id.fragments,f).addToBackStack("app").commit();
-        db = SelesterDatabase.getDatabase(this);
-
-
         ImageView helpBtn = findViewById(R.id.help_btn);
         helpBtn.setOnClickListener(new View.OnClickListener() {
             @Override

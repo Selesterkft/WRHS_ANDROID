@@ -53,13 +53,11 @@ public class TreeViewFragment extends Fragment implements MovesSubViewPager.Frag
     @Override
     public void onStart() {
         super.onStart();
-        Log.i("TAG","START TREE");
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.i("TAG","TREEVIEW ONCREATE VIEW");
         rootView = inflater.inflate(R.layout.frg_movessub_treeview, container, false);
         ImageView searchIcon = rootView.findViewById(R.id.movessub_treeview_searchicon);
 
@@ -94,11 +92,9 @@ public class TreeViewFragment extends Fragment implements MovesSubViewPager.Frag
             int tranCode = Integer.parseInt(SessionClass.getParam("tranCode"));
             int qBarcode02 = HelperClass.getArrayPosition("Barcode02", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
             List<String> data = AllLinesData.getParamsMainPosition(qBarcode02);
-            Log.i("TAG", "" + data.size());
             for (int i = 0; i < data.size(); i++) {
                 dataList.add(new TreeViewGroup(data.get(i), 10));
             }
-            Log.i("TAG", "" + dataList.size());
             ((TreeViewPalettAdapter) rv.getAdapter()).update(dataList);
         }catch (Exception e){
             e.printStackTrace();

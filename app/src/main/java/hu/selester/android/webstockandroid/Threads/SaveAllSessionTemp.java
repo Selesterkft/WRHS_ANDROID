@@ -23,7 +23,6 @@ public class SaveAllSessionTemp extends Thread{
 
     @Override
     public void run() {
-        Log.i("TAG","Save All SessionTemp");
         try {
             db.sessionTempDao().deleteAllData();
             List<SessionTemp> stList = new ArrayList<>();

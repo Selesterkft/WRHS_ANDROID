@@ -28,7 +28,7 @@ public class CheckedList {
     }
 
     public static void setParamItem(String key, int checked){
-        param.put(key,checked);
+        if( !InsertedList.isInsert(key) ) param.put(key,checked);
     }
 
     public static Map<String,Integer> getParam(){

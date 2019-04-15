@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingDefaultResource"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/whiteColor">
+<TextView
+    android:id="@+id/barcode_header"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingTop="10dp"
+    android:paddingBottom="10dp"
+    android:gravity="center_horizontal"
+    android:text="Vonalkód ellenőrzés"
+    android:background="@color/headerColor"
+    android:textSize="20sp"
+    android:textColor="@color/whiteColor"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    />
+
+    <LinearLayout
+        android:id="@+id/menuPanel"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        app:layout_constraintStart_toStartOf="@+id/barcode1_layer"
+        app:layout_constraintTop_toBottomOf="@+id/barcode_header"
+        android:background="@color/secondColor"
+        android:orientation="horizontal">
+        <ImageButton
+            android:id="@+id/barcode_editable1"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:focusable="false"
+            android:scaleType="fitCenter"
+            android:backgroundTint="@color/whiteColor"
+            android:src="@drawable/editable_icon" />
+
+        <ImageButton
+            android:id="@+id/barcode_lock"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:focusable="false"
+            android:scaleType="fitCenter"
+            android:src="@drawable/lock_off"
+            android:backgroundTint="@color/whiteColor" />
+
+        <View
+            android:id="@+id/divider"
+            android:layout_width="1dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="?android:attr/listDivider" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/barcode1_layer"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:paddingLeft="10dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/barcode_resultImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewX">
+
+        <mobil.selester.wheditbox.WHEditBox
+            android:id="@+id/barcode2"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="37dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center_vertical"
+            app:backgroundStyle="@drawable/et_shape"
+            app:setDelBtn="true"
+            app:innerPadding="10dp"
+            app:writeType="None"
+            android:text=""
+            android:textColor="@color/whiteColor" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/barcode_enableTrim1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical" />
+
+        <Button
+            android:id="@+id/barcode_trim11"
+            android:layout_width="30dp"
+            android:layout_height="37dp"
+            android:layout_gravity="center_vertical"
+            android:background="@color/whiteColor"
+            android:enabled="false"
+            android:text="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="37dp"
+            android:layout_gravity="top"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:text="-"
+            android:textColor="@color/blackColor"
+            android:textSize="32sp" />
+
+        <Button
+            android:id="@+id/barcode_trim21"
+            android:layout_width="30dp"
+            android:layout_height="37dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="3dp"
+            android:background="@color/whiteColor"
+            android:enabled="false"
+            android:text="1" />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/barcode2_layer"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:paddingLeft="10dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintEnd_toStartOf="@+id/barcode_resultImage"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3">
+
+        <mobil.selester.wheditbox.WHEditBox
+            android:id="@+id/barcode1"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="37dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center_vertical"
+            app:backgroundStyle="@drawable/et_shape"
+            app:setDelBtn="true"
+            app:innerPadding="10dp"
+            app:writeType="None"
+            android:text=""
+            android:textColor="@color/whiteColor" />
+
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/barcode_enableTrim2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical" />
+
+        <Button
+            android:id="@+id/barcode_trim12"
+            android:layout_width="30dp"
+            android:layout_height="37dp"
+            android:layout_gravity="center_vertical"
+            android:background="@color/whiteColor"
+            android:enabled="false"
+            android:text="1" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="37dp"
+            android:layout_gravity="top"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
+            android:text="-"
+            android:textColor="@color/blackColor"
+            android:textSize="32sp" />
+
+        <Button
+            android:id="@+id/barcode_trim22"
+            android:layout_width="30dp"
+            android:layout_height="37dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginEnd="3dp"
+            android:background="@color/whiteColor"
+            android:enabled="false"
+            android:text="1" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textViewX"
+        android:layout_width="wrap_content"
+        android:layout_height="22dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:text="Eredeti vonalkód"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/menuPanel" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="15dp"
+        android:text="Ellenőrizendő vonalkód"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/barcode1_layer" />
+
+
+
+    <Button
+        android:id="@+id/barcode_endChk"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:backgroundTint="@color/secondColor"
+        android:textColor="@color/whiteColor"
+        android:text="Ellenőrzéssel végeztem"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/barcode_resultImage"
+        android:layout_width="216dp"
+        android:layout_height="198dp"
+        android:src="@drawable/warningicon"
+        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintDimensionRatio="w,1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="parent" />
+
+    <TextView
+        android:id="@+id/barcode_resultText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="TextView"
+        android:textSize="21sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@+id/barcode_resultImage"
+        app:layout_constraintStart_toStartOf="@+id/barcode_resultImage"
+        app:layout_constraintTop_toBottomOf="@+id/barcode_resultImage" />
+
+</android.support.constraint.ConstraintLayout>

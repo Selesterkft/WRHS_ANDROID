@@ -8,6 +8,7 @@
     <color name="decorColor">#4cc5f3</color>
     <color name="whiteColor">#ffffff</color>
     <color name="ltGrayColor">#dfdfdf</color>
+    <color name="dkGrayColor">#9f9f9f</color>
     <color name="decorDarkColor">#06193d</color>
     <color name="backOpacityColor">#55000000</color>
     <color name="itemListFullColor">#dfdfdf</color>
@@ -16,6 +17,7 @@
     <color name="headerColor2">#359338</color>
     <color name="secondColor">#5d97d1</color>
     <color name="btnIconColor">#0071ad</color>
+    <color name="warningColor">#ff8e5b</color>
 
     <color name="productRowOKBack">#5500ff00</color>
     <color name="productRowPHBack">#aad3d3ff</color>

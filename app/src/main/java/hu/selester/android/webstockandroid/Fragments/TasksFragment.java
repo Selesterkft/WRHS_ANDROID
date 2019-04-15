@@ -79,6 +79,7 @@ public class TasksFragment extends Fragment {
                         //addTaskIcon(jsonArray.getJSONObject(i).getInt("Tran_Code"),TranText);
 
                         String tranCode = jsonArray.getJSONObject(i).getString("Tran_Code");
+                        if( tranCode.equals("null") ){ tranCode = "0"; }
                         int id = getContext().getResources().getIdentifier("task_icon"+tranCode.charAt(0), "drawable", getContext().getPackageName());
                         list.add(new TaskObject(Integer.parseInt(tranCode), id, TranText ) );
                     }
@@ -88,8 +89,12 @@ public class TasksFragment extends Fragment {
                     gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-                            Fragment f = new MovesTableFragment();
+                            Fragment f;
+                            if(id == 31 || id == 41) {
+                                f = new XD_SelectFragment();
+                            }else{
+                                f = new MovesTableFragment();
+                            }
                             FragmentManager fm = getFragmentManager();
                             FragmentTransaction ft = fm.beginTransaction();
                             Bundle b = new Bundle();
@@ -144,7 +149,7 @@ public class TasksFragment extends Fragment {
                         ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
                         ft.replace(R.id.fragments, f);
                         ft.addToBackStack("app");
-                        ft.commit();
+                        //ft.commit();
                     }
                 });
 

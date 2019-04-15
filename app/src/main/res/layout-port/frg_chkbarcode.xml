@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingDefaultResource"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/whiteColor">
@@ -63,17 +64,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewX" >
-        <Button
+        <mobil.selester.wheditbox.WHEditBox
+            android:id="@+id/barcode2"
             android:layout_weight="1"
-            android:id="@+id/barcode1"
             android:layout_width="match_parent"
             android:layout_height="37dp"
-            android:focusable="false"
-            android:text=""
-            android:background="@color/secondColor"
-            android:textColor="@color/whiteColor"
+            android:layout_marginRight="10dp"
             android:layout_gravity="center_vertical"
-        />
+            app:backgroundStyle="@drawable/et_shape"
+            app:setDelBtn="true"
+            app:innerPadding="10dp"
+            app:writeType="None"
+            android:text=""
+            android:textColor="@color/whiteColor" />
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/barcode_enableTrim1"
             android:layout_width="wrap_content"
@@ -121,17 +124,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView3" >
-        <Button
+        <mobil.selester.wheditbox.WHEditBox
+            android:id="@+id/barcode1"
             android:layout_weight="1"
-            android:id="@+id/barcode2"
             android:layout_width="match_parent"
             android:layout_height="37dp"
-            android:focusable="false"
-            android:text=""
-            android:background="@color/secondColor"
-            android:textColor="@color/whiteColor"
+            android:layout_marginRight="10dp"
             android:layout_gravity="center_vertical"
-            />
+            app:backgroundStyle="@drawable/et_shape"
+            app:setDelBtn="true"
+            app:innerPadding="10dp"
+            app:writeType="None"
+            android:text=""
+            android:textColor="@color/whiteColor" />
         <android.support.v7.widget.SwitchCompat
             android:id="@+id/barcode_enableTrim2"
             android:layout_width="wrap_content"

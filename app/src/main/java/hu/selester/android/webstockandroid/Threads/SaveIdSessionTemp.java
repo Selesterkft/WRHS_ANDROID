@@ -37,7 +37,6 @@ public class SaveIdSessionTemp extends Thread{
                 SessionTemp st = db.sessionTempDao().getData(id.get(i));
                 if (st != null) {
                     db.sessionTempDao().setData(HelperClass.createSessionTempFormat(id.get(i), st.getNum(), s));
-                    Log.i("TAG","Save SessionTemp - " + HelperClass.createSessionTempFormat(id.get(i), st.getNum(), s).toString() );
                 }
 
             }

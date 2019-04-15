@@ -30,7 +30,6 @@ public class DefaultTextWatcher implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable s) {
-        Log.i("TAG","afterCHANGED");
         int suffixLen = SessionClass.getParam("barcodeSuffix").length();
         if (s.length() > 3) {
             if (s.toString().substring(s.length() - suffixLen, s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {

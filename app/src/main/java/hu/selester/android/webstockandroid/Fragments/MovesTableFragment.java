@@ -40,13 +40,15 @@ import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
 import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.CheckedList;
+import hu.selester.android.webstockandroid.Objects.InsertedList;
 import hu.selester.android.webstockandroid.Objects.ListSettings;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.TablePanel.TablePanel;
 import hu.selester.android.webstockandroid.TableView.TableView;
 
-public class MovesTableFragment extends Fragment implements View.OnClickListener {
+public class
+MovesTableFragment extends Fragment implements View.OnClickListener {
 
     private View rootView;
     private ListSettings ls;
@@ -55,7 +57,7 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
     private int tranCode;
     private String[] headerText;
     private ProgressDialog pd;
-    private int qBreak, qCollection;
+    private int qBreak, qCollection, qTakePhoto, qMAR;
     private String[] arrayBtnVisibility;
 
     @Nullable
@@ -79,24 +81,24 @@ public class MovesTableFragment extends Fragment implements View.OnClickListener
             }
         });
         AllLinesData.delParams();
-
+        InsertedList.clearAll();
+        CheckedList.clearAllData();
         if(SessionClass.getParam(tranCode + "_Detail_Button_IsVisible") != null) {
-            arrayBtnVisibility = SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").split(",");
-            qBreak = HelperClass.getArrayPosition("break", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
-            qCollection = HelperClass.getArrayPosition("collection", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
-            if (qBreak > -1) {
-                SessionClass.setParam("breakBtn", arrayBtnVisibility[qBreak]);
-            } else {
-                SessionClass.setParam("breakBtn", "0");
-            }
-            if (qCollection > -1) {
-                SessionClass.setParam("collectionBtn", arrayBtnVisibility[qCollection]);
-            } else {
-                SessionClass.setParam("collectionBtn", "0");
-            }
+
+            arrayBtnVisibility  = SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").split(",");
+            qBreak              = HelperClass.getArrayPosition("break", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+            qCollection         = HelperClass.getArrayPosition("collection", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+            qTakePhoto          = HelperClass.getArrayPosition("photo", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+            qMAR                = HelperClass.getArrayPosition("ManualAddRemove", SessionClass.getParam(tranCode + "_Detail_Button_Names"));
+            if( qBreak > -1 )       { SessionClass.setParam("breakBtn", arrayBtnVisibility[qBreak]); } else { SessionClass.setParam("breakBtn", "0" ); }
+            if( qCollection > -1 )  { SessionClass.setParam("collectionBtn", arrayBtnVisibility[qCollection]); } else { SessionClass.setParam("collectionBtn", "0" ); }
+            if( qTakePhoto > -1 )   { SessionClass.setParam("takePhotoBtn", arrayBtnVisibility[qTakePhoto]); } else { SessionClass.setParam("takePhotoBtn", "0" ); }
+            if( qMAR > -1 )         { SessionClass.setParam("marBtn", arrayBtnVisibility[qMAR]); } else { SessionClass.setParam("marBtn", "0" ); }
         }else{
             SessionClass.setParam("breakBtn", "0");
             SessionClass.setParam("collectionBtn", "0");
+            SessionClass.setParam("takePhotoBtn", "0");
+            SessionClass.setParam("marBtn", "0");
         }
         //Log.i("TAG",""+SessionClass.getParam("breakBtn")+" - "+SessionClass.getParam("collectionBtn"));
 

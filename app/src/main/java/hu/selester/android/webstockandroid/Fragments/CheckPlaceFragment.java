@@ -346,7 +346,8 @@ public class CheckPlaceFragment extends Fragment {
                 rq.add(jr);
             }
         }else{
-            Toast.makeText(getContext(),"Nincs kiválasztva a raktár!",Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Rakhely ellenőrzés","Nincs kiválasztva a raktár!",HelperClass.ERROR);
+            //Toast.makeText(getContext(),"Nincs kiválasztva a raktár!",Toast.LENGTH_LONG).show();
         }
     }
 

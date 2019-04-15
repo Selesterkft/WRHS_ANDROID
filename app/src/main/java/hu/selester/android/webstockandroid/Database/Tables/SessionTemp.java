@@ -39,9 +39,20 @@ public class SessionTemp {
     private String param27;
     private String param28;
     private String param29;
+    private String param30;
+    private String param31;
+    private String param32;
+    private String param33;
+    private String param34;
+    private String param35;
+    private String param36;
+    private String param37;
+    private String param38;
+    private String param39;
     private int status;
+    private boolean insertRow;
 
-    public SessionTemp(long id, int num, String param0, String param1, String param2, String param3, String param4, String param5, String param6, String param7, String param8, String param9, String param10, String param11, String param12, String param13, String param14, String param15, String param16, String param17, String param18, String param19, String param20, String param21, String param22, String param23, String param24, String param25, String param26, String param27, String param28, String param29, int status) {
+    public SessionTemp(long id, int num, String param0, String param1, String param2, String param3, String param4, String param5, String param6, String param7, String param8, String param9, String param10, String param11, String param12, String param13, String param14, String param15, String param16, String param17, String param18, String param19, String param20, String param21, String param22, String param23, String param24, String param25, String param26, String param27, String param28, String param29, String param30, String param31, String param32, String param33, String param34, String param35, String param36, String param37, String param38, String param39, int status, boolean insertRow) {
         this.id = id;
         this.num = num;
         this.param0 = param0;
@@ -74,7 +85,26 @@ public class SessionTemp {
         this.param27 = param27;
         this.param28 = param28;
         this.param29 = param29;
+        this.param30 = param30;
+        this.param31 = param31;
+        this.param32 = param32;
+        this.param33 = param33;
+        this.param34 = param34;
+        this.param35 = param35;
+        this.param36 = param36;
+        this.param37 = param37;
+        this.param38 = param38;
+        this.param39 = param39;
         this.status = status;
+        this.insertRow = insertRow;
+    }
+
+    public boolean isInsertRow() {
+        return insertRow;
+    }
+
+    public void setInsertRow(boolean insertRow) {
+        this.insertRow = insertRow;
     }
 
     public int getStatus() {
@@ -341,6 +371,86 @@ public class SessionTemp {
         this.param29 = param29;
     }
 
+    public String getParam30() {
+        return param30;
+    }
+
+    public void setParam30(String param30) {
+        this.param30 = param30;
+    }
+
+    public String getParam31() {
+        return param31;
+    }
+
+    public void setParam31(String param31) {
+        this.param31 = param31;
+    }
+
+    public String getParam32() {
+        return param32;
+    }
+
+    public void setParam32(String param32) {
+        this.param32 = param32;
+    }
+
+    public String getParam33() {
+        return param33;
+    }
+
+    public void setParam33(String param33) {
+        this.param33 = param33;
+    }
+
+    public String getParam34() {
+        return param34;
+    }
+
+    public void setParam34(String param34) {
+        this.param34 = param34;
+    }
+
+    public String getParam35() {
+        return param35;
+    }
+
+    public void setParam35(String param35) {
+        this.param35 = param35;
+    }
+
+    public String getParam36() {
+        return param36;
+    }
+
+    public void setParam36(String param36) {
+        this.param36 = param36;
+    }
+
+    public String getParam37() {
+        return param37;
+    }
+
+    public void setParam37(String param37) {
+        this.param37 = param37;
+    }
+
+    public String getParam38() {
+        return param38;
+    }
+
+    public void setParam38(String param38) {
+        this.param38 = param38;
+    }
+
+    public String getParam39() {
+        return param39;
+    }
+
+    public void setParam39(String param39) {
+        this.param39 = param39;
+    }
+
     @Override
     public String toString() {
         return "SessionTemp{" +
@@ -376,7 +486,18 @@ public class SessionTemp {
                 ", param27='" + param27 + '\'' +
                 ", param28='" + param28 + '\'' +
                 ", param29='" + param29 + '\'' +
+                ", param30='" + param30 + '\'' +
+                ", param31='" + param31 + '\'' +
+                ", param32='" + param32 + '\'' +
+                ", param33='" + param33 + '\'' +
+                ", param34='" + param34 + '\'' +
+                ", param35='" + param35 + '\'' +
+                ", param36='" + param36 + '\'' +
+                ", param37='" + param37 + '\'' +
+                ", param38='" + param38 + '\'' +
+                ", param39='" + param39 + '\'' +
                 ", status=" + status +
+                ", insertRow=" + insertRow +
                 '}';
     }
 }

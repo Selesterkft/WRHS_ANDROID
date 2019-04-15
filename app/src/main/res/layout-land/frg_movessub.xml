@@ -1,17 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
+<android.support.constraint.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="MissingDefaultResource"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
     <LinearLayout
         android:id="@+id/movessub_progressLayout"
         android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
         android:elevation="1dp"
         android:background="@color/blackColor"
         android:alpha="0.8"
         android:orientation="vertical"
-        android:clickable="false">
+        android:clickable="false"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
         <TextView
             android:elevation="2dp"
             android:layout_gravity="center_horizontal"
@@ -31,7 +39,7 @@
             android:padding="2dp"
             android:elevation="2dp"
             android:layout_marginTop="20dp"
-             />
+            />
         <TextView
             android:id="@+id/movessub_progresspercent"
             android:elevation="2dp"
@@ -42,21 +50,30 @@
             android:textSize="16sp"
             android:text="0%"/>
     </LinearLayout>
+    <TextView
+        android:id="@+id/movessub_headertext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="Sor kiválasztása"
+        android:background="@color/headerColor"
+        android:textColor="@color/whiteColor"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:gravity="center"/>
+
     <LinearLayout
-        android:layout_width="match_parent" android:layout_height="match_parent"
-        android:orientation="vertical" android:id="@+id/movessub_tableRoot"
-        android:weightSum="20"
-        >
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textSize="20sp"
-            android:paddingTop="10dp"
-            android:paddingBottom="10dp"
-            android:text="Sor kiválasztása"
-            android:background="@color/headerColor"
-            android:textColor="@color/whiteColor"
-            android:gravity="center"/>
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:id="@+id/movessub_tableRoot"
+        app:layout_constraintTop_toBottomOf="@id/movessub_headertext"
+        app:layout_constraintEnd_toStartOf="@+id/movessub_btncontainer"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="60dp"
@@ -98,7 +115,7 @@
                 android:textColor="@color/whiteColor"
                 android:layout_marginBottom="0dp"
                 android:text="-->"
-            />
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -140,61 +157,69 @@
                 android:gravity="center_vertical"
                 android:text="Új raklap hozzáadása"/>
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:paddingBottom="6dp"
-            android:orientation="horizontal">
-            <ImageButton
-                android:src="@drawable/but_cancel_44x44"
-                android:layout_weight="3"
-                android:background="@null"
-                android:padding="0dp"
-                android:scaleType="fitCenter"
-                android:id="@+id/movessub_flushBtn"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="ElDOBÁS"/>
-            <ImageButton
-                android:src="@drawable/but_lock_44x44"
-                android:layout_weight="3"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                android:id="@+id/movessub_lockBtn"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:enabled="false"
-                android:text="Végleges lezárás"/>
-            <ImageButton
-                android:src="@drawable/but_save_44x44"
-                android:layout_weight="3"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                android:id="@+id/movessub_saveBtn"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:enabled="false"
-                android:text="Mentés"/>
-            <ImageButton
-                android:src="@drawable/create_line_44x44"
-                android:layout_weight="3"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                android:id="@+id/movessub_createBtn"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Kiválasztás"/>
-            <ImageButton
-                android:src="@drawable/but_ok_44x44"
-                android:layout_weight="3"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                android:id="@+id/movessub_selectBtn"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:text="Kiválasztás"/>
-        </LinearLayout>
     </LinearLayout>
-</RelativeLayout>
+    <LinearLayout
+        android:id="@+id/movessub_btncontainer"
+        android:layout_width="75dp"
+        android:layout_height="0dp"
+        android:paddingBottom="6dp"
+        android:paddingLeft="5dp"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/movessub_headertext"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:background="@color/headerColor">
+        <ImageButton
+            android:src="@drawable/but_cancel_44x44"
+            android:background="@null"
+            android:padding="0dp"
+            android:scaleType="fitCenter"
+            android:id="@+id/movessub_flushBtn"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:text="ELDOBÁS"/>
+        <ImageButton
+            android:src="@drawable/but_lock_44x44"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:id="@+id/movessub_lockBtn"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:enabled="false"
+            android:text="Végleges lezárás"/>
+        <ImageButton
+            android:src="@drawable/but_save_44x44"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:id="@+id/movessub_saveBtn"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:enabled="false"
+            android:text="Mentés"/>
+        <ImageButton
+            android:src="@drawable/create_line_44x44"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:id="@+id/movessub_createBtn"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:text="Kiválasztás"/>
+        <ImageButton
+            android:src="@drawable/but_stock_v2_44x44"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:id="@+id/movessub_paramsBtn"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:text="Paraméterezés"/>
+        <ImageButton
+            android:src="@drawable/but_ok_44x44"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            android:id="@+id/movessub_selectBtn"
+            android:layout_width="65dp"
+            android:layout_height="65dp"
+            android:text="Kiválasztás"/>
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

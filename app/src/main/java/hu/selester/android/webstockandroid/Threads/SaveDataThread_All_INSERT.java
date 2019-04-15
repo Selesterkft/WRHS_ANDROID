@@ -127,7 +127,6 @@ public class SaveDataThread_All_INSERT extends Thread {
                 str = str + "[Line" + data.get(i)[4] + "[comm " + commandString;
             }
         }
-        Log.i("SAVE DATA THREAD INSERT",str);
         RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
         String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_SaveLineData_ByGroup";
         Log.i("URL",url);
@@ -139,7 +138,6 @@ public class SaveDataThread_All_INSERT extends Thread {
         map.put("Tran_code",data.get(0)[2]);
         map.put("Head_ID",data.get(0)[3]);
         map.put("cmd",str);
-        Log.i("TAG",str);
         if(HelperClass.isOnline(context)) {
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
                 @Override

@@ -80,7 +80,7 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frg_login,container,false);
         db = SelesterDatabase.getDatabase(getContext());
-        //db.systemDao().setValue(new SystemTable("WSUrl","http://185.187.72.228:8092/service1.svc"));
+        //db.systemDao().setValue(new SystemTable("WSUrl","https://web-restapi-services-01.conveyor.cloud/service1.svc"));
         //db.systemDao().setValue(new SystemTable("terminal","AdmAndrJ"));
         //db.systemDao().setValue(new SystemTable("barcodeSuffix","#&"));
         //db.systemDao().setValue(new SystemTable("scanButtonCode", "203"));
@@ -93,6 +93,7 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
         }else{
             loadSettingPanel();
         }
+
         ImageView settingBtn = rootView.findViewById(R.id.login_settingBtn);
         settingBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,7 +106,9 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
         loginLogo.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                forceRefresh();
+                //forceRefresh();
+                Fragment f = new PhotoFragment();
+                getActivity().getSupportFragmentManager().beginTransaction().add(R.id.fragments, f).addToBackStack("app").commit();
                 return false;
             }
         });
@@ -188,6 +191,7 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
                             }
                         }else{
                             if(root.getString("version")!=null){
+                                Log.i("TAG",root.getString("version") + " - " + BuildConfig.VERSION_NAME);
                                 if(root.getString("version").equals(BuildConfig.VERSION_NAME)){
                                     db.usersDao().setUserData(
                                         new UsersTable(

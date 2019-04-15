@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/dialog_xd_item_label1"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:text="súly"
+        android:textAlignment="center"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_xd_item_label2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/dialog_xd_item_label2"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:text="hosszúság"
+        android:textAlignment="center"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_xd_item_label3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/dialog_xd_item_label1" />
+
+    <TextView
+        android:id="@+id/dialog_xd_item_label3"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:text="szélesség"
+        android:textAlignment="center"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_xd_item_label4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/dialog_xd_item_label2" />
+
+    <TextView
+        android:id="@+id/dialog_xd_item_label4"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:text="magasság"
+        android:textAlignment="center"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/dialog_xd_item_label3" />
+
+    <EditText
+        android:id="@+id/dialog_xd_item_editText1"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/et_shape"
+        android:text=""
+        android:padding="2dp"
+        android:textAlignment="textEnd"
+        android:layout_marginTop="10dp"
+        android:selectAllOnFocus="true"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/dialog_xd_item_label1"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_xd_item_editText2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <EditText
+        android:id="@+id/dialog_xd_item_editText2"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/et_shape"
+        android:text=""
+        android:padding="2dp"
+        android:textAlignment="textEnd"
+        android:layout_marginTop="10dp"
+        android:selectAllOnFocus="true"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/dialog_xd_item_label2"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_xd_item_editText3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/dialog_xd_item_editText1"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <EditText
+        android:id="@+id/dialog_xd_item_editText3"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/et_shape"
+        android:text=""
+        android:padding="2dp"
+        android:textAlignment="textEnd"
+        android:layout_marginTop="10dp"
+        android:selectAllOnFocus="true"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/dialog_xd_item_label3"
+        app:layout_constraintEnd_toStartOf="@+id/dialog_xd_item_editText4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/dialog_xd_item_editText2"
+        tools:layout_editor_absoluteY="16dp" />
+
+    <EditText
+        android:id="@+id/dialog_xd_item_editText4"
+        android:layout_width="70dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/et_shape"
+        android:text=""
+        android:padding="2dp"
+        android:textAlignment="textEnd"
+        android:layout_marginTop="10dp"
+        android:selectAllOnFocus="true"
+        android:inputType="numberSigned"
+        app:layout_constraintTop_toBottomOf="@id/dialog_xd_item_label1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/dialog_xd_item_editText3"
+        tools:layout_editor_absoluteY="16dp" />
+
+
+
+</android.support.constraint.ConstraintLayout>

@@ -4,7 +4,9 @@ import android.Manifest;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -67,11 +69,13 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
     private TextView urlText,terminalText,errorText;
     private LinearLayout urlPanel;
     private ImageButton qrUrlBtn;
+    private ImageView landscapeBtn, portraitBtn;
     public boolean scanListenerActive;
     private FragmentTransaction dialogTransaction;
     private Fragment dialogFragment;
     public int scanBtnCode;
     private EditText barCodeSuffix;
+    private int orientation;
 
     @Nullable
     @Override
@@ -93,6 +97,38 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
         terminalText = rootView.findViewById(R.id.setting_terminal);
         errorText = rootView.findViewById(R.id.setting_errorText);
         barCodeSuffix = rootView.findViewById(R.id.setting_barcodesuffix);
+        landscapeBtn = rootView.findViewById(R.id.setting_landscape);
+        portraitBtn = rootView.findViewById(R.id.setting_portait);
+        if( db.systemDao().getValue("orientation") != null && !db.systemDao().getValue("orientation").equals("") ) {
+            orientation = Integer.parseInt(db.systemDao().getValue("orientation"));
+        }else{
+            orientation = 0;
+        }
+        if( orientation == 0 ){
+            portraitBtn.setBackgroundColor(getResources().getColor(R.color.backOpacityColor));
+            landscapeBtn.setBackgroundColor(Color.TRANSPARENT);
+        }else{
+            landscapeBtn.setBackgroundColor(getResources().getColor(R.color.backOpacityColor));
+            portraitBtn.setBackgroundColor(Color.TRANSPARENT);
+        }
+        portraitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                portraitBtn.setBackgroundColor(getResources().getColor(R.color.backOpacityColor));
+                landscapeBtn.setBackgroundColor(Color.TRANSPARENT);
+                orientation = 0;
+            }
+        });
+
+        landscapeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                landscapeBtn.setBackgroundColor(getResources().getColor(R.color.backOpacityColor));
+                portraitBtn.setBackgroundColor(Color.TRANSPARENT);
+                orientation = 1;
+            }
+        });
+
         if( db.systemDao().getValue("barcodeSuffix") == null || db.systemDao().getValue("barcodeSuffix").equals("")) {
             barCodeSuffix.setText("#&");
         }else{
@@ -232,11 +268,18 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
         db.systemDao().setValue(new SystemTable("terminal",terminalText.getText().toString()));
         db.systemDao().setValue(new SystemTable("barcodeSuffix",barCodeSuffix.getText().toString()));
         db.systemDao().setValue(new SystemTable("scanButtonCode", "" + scanBtnCode));
+        db.systemDao().setValue(new SystemTable("orientation", "" + orientation));
         SessionClass.setParam("WSUrl",urlText.getText().toString());
         SessionClass.setParam("terminal",terminalText.getText().toString());
         db.systemDao().setValue(new SystemTable("terminal",terminalText.getText().toString()));
-        Toast.makeText(getContext(),"Mentés sikeresen megtörtént!",Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(),"Mentés sikeresen megtörtént!",Toast.LENGTH_LONG).show();
         KeyboardUtils.hideKeyboard(getActivity());
+        if( orientation == 1 ){
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        }else{
+            getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+        }
+
         getFragmentManager().popBackStack();
     }
 

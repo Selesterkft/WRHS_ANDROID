@@ -16,9 +16,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -33,12 +39,15 @@ import java.util.Map;
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
 import hu.selester.android.webstockandroid.Dialogs.MessageDialog;
+import hu.selester.android.webstockandroid.Fragments.MovesSubTableFragment;
 import hu.selester.android.webstockandroid.MainActivity;
 import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.CheckedList;
+import hu.selester.android.webstockandroid.Objects.InsertedList;
 import hu.selester.android.webstockandroid.Objects.MessageBoxSettingsObject;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
+import hu.selester.android.webstockandroid.Threads.ChangeStatusThread;
 import it.sephiroth.android.library.tooltip.Tooltip;
 
 public class HelperClass {
@@ -215,17 +224,6 @@ public class HelperClass {
         ).show();
     }
 
-    public static void loadTempSession(Context context) {
-        SelesterDatabase db = SelesterDatabase.getDatabase(context);
-        List<SessionTemp> tempList = db.sessionTempDao().getAllData();
-        if(tempList != null && tempList.size() > 0) {
-            for(int i=0; i < tempList.size() ; i++ ){
-                Log.i("SQL", tempList.get(i).toString());
-            }
-        }else{
-        }
-    }
-
     public static void reloadTempSession(Context context, int datacount) {
         SelesterDatabase db = SelesterDatabase.getDatabase(context);
         List<SessionTemp> tempList = db.sessionTempDao().getAllData();
@@ -262,8 +260,23 @@ public class HelperClass {
                 if( datacount > 27 ) strArray[27] = tempList.get(i).getParam27();
                 if( datacount > 28 ) strArray[28] = tempList.get(i).getParam28();
                 if( datacount > 29 ) strArray[29] = tempList.get(i).getParam29();
+                if( datacount > 30 ) strArray[30] = tempList.get(i).getParam30();
+                if( datacount > 31 ) strArray[31] = tempList.get(i).getParam31();
+                if( datacount > 32 ) strArray[32] = tempList.get(i).getParam32();
+                if( datacount > 33 ) strArray[33] = tempList.get(i).getParam33();
+                if( datacount > 34 ) strArray[34] = tempList.get(i).getParam34();
+                if( datacount > 35 ) strArray[35] = tempList.get(i).getParam35();
+                if( datacount > 36 ) strArray[36] = tempList.get(i).getParam36();
+                if( datacount > 37 ) strArray[37] = tempList.get(i).getParam37();
+                if( datacount > 38 ) strArray[38] = tempList.get(i).getParam38();
+                if( datacount > 39 ) strArray[39] = tempList.get(i).getParam39();
+
                 AllLinesData.setParam(String.valueOf(tempList.get(i).getId()), strArray);
                 CheckedList.setParamItem(strArray[0],tempList.get(i).getStatus());
+                if( tempList.get(i).isInsertRow() ) {
+                    Log.i("INSERT SAVE DATA", "" + String.valueOf(tempList.get(i).getId()) );
+                    InsertedList.setInsertElement(String.valueOf(tempList.get(i).getId()), "0");
+                }
             }
             AllLinesData.toStringLog();
         }else{
@@ -272,14 +285,22 @@ public class HelperClass {
     }
 
     public static SessionTemp createSessionTempFormat(long id, int num, String[] data){
-        String[] tempdata = new String[30];
-        for(int i=0; i<30; i++){
+        String[] tempdata = new String[40];
+        for(int i=0; i<40; i++){
             tempdata[i] = "not";
         }
         for(int i=0; i<data.length; i++){
             tempdata[i] = data[i];
         }
-        return new SessionTemp(id,num,tempdata[0],tempdata[1],tempdata[2],tempdata[3],tempdata[4],tempdata[5],tempdata[6],tempdata[7],tempdata[8],tempdata[9],tempdata[10],tempdata[11],tempdata[12],tempdata[13],tempdata[14],tempdata[15],tempdata[16],tempdata[17],tempdata[18],tempdata[19],tempdata[20],tempdata[21],tempdata[22],tempdata[23],tempdata[24],tempdata[25],tempdata[26],tempdata[27],tempdata[28],tempdata[29], CheckedList.getParamItem(tempdata[0]));
+        Log.i("TAG","SAVE SESSIONTEMP: " + id + " - " + num + " - " + tempdata[0] + " - " + tempdata[1] + " - " + tempdata[2] + " - " + tempdata[3] + " - " +
+                tempdata[4] + " - " + tempdata[5] + " - " + tempdata[6] + " - " + tempdata[7] + " - " + tempdata[8] + " - " + tempdata[9] + " - " + tempdata[10] + " - " +
+                tempdata[11] + " - " + tempdata[12] + " - " + tempdata[13] + " - " + tempdata[14] + " - " + tempdata[15] + " - " + tempdata[16] + " - " + tempdata[17] + " - " +
+                tempdata[18] + " - " + tempdata[19] + " - " + tempdata[20] + " - " + tempdata[21] + " - " + tempdata[22] + " - " + tempdata[23] + " - " + tempdata[24] + " - " +
+                tempdata[25] + " - " + tempdata[26] + " - " + tempdata[27] + " - " + tempdata[28] + " - " + tempdata[29] + " - " + tempdata[30] + " - " +
+                tempdata[31] + " - " + tempdata[32] + " - " + tempdata[33] + " - " + tempdata[34] + " - " + tempdata[35] + " - " + tempdata[36] + " - " +
+                tempdata[37] + " - " + tempdata[38] + " - " + tempdata[39] + " - " +  CheckedList.getParamItem(tempdata[0]) + " - " +  InsertedList.isInsert(String.valueOf(id))
+        );
+        return new SessionTemp(id,num,tempdata[0],tempdata[1],tempdata[2],tempdata[3],tempdata[4],tempdata[5],tempdata[6],tempdata[7],tempdata[8],tempdata[9],tempdata[10],tempdata[11],tempdata[12],tempdata[13],tempdata[14],tempdata[15],tempdata[16],tempdata[17],tempdata[18],tempdata[19],tempdata[20],tempdata[21],tempdata[22],tempdata[23],tempdata[24],tempdata[25],tempdata[26],tempdata[27],tempdata[28],tempdata[29],tempdata[30],tempdata[31],tempdata[32],tempdata[33],tempdata[34],tempdata[35],tempdata[36],tempdata[37],tempdata[38],tempdata[39], CheckedList.getParamItem(tempdata[0]), InsertedList.isInsert(String.valueOf(id)) );
     }
 
     public static ProgressDialog loadingDialogOn(Activity activity){
@@ -360,5 +381,54 @@ public class HelperClass {
 
     }
 
+
+    public static void logMapParamteres(Map<String,String> mapParams){
+        for(Map.Entry<String, String> entry: mapParams.entrySet() ){
+            Log.i("logMap",entry.getKey()+  " " + entry.getValue());
+        }
+    }
+
+    public final static int DONE    = 0;
+    public final static int WARNING = 1;
+    public final static int ERROR   = 2;
+    public final static int DELETE  = 3;
+
+    public static void messageBox(final Activity activity, String title, String message, int status) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        View rootView = LayoutInflater.from(activity).inflate(R.layout.dialog_messagebox,null, false);
+        TextView titleTV = rootView.findViewById(R.id.dialog_messagebox_title);
+        titleTV.setText(title);
+        TextView contentTV = rootView.findViewById(R.id.dialog_messagebox_content);
+        contentTV.setText(message);
+        ImageView statusImg = rootView.findViewById(R.id.dialog_messagebox_image);
+        titleTV.setBackgroundColor( ContextCompat.getColor(activity, R.color.secondColor) );
+        switch (status){
+            case 0:
+                statusImg.setBackground( ContextCompat.getDrawable(activity, R.drawable.dialog_done) );
+                break;
+            case 1:
+                statusImg.setBackground( ContextCompat.getDrawable(activity, R.drawable.dialog_warning) );
+                titleTV.setBackgroundColor( ContextCompat.getColor(activity, R.color.warningColor) );
+                break;
+            case 2:
+                statusImg.setBackground( ContextCompat.getDrawable(activity, R.drawable.dialog_error) );
+                titleTV.setBackgroundColor( ContextCompat.getColor(activity, R.color.errorColor) );
+                break;
+            case 3:
+                statusImg.setBackground( ContextCompat.getDrawable(activity, R.drawable.dialog_delete) );
+                titleTV.setBackgroundColor( ContextCompat.getColor(activity, R.color.errorColor) );
+                break;
+        }
+        builder.setView(rootView);
+        builder.setNegativeButton("Rendben", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(activity);
+                dialog.cancel();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
 
 }

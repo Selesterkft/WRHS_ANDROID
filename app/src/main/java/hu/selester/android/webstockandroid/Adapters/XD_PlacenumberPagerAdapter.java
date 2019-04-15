@@ -3,13 +3,14 @@ package hu.selester.android.webstockandroid.Adapters;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.util.Log;
 
 import java.util.List;
 
 import hu.selester.android.webstockandroid.Fragments.XD_PlacenumberFragment;
 
-public class XD_PlacenumberPagerAdapter extends FragmentPagerAdapter {
+public class XD_PlacenumberPagerAdapter extends FragmentStatePagerAdapter {
 
     private List<XD_PlacenumberFragment> frgList;
     private List<String> pageTitleList;
@@ -37,7 +38,6 @@ public class XD_PlacenumberPagerAdapter extends FragmentPagerAdapter {
     }
 
     public void update(XD_PlacenumberFragment item, String text){
-        Log.i("TAG","UPDATE");
         frgList.add(item);
         pageTitleList.add(text);
         notifyDataSetChanged();
