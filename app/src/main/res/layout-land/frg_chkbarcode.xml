@@ -21,10 +21,23 @@
     app:layout_constraintTop_toTopOf="parent"
     />
 
+    <ImageButton
+        android:id="@+id/barcode_lock"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:backgroundTint="@color/whiteColor"
+        android:focusable="false"
+        android:scaleType="fitCenter"
+        android:src="@drawable/lock_off"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/barcode_header"/>
+
     <LinearLayout
         android:id="@+id/menuPanel"
         android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="@+id/barcode1_layer"
         app:layout_constraintTop_toBottomOf="@+id/barcode_header"
         android:background="@color/secondColor"
@@ -38,15 +51,6 @@
             android:scaleType="fitCenter"
             android:backgroundTint="@color/whiteColor"
             android:src="@drawable/editable_icon" />
-
-        <ImageButton
-            android:id="@+id/barcode_lock"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:focusable="false"
-            android:scaleType="fitCenter"
-            android:src="@drawable/lock_off"
-            android:backgroundTint="@color/whiteColor" />
 
         <View
             android:id="@+id/divider"
@@ -72,12 +76,14 @@
             android:id="@+id/barcode2"
             android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="37dp"
+            android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:layout_gravity="center_vertical"
             app:backgroundStyle="@drawable/et_shape"
+            app:selectBackgroundStyle="@drawable/et_shape_select"
             app:setDelBtn="true"
-            app:innerPadding="10dp"
+            app:textSize="14sp"
+            app:innerPadding="8dp"
             app:writeType="None"
             android:text=""
             android:textColor="@color/whiteColor" />
@@ -136,12 +142,14 @@
             android:id="@+id/barcode1"
             android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="37dp"
+            android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:layout_gravity="center_vertical"
             app:backgroundStyle="@drawable/et_shape"
+            app:selectBackgroundStyle="@drawable/et_shape_select"
             app:setDelBtn="true"
-            app:innerPadding="10dp"
+            app:innerPadding="8dp"
+            app:textSize="14sp"
             app:writeType="None"
             android:text=""
             android:textColor="@color/whiteColor" />
@@ -220,13 +228,16 @@
 
     <ImageView
         android:id="@+id/barcode_resultImage"
-        android:layout_width="216dp"
-        android:layout_height="198dp"
+        android:layout_width="156dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginBottom="8dp"
         android:src="@drawable/warningicon"
-        app:layout_constraintBottom_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/barcode_endChk"
         app:layout_constraintDimensionRatio="w,1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/menuPanel" />
 
     <TextView
         android:id="@+id/barcode_resultText"
@@ -234,7 +245,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:text="TextView"
-        android:textSize="21sp"
+        android:textSize="18sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/barcode_resultImage"
         app:layout_constraintStart_toStartOf="@+id/barcode_resultImage"
