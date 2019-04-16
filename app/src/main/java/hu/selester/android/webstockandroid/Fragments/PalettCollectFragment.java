@@ -278,7 +278,8 @@ public class PalettCollectFragment extends Fragment implements LoadingParams.Asy
                 e.printStackTrace();
             }
         }else{
-            Toast.makeText(getContext(), "Nincs ilyen gyűjtő létrehozva!", Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Rakhely gyűjtő","Nincs ilyen gyűjtő létrehozva!",HelperClass.ERROR);
+            //Toast.makeText(getContext(), "Nincs ilyen gyűjtő létrehozva!", Toast.LENGTH_LONG).show();
             barcodeET1.setText( "" );
         }
     }

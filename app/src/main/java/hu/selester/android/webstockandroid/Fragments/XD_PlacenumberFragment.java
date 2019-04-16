@@ -182,16 +182,8 @@ public class XD_PlacenumberFragment extends Fragment {
                 return false;
             }
         });*/
-
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(mBarcodeReceiver, new IntentFilter("BROADCAST_BARCODE"));
         return rootView;
     }
-
-    private BroadcastReceiver mBarcodeReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-        }
-    };
 
     public void update(){
         RecyclerView.LayoutManager lm = new LinearLayoutManager(getContext());

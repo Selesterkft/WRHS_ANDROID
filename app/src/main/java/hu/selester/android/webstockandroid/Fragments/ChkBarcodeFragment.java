@@ -11,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
@@ -56,8 +57,6 @@ import java.util.HashMap;
 
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Database.Tables.EansTable;
-import hu.selester.android.webstockandroid.Database.Tables.SystemTable;
-import hu.selester.android.webstockandroid.Database.Tables.UsersTable;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
@@ -65,9 +64,6 @@ import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 import mobil.selester.wheditbox.WHEditBox;
 
-import android.app.AlertDialog.Builder;
-
-import static hu.selester.android.webstockandroid.R.color.secondColor;
 
 public class ChkBarcodeFragment extends Fragment {
 
@@ -202,25 +198,25 @@ public class ChkBarcodeFragment extends Fragment {
         lock.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            if (bar1Btn.EDText.getText().toString().equals(getResources().getString(R.string.buttonLabel))) {
-                HelperClass.messageBox(getActivity(),"Barcode ellenőrzés","Nincs kiválasztva az eredeti vonalkód!",HelperClass.ERROR);
-                //Toast.makeText(getActivity(), "Nincs kiválasztva az eredeti vonalkód!", Toast.LENGTH_LONG).show();
-            } else {
-                if (bar1Btn.isEnabled()) {
-                    lock.setImageDrawable(getResources().getDrawable(R.drawable.lock_on));
-                    bar1Btn.setEnabled(false);
-                    bar2Btn.EDText.requestFocus();
-                    resultImage.setImageResource(0);
-                    resultText.setText("");
-
+                if (bar2Btn.EDText.isEnabled()) {
+                    if (bar2Btn.EDText.getText().toString().equals("")) {
+                        HelperClass.messageBox(getActivity(),"Barcode ellenőrzés","Nincs kiválasztva az eredeti vonalkód!",HelperClass.WARNING);
+                        //Toast.makeText(getActivity(), "Nincs kiválasztva az eredeti vonalkód!", Toast.LENGTH_LONG).show();
+                    } else {
+                        lock.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.lock_on));
+                        bar2Btn.EDText.setEnabled(false);
+                        bar1Btn.EDText.requestFocus();
+                        resultImage.setImageResource(0);
+                        resultText.setText("");
+                    }
                 } else {
-                    lock.setImageDrawable(getResources().getDrawable(R.drawable.lock_off));
-                    bar1Btn.setEnabled(true);
-                    bar1Btn.EDText.requestFocus();
-                    bar1Btn.EDText.setHint(getResources().getString(R.string.buttonLabel));
-                    bar2Btn.EDText.setHint(getResources().getString(R.string.buttonLabel));
+                    lock.setImageDrawable(ContextCompat.getDrawable(getActivity(), R.drawable.lock_off));
+                    bar2Btn.EDText.setEnabled(true);
+                    bar2Btn.EDText.requestFocus();
+                    bar1Btn.EDText.setText("");
+                    bar2Btn.EDText.setText("");
+                    bar2Btn.EDText.performClick();
                 }
-            }
             }
         });
         WHEditBox.suffix = SessionClass.getParam("barcodeSuffix");
@@ -233,9 +229,21 @@ public class ChkBarcodeFragment extends Fragment {
         bar2Btn.setOnDetectBarcodeListener(new WHEditBox.OnDetectBarcodeListener() {
             @Override
             public void OnDetectBarcode() {
-                bar1Btn.EDText.setHint(getResources().getString(R.string.buttonLabel));
+                String edtext = bar2Btn.EDText.getText().toString();
+                if(trimBarcode2){
+                    try {
+                        int x = Integer.parseInt(trimET22.getText().toString());
+                        if(x>edtext.length()){ x=edtext.length(); }
+                        edtext = edtext.substring(Integer.parseInt(trimET12.getText().toString())-1, x);
+                        bar2Btn.EDText.setText(edtext);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+
                 resultImage.setImageResource(0);
                 resultText.setText("");
+                bar1Btn.EDText.setText("");
                 bar1Btn.EDText.performClick();
             }
         });
@@ -243,22 +251,37 @@ public class ChkBarcodeFragment extends Fragment {
         bar1Btn.setOnDetectBarcodeListener(new WHEditBox.OnDetectBarcodeListener() {
             @Override
             public void OnDetectBarcode() {
-                bar2Btn.EDText.performClick();
+                String edtext = bar1Btn.EDText.getText().toString();
+                if(trimBarcode1){
+                    try {
+                        int x = Integer.parseInt(trimET21.getText().toString());
+                        if(x>edtext.length()){ x=edtext.length(); }
+                        edtext = edtext.substring(Integer.parseInt(trimET11.getText().toString())-1, x);
+                        bar1Btn.EDText.setText(edtext);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+
                 checkBarcodes();
+                bar1Btn.EDText.setText("");
+                if (bar2Btn.EDText.isEnabled()) {
+                    bar2Btn.EDText.setText("");
+                    bar2Btn.EDText.performClick();
+                }
             }
         });
 
         bar1Btn.EDText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (bar1Btn.EDText.isEnabled()) {
+                if (bar2Btn.EDText.isEnabled()) {
                     activeButton = 1;
-                    bar1Btn.setBackgroundColor(Color.YELLOW);
-                    bar1Btn.EDText.setTextColor(Color.BLACK);
-                    bar2Btn.setBackgroundColor(getResources().getColor(R.color.secondColor));
-                    bar2Btn.EDText.setTextColor(Color.WHITE);
+                    //bar1Btn.setBackgroundColor(Color.YELLOW);
+                    //bar1Btn.EDText.setTextColor(Color.BLACK);
+                    //bar2Btn.setBackgroundColor(Color.TRANSPARENT);
+                    //bar2Btn.EDText.setTextColor(Color.WHITE);
                     bar1Btn.EDText.requestFocus();
-
                 }
             }
         });
@@ -270,10 +293,10 @@ public class ChkBarcodeFragment extends Fragment {
                     //Toast.makeText(getActivity(), "Nincs kiválasztva az eredeti vonalkód!", Toast.LENGTH_LONG).show();
                 } else {
                     activeButton = 2;
-                    bar2Btn.setBackgroundColor(Color.YELLOW);
-                    bar2Btn.EDText.setTextColor(Color.BLACK);
-                    bar1Btn.setBackgroundColor(getResources().getColor(R.color.secondColor));
-                    bar1Btn.EDText.setTextColor(Color.WHITE);
+                    //bar2Btn.setBackgroundColor(Color.YELLOW);
+                    //bar2Btn.EDText.setTextColor(Color.BLACK);
+                    //bar1Btn.setBackgroundColor(Color.TRANSPARENT);
+                    //bar1Btn.EDText.setTextColor(Color.WHITE);
                     bar2Btn.EDText.requestFocus();
                 }
             }
@@ -306,8 +329,7 @@ public class ChkBarcodeFragment extends Fragment {
                     }
                     bar1Btn.EDText.setText(edtext);
                     bar2Btn.performClick();
-
-                    bar2Btn.EDText.setHint(getResources().getString(R.string.buttonLabel));
+                    bar2Btn.EDText.setText("");
                     resultImage.setImageResource(0);
                     resultText.setText("");
 
@@ -414,7 +436,6 @@ public class ChkBarcodeFragment extends Fragment {
                 resultText.setText("Vonalkód nem egyezik!");
             }
         }
-
     }
 
     @Override

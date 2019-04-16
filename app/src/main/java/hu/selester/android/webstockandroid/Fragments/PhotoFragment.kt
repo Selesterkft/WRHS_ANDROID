@@ -122,7 +122,8 @@ class PhotoFragment:Fragment(){
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 dispatchTakePictureIntent()
             } else {
-                Toast.makeText(context, "NO CAMERA", Toast.LENGTH_LONG).show()
+                HelperClass.messageBox(activity!!,"Fájlkezelés","Nem érhető el a camera!",HelperClass.ERROR)
+                //Toast.makeText(context, "NO CAMERA", Toast.LENGTH_LONG).show()
             }
         }
         if (requestCode == MY_PERMISSIONS_REQUEST_READ_EXTERNAL_STORAGE) {
@@ -214,7 +215,8 @@ class PhotoFragment:Fragment(){
                 (rootView.transphoto_list.adapter!! as PhotosListAdapter).addItem(item)
             }catch (ex:java.lang.Exception){
                 ex.printStackTrace()
-                KT_HelperClass.toast(context,"Hiba a kép mentése közben!")
+                HelperClass.messageBox(activity!!,"Fájlkezelés","Hiba a kép mentése közben!",HelperClass.ERROR)
+                //KT_HelperClass.toast(context,"Hiba a kép mentése közben!")
             }
         }
     }

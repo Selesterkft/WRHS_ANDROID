@@ -135,7 +135,8 @@ public class XD_ItemParametersFragment extends Fragment {
             spl.setViewPager(vp);
             placeNumberTV.setText("");
         }else{
-            Toast.makeText(getContext(),"Nincs rakhely meghatározva!",Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"CrossDock","Nincs rakhely meghatározva!",HelperClass.ERROR);
+            //Toast.makeText(getContext(),"Nincs rakhely meghatározva!",Toast.LENGTH_LONG).show();
         }
         KeyboardUtils.hideKeyboard(getActivity());
     }
@@ -239,7 +240,8 @@ public class XD_ItemParametersFragment extends Fragment {
                                 SaveAllSessionTemp sst = new SaveAllSessionTemp(getContext());
                                 sst.start();
                             } else {
-                                Toast.makeText(getContext(), "Nincs rakhely kiválasztva!", Toast.LENGTH_LONG).show();
+                                HelperClass.messageBox(getActivity(),"CrossDock","Nincs rakhely kiválasztva!",HelperClass.ERROR);
+                                //Toast.makeText(getContext(), "Nincs rakhely kiválasztva!", Toast.LENGTH_LONG).show();
                             }
                             itOK = true;
                             break;
@@ -247,13 +249,15 @@ public class XD_ItemParametersFragment extends Fragment {
                     }
                 }
                 if (!itOK) {
-                    Toast.makeText(getContext(), "Nincs ebből a termékből több!", Toast.LENGTH_LONG).show();
+                    HelperClass.messageBox(getActivity(),"CrossDock","Nincs több ebből a termékből!",HelperClass.ERROR);
+                    //Toast.makeText(getContext(), "Nincs ebből a termékből több!", Toast.LENGTH_LONG).show();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }else{
-            Toast.makeText(getContext(), "Nincs rakhely definiálva!", Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"CrossDock","Nincs rakhely definiálva!",HelperClass.ERROR);
+            //Toast.makeText(getContext(), "Nincs rakhely definiálva!", Toast.LENGTH_LONG).show();
         }
         edit.EDText.setText("");
     }

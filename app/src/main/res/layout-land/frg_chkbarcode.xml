@@ -33,6 +33,7 @@
             android:id="@+id/barcode_editable1"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:visibility="gone"
             android:focusable="false"
             android:scaleType="fitCenter"
             android:backgroundTint="@color/whiteColor"
@@ -82,13 +83,13 @@
             android:textColor="@color/whiteColor" />
 
         <android.support.v7.widget.SwitchCompat
-            android:id="@+id/barcode_enableTrim1"
+            android:id="@+id/barcode_enableTrim2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical" />
 
         <Button
-            android:id="@+id/barcode_trim11"
+            android:id="@+id/barcode_trim12"
             android:layout_width="30dp"
             android:layout_height="37dp"
             android:layout_gravity="center_vertical"
@@ -107,7 +108,7 @@
             android:textSize="32sp" />
 
         <Button
-            android:id="@+id/barcode_trim21"
+            android:id="@+id/barcode_trim22"
             android:layout_width="30dp"
             android:layout_height="37dp"
             android:layout_gravity="center_vertical"
@@ -146,13 +147,13 @@
             android:textColor="@color/whiteColor" />
 
         <android.support.v7.widget.SwitchCompat
-            android:id="@+id/barcode_enableTrim2"
+            android:id="@+id/barcode_enableTrim1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical" />
 
         <Button
-            android:id="@+id/barcode_trim12"
+            android:id="@+id/barcode_trim11"
             android:layout_width="30dp"
             android:layout_height="37dp"
             android:layout_gravity="center_vertical"
@@ -171,7 +172,7 @@
             android:textSize="32sp" />
 
         <Button
-            android:id="@+id/barcode_trim22"
+            android:id="@+id/barcode_trim21"
             android:layout_width="30dp"
             android:layout_height="37dp"
             android:layout_gravity="center_vertical"

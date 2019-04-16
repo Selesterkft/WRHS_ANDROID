@@ -31,6 +31,7 @@
         android:orientation="horizontal">
         <ImageButton
             android:id="@+id/barcode_editable1"
+            android:visibility="gone"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:focusable="false"
@@ -68,72 +69,14 @@
             android:id="@+id/barcode2"
             android:layout_weight="1"
             android:layout_width="match_parent"
-            android:layout_height="37dp"
-            android:layout_marginRight="10dp"
-            android:layout_gravity="center_vertical"
-            app:backgroundStyle="@drawable/et_shape"
-            app:setDelBtn="true"
-            app:innerPadding="10dp"
-            app:writeType="None"
-            android:text=""
-            android:textColor="@color/whiteColor" />
-        <android.support.v7.widget.SwitchCompat
-            android:id="@+id/barcode_enableTrim1"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"/>
-        <Button
-            android:id="@+id/barcode_trim11"
-            android:layout_width="30dp"
-            android:layout_height="37dp"
-            android:background="@color/whiteColor"
-            android:layout_gravity="center_vertical"
-            android:text="1"
-            android:enabled="false" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="37dp"
-            android:layout_gravity="top"
-            android:text="-"
-            android:textSize="32sp"
-            android:textColor="@color/blackColor"
-            android:layout_marginLeft="4dp"
-            android:layout_marginRight="4dp"/>
-        <Button
-            android:id="@+id/barcode_trim21"
-            android:enabled="false"
-            android:layout_gravity="center_vertical"
-            android:layout_width="30dp"
-            android:layout_height="37dp"
-            android:background="@color/whiteColor"
-            android:layout_marginEnd="3dp"
-            android:text="1"
-            />
-
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:id="@+id/barcode2_layer"
-        android:layout_width="0dp"
-        android:layout_height="50dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView3" >
-        <mobil.selester.wheditbox.WHEditBox
-            android:id="@+id/barcode1"
-            android:layout_weight="1"
-            android:layout_width="match_parent"
-            android:layout_height="37dp"
             android:layout_marginRight="10dp"
             android:layout_gravity="center_vertical"
             app:backgroundStyle="@drawable/et_shape"
+            app:selectBackgroundStyle="@drawable/et_shape_select"
             app:setDelBtn="true"
-            app:innerPadding="10dp"
+            app:textSize="14sp"
+            app:innerPadding="8dp"
             app:writeType="None"
             android:text=""
             android:textColor="@color/whiteColor" />
@@ -162,6 +105,68 @@
             android:layout_marginRight="4dp"/>
         <Button
             android:id="@+id/barcode_trim22"
+            android:enabled="false"
+            android:layout_gravity="center_vertical"
+            android:layout_width="30dp"
+            android:layout_height="37dp"
+            android:background="@color/whiteColor"
+            android:layout_marginEnd="3dp"
+            android:text="1"
+            />
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:id="@+id/barcode2_layer"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView3" >
+        <mobil.selester.wheditbox.WHEditBox
+            android:id="@+id/barcode1"
+            android:layout_weight="1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center_vertical"
+            app:backgroundStyle="@drawable/et_shape"
+            app:selectBackgroundStyle="@drawable/et_shape_select"
+            app:setDelBtn="true"
+            app:innerPadding="8dp"
+            app:textSize="14sp"
+            app:writeType="None"
+            android:text=""
+            android:textColor="@color/whiteColor" />
+        <android.support.v7.widget.SwitchCompat
+            android:id="@+id/barcode_enableTrim1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"/>
+        <Button
+            android:id="@+id/barcode_trim11"
+            android:layout_width="30dp"
+            android:layout_height="37dp"
+            android:background="@color/whiteColor"
+            android:layout_gravity="center_vertical"
+            android:text="1"
+            android:enabled="false" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="37dp"
+            android:layout_gravity="top"
+            android:text="-"
+            android:textSize="32sp"
+            android:textColor="@color/blackColor"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"/>
+        <Button
+            android:id="@+id/barcode_trim21"
             android:enabled="false"
             android:layout_gravity="center_vertical"
             android:layout_marginEnd="3dp"

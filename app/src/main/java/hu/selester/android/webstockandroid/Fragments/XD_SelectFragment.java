@@ -173,7 +173,8 @@ public class XD_SelectFragment extends Fragment {
             KeyboardUtils.hideKeyboard(getActivity());
             ft.commit();
         }else{
-            Toast.makeText(getContext(),"Nincs rámpaszám meghatározva!",Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"CrossDock - kiválasztás","Nincs rámpaszám meghatározva!",HelperClass.ERROR);
+            //Toast.makeText(getContext(),"Nincs rámpaszám meghatározva!",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -232,7 +233,8 @@ public class XD_SelectFragment extends Fragment {
                     rampNum.requestFocus();
                     KeyboardUtils.hideKeyboard(getActivity());
                 } catch (JSONException e) {
-                    Toast.makeText(getContext(),"Nincs adat ehhez a feladatkódhoz!",Toast.LENGTH_LONG).show();
+                    HelperClass.messageBox(getActivity(),"CrossDock - kiválasztás","Nincs adat ehhez a feladatkódhoz!",HelperClass.ERROR);
+                    //Toast.makeText(getContext(),"Nincs adat ehhez a feladatkódhoz!",Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
                 pd.dismiss();

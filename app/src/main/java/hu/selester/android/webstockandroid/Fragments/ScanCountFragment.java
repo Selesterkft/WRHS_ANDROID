@@ -289,7 +289,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         }catch (Exception e){
             db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
-            Toast.makeText(getContext(),"ERROR SCANCOUNT 001",Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Részletek","Ismeretlen hiba (001)!",HelperClass.ERROR);
+            //Toast.makeText(getContext(),"ERROR SCANCOUNT 001",Toast.LENGTH_LONG).show();
         }
         KeyboardUtils.hideKeyboard(getActivity());
         //HelperClass.loadTempSession(getContext());
@@ -430,7 +431,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         }catch (Exception e){
             db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
-            Toast.makeText(getContext(),"ERROR SCANCOUNT 002",Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Részletek","Ismeretlen hiba (002)!",HelperClass.ERROR);
+            //Toast.makeText(getContext(),"ERROR SCANCOUNT 002",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -442,7 +444,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         }catch (Exception e){
             db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
-            Toast.makeText(getContext(),"ERROR SCANCOUNT 003",Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Részletek","Ismeretlen hiba (003)!",HelperClass.ERROR);
+            //Toast.makeText(getContext(),"ERROR SCANCOUNT 003",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -507,13 +510,15 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                                     isnew = !isnew;
                                 } else {
                                     HelperClass.errorSound(getActivity());
-                                    Toast.makeText(getContext(), "Nem tárolható ilyen tétel!", Toast.LENGTH_LONG).show();
+                                    HelperClass.messageBox(getActivity(),"Részletek","Nem tárolható ilyen tétel!",HelperClass.ERROR);
+                                    //Toast.makeText(getContext(), "Nem tárolható ilyen tétel!", Toast.LENGTH_LONG).show();
                                 }
                                 //}
                             }
                         } else {
                             HelperClass.errorSound(getActivity());
-                            Toast.makeText(getContext(), "Nem létező vonalkód!", Toast.LENGTH_LONG).show();
+                            HelperClass.messageBox(getActivity(),"Részletek","Nem létező vonalkód!",HelperClass.ERROR);
+                            //Toast.makeText(getContext(), "Nem létező vonalkód!", Toast.LENGTH_LONG).show();
                         }
                         findValue.removeTextChangedListener(textWatcher);
                         findValue.setText("");
@@ -523,7 +528,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 } catch (Exception e) {
                     db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
                     e.printStackTrace();
-                    Toast.makeText(getContext(), "ERROR SCANCOUNT 004", Toast.LENGTH_LONG).show();
+                    HelperClass.messageBox(getActivity(),"Részletek","Ismeretlen hiba (004)!",HelperClass.ERROR);
+                    //Toast.makeText(getContext(), "ERROR SCANCOUNT 004", Toast.LENGTH_LONG).show();
                 }
             }else{
                 findValue.removeTextChangedListener(textWatcher);
@@ -565,7 +571,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                     }
                 }else{
                     HelperClass.errorSound(getActivity());
-                    Toast.makeText(getContext(), "Nem létező vonalkód!", Toast.LENGTH_LONG).show();
+                    HelperClass.messageBox(getActivity(),"Részletek","Nem létező vonalkód!",HelperClass.ERROR);
+                    //Toast.makeText(getContext(), "Nem létező vonalkód!", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -612,7 +619,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 if ((itemCount + 1) > maxItemCount) {
                     if (tranCode.charAt(0) == '2') {
                         HelperClass.errorSound(getActivity());
-                        Toast.makeText(getContext(), "Nem tárolható ki több tétel!", Toast.LENGTH_LONG).show();
+                        HelperClass.messageBox(getActivity(),"Részletek","Nem tárolható ki több tétel!",HelperClass.ERROR);
+                        //Toast.makeText(getContext(), "Nem tárolható ki több tétel!", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     if (qCurrent != 0) {
@@ -794,7 +802,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         }catch (Exception e){
             db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
-            Toast.makeText(getContext(),"ERROR SCANCOUNT 005",Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Részletek","Ismeretlen hiba (005)!",HelperClass.ERROR);
+            //Toast.makeText(getContext(),"ERROR SCANCOUNT 005",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -811,7 +820,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         }catch (Exception e){
             db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
-            Toast.makeText(getContext(),"ERROR SCANCOUNT 006",Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Részletek","Ismeretlen hiba (006)!",HelperClass.ERROR);
+            //Toast.makeText(getContext(),"ERROR SCANCOUNT 006",Toast.LENGTH_LONG).show();
         }
     }
 
@@ -846,7 +856,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         }catch (Exception e){
             db.logDao().addLog(new LogTable(LogTable.LogType_Error,"ScanCountFragment",e.getMessage(),"LOGUSER",null,null));
             e.printStackTrace();
-            Toast.makeText(getContext(),"ERROR SCANCOUNT 007",Toast.LENGTH_LONG).show();
+            HelperClass.messageBox(getActivity(),"Részletek","Ismeretlen hiba (007)!",HelperClass.ERROR);
+            //Toast.makeText(getContext(),"ERROR SCANCOUNT 007",Toast.LENGTH_LONG).show();
         }
         if(dataCounter == 10){
             dataCounter = 0;
