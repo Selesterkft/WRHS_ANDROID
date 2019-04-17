@@ -80,8 +80,9 @@ class PhotoFragment:Fragment(){
         rootView.transphoto_list.layoutManager = LinearLayoutManager(context!!)
         tranCode = SessionClass.getParam("tranCode")
         if( SessionClass.getParam( tranCode + "_Line_ListView_SELECT") != null || !SessionClass.getParam(tranCode + "_Line_ListView_SELECT").equals("") ){
-            qPhotoID = HelperClass.getArrayPosition(SessionClass.getParam( tranCode + "_Detail_TakePhoto_ID"), SessionClass.getParam(SessionClass.getParam("tranCode") + "_Line_ListView_SELECT"))
+            qPhotoID = HelperClass.getArrayPosition(SessionClass.getParam( tranCode + "_Detail_TakePhoto_ID"), SessionClass.getParam(tranCode + "_Line_ListView_SELECT"))
             attrId = Integer.parseInt( AllLinesData.getParam(SessionClass.getParam("selectLineID"))[qPhotoID] )
+            //Log.i("TAG",""+qPhotoID + " " + SessionClass.getParam( tranCode + "_Detail_TakePhoto_ID") + " - "  + attrId )
         }
         val adapter = PhotosListAdapter(context as Context, db.photosDao().getPositionData( orderId, attrId ) as MutableList<PhotosTable>, listener)
         rootView.transphoto_list.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
@@ -112,7 +113,6 @@ class PhotoFragment:Fragment(){
             val permissionRequested = arrayOf(Manifest.permission.CAMERA)
             requestPermissions(permissionRequested, REQUESTCODE_ACTION_IMAGE_CAPTURE)
         }
-
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {

@@ -30,7 +30,7 @@ class UploadFilesThread(val context: Context?, val tranCode:String , val tranID:
             allComplated = true
             list.forEach {
                 db.photosDao().setUploadStatus(it.id!!, 1)
-                if( it.addrId != null && !it.addrId.equals("null") && !it.addrId.equals("null") ) {
+                if( !it.addrId.equals("null") && !it.addrId.equals("null") ) {
                     uploadFile2(it.filePath, it.addrId, it.ptype, it.id!!)
                 }else{
                     allComplated = false
@@ -38,7 +38,6 @@ class UploadFilesThread(val context: Context?, val tranCode:String , val tranID:
                 Log.i("TAG", "OUT THREAD")
             }
             if (allComplated){
-                db.sessionTempDao().deleteAllData()
                 val dir = File( context!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.absolutePath )
                 if (dir.isDirectory()) {
                     val children = dir.list()
@@ -46,12 +45,12 @@ class UploadFilesThread(val context: Context?, val tranCode:String , val tranID:
                         File(dir, children[i]).delete()
                     }
                 }
+                db.photosDao().deleteAll()
                 CloseLineThread(context,tranCode, tranID, f).start()
                 Log.i("TAG", "ALL COMPLATED!")
             }else{
-                Toast.makeText(context, "Lezárás nem sikerült, hiba a fájlok feltöltésekor!", Toast.LENGTH_LONG).show()
+                Log.i("TAG","Lezárás nem sikerült, hiba a fájlok feltöltésekor!")
             }
-
         } else {
             CloseLineThread(context,tranCode, tranID, f).start()
         }
@@ -71,8 +70,6 @@ class UploadFilesThread(val context: Context?, val tranCode:String , val tranID:
                 val client = Multipart(URL(SessionClass.getParam("WSUrl") + "/PostImage"))
                 client.addFilePart("pic", file, filename, content_type!!)
                 client.addHeaderField("addrid", addrID.toString())
-                //client.addHeaderField("doctypeid", docType.toString())
-                //client.addHeaderField("addrid", "118319630")
                 client.addHeaderField("doctypeid", "-1003")
                 Log.i("TAG", addrID.toString() + " - " + docType.toString())
                 client.upload(object : Multipart.OnFileUploadedListener {

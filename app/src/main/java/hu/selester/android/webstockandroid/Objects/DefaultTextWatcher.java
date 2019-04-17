@@ -30,12 +30,16 @@ public class DefaultTextWatcher implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable s) {
-        int suffixLen = SessionClass.getParam("barcodeSuffix").length();
-        if (s.length() > 3) {
-            if (s.toString().substring(s.length() - suffixLen, s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
-                myET.setText(s.toString().substring(0, s.toString().length() - suffixLen));
-                event.Changed();
+        try {
+            if (s.length() > 3) {
+                int suffixLen = SessionClass.getParam("barcodeSuffix").length();
+                if (s.toString().substring(s.length() - suffixLen, s.length()).equals(SessionClass.getParam("barcodeSuffix"))) {
+                    myET.setText(s.toString().substring(0, s.toString().length() - suffixLen));
+                    event.Changed();
+                }
             }
+        }catch (Exception e){
+
         }
     }
 }

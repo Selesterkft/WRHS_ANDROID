@@ -30,9 +30,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
+import hu.selester.android.webstockandroid.Database.Tables.PlacesTable;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
@@ -54,6 +57,7 @@ public class MainMenuFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+        SessionClass.setParam("whid","1024259");
         settingLoded =false;
 
         View rootView = inflater.inflate(R.layout.frg_mainmenu,container,false);
@@ -160,6 +164,7 @@ public class MainMenuFragment extends Fragment {
                 logout();
             }
         });
+        downloadPlaces();
         loadBarcodeData();
         downloadSetting();
         return rootView;
@@ -274,6 +279,59 @@ public class MainMenuFragment extends Fragment {
         rq.add(jro);
     }
 
+    private void downloadPlaces(){
+        RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
+        long transactID = 0;
+        if ( db.placesDao().getTransactID() > 0 ){
+            transactID = db.placesDao().getTransactID();
+        }else{
+            db.placesDao().deleteAll();
+        }
+
+        String userid = SessionClass.getParam("userid");
+        String pdaid = SessionClass.getParam("pdaid");
+        String terminal = SessionClass.getParam("terminal");
+        String url = SessionClass.getParam("WSUrl")+"/GET_LOCATIONS/" + transactID + "/" + SessionClass.getParam("whid");
+        Log.i("URL",url);
+        JsonObjectRequest jro = new JsonObjectRequest(Request.Method.GET, url, new JSONObject(), new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    String jsonText = response.getString("GET_LOCATIONSResult");
+                    List<PlacesTable> list = new ArrayList<>();
+                    if( !jsonText.equals("")) {
+                        JSONArray jsonArray = new JSONArray(jsonText);
+                        for (int i = 0; i < jsonArray.length(); i++) {
+                            JSONObject jsonObject = jsonArray.getJSONObject(i);
+                            long _id = jsonArray.getJSONObject(i).getLong("ID");
+                            String _name = jsonArray.getJSONObject(i).getString("NameInEinFeld");
+                            long _tranid = jsonArray.getJSONObject(i).getLong("TransactID");
+                            list.add(new PlacesTable(_id, _name, _tranid));
+                            Log.i("TAG","" + _id + ", " + _name + ", " + _tranid);
+                        }
+                        db.placesDao().setPlacesData(list);
+                    }else{
+                        //HelperClass.messageBox(getActivity(),"Beállítások betöltése","Tranzakciós beállítások nem érvényesek!",HelperClass.ERROR);
+                    }
+                } catch (JSONException e) {
+                    //HelperClass.messageBox(getActivity(),"Beállítások betöltése","Tranzakciós beállítások nem érvényesek!",HelperClass.ERROR);
+                    e.printStackTrace();
+                }
+
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if(error != null){
+                    //HelperClass.messageBox(getActivity(),"Beállítások betöltése","Tranzakciós beállítások nem érvényesek!",HelperClass.ERROR);
+                    error.printStackTrace();
+                }
+            }
+        });
+        jro.setRetryPolicy(new DefaultRetryPolicy(50000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        rq.add(jro);
+    }
+
     void buildErrorDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Hibakezelés");
@@ -345,6 +403,8 @@ public class MainMenuFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 db.sessionTempDao().deleteAllData();
+                db.photosDao().deleteAll();
+
             }
         });
 

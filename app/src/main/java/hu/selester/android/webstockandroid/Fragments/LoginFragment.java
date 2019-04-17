@@ -34,6 +34,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -80,7 +82,8 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frg_login,container,false);
         db = SelesterDatabase.getDatabase(getContext());
-        //db.systemDao().setValue(new SystemTable("WSUrl","https://web-restapi-services-01.conveyor.cloud/service1.svc"));
+        //db.systemDao().setValue(new SystemTable("WSUrl","http://192.168.1.103:8089/service1.svc"));
+        db.systemDao().setValue(new SystemTable("WSUrl","https://web-restapi-services-01.conveyor.cloud/service1.svc"));
         //db.systemDao().setValue(new SystemTable("terminal","AdmAndrJ"));
         //db.systemDao().setValue(new SystemTable("barcodeSuffix","#&"));
         //db.systemDao().setValue(new SystemTable("scanButtonCode", "203"));
@@ -266,6 +269,7 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
                 }
             }
         });
+        jr.setRetryPolicy(new DefaultRetryPolicy(50000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         rq.add(jr);
     }
 

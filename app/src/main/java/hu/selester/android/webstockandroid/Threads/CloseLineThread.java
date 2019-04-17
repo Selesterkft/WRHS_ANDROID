@@ -303,6 +303,7 @@ public class CloseLineThread extends Thread {
                             new ChangeStatusThread(context,"PDA_CHECKED", tranCode,tranID,f).start();
                             f.closeFragment();
                         }else{
+                            f.errorClose();
                             try {
                                 String rtext2 = jsonObject.getString("ERROR_TEXT");
                                 if (rtext2!=null && !rtext2.equals("")){
@@ -316,9 +317,11 @@ public class CloseLineThread extends Thread {
                             }
                         }
                     }else{
+                        f.errorClose();
                         Toast.makeText(context,"Sorok lezárása sikertelen, kérem jelezze a Selesternek!",Toast.LENGTH_LONG).show();
                     }
                 } catch (JSONException e) {
+                    f.errorClose();
                     Toast.makeText(context,"Sorok lezárása sikertelen, kérem jelezze a Selesternek!",Toast.LENGTH_LONG).show();
                     e.printStackTrace();
                 }
@@ -327,6 +330,7 @@ public class CloseLineThread extends Thread {
             @Override
             public void onErrorResponse(VolleyError error) {
                 if(error!=null){
+                    f.errorClose();
                     Toast.makeText(context,"Sorok lezárása sikertelen, hálózati hiba!",Toast.LENGTH_LONG).show();
                     error.printStackTrace();
                 }

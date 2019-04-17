@@ -161,6 +161,7 @@ public class XD_SelectFragment extends Fragment {
             //Fragment f = new XD_ItemParametersFragment();
             FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
             Bundle b = new Bundle();
+            if( rampNum.getText().toString().length() > 5 ) SessionClass.setParam("rampNum", rampNum.getText().toString().substring(0,5) ); else SessionClass.setParam("rampNum", rampNum.getText().toString() );
             SessionClass.setParam("ORD_NUM", orderId.getText().toString());
             b.putString("tranid", orderId.getText().toString());
             b.putString("movenum", "");

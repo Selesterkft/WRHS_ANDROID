@@ -474,7 +474,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                                     if (id != null) {
                                         refreshData(id);
                                     } else {
-                                        buildFullDialog();
+                                        HelperClass.messageBox(getActivity(),"Részletek","Nem található több ebből a cikkből!",HelperClass.WARNING);
+                                        //buildFullDialog();
                                     }
                                 } else {
                                     AllLinesData.setItemParams(lineID, qCurrent, "" + (itemCount + Integer.parseInt(counter.getText().toString())));
@@ -510,7 +511,11 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                                     isnew = !isnew;
                                 } else {
                                     HelperClass.errorSound(getActivity());
-                                    HelperClass.messageBox(getActivity(),"Részletek","Nem tárolható ilyen tétel!",HelperClass.ERROR);
+                                    if( AllLinesData.isValidateValue(findRow, isBar) ) {
+                                        HelperClass.messageBox(getActivity(), "Részletek", "Nem létező vonalkód!", HelperClass.ERROR);
+                                    }else{
+                                        HelperClass.messageBox(getActivity(),"Részletek","Nem található több ebből a cikkből!",HelperClass.WARNING);
+                                    }
                                     //Toast.makeText(getContext(), "Nem tárolható ilyen tétel!", Toast.LENGTH_LONG).show();
                                 }
                                 //}
@@ -620,7 +625,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                     if (tranCode.charAt(0) == '2') {
                         HelperClass.errorSound(getActivity());
                         HelperClass.messageBox(getActivity(),"Részletek","Nem tárolható ki több tétel!",HelperClass.ERROR);
-                        //Toast.makeText(getContext(), "Nem tárolható ki több tétel!", Toast.LENGTH_LONG).show();
                     }
                 } else {
                     if (qCurrent != 0) {

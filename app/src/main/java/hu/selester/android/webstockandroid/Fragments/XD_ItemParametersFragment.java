@@ -24,6 +24,7 @@ import java.util.Random;
 
 import hu.selester.android.webstockandroid.Adapters.XD_PlacenumberPagerAdapter;
 import hu.selester.android.webstockandroid.Adapters.XD_ItemsParametersListAdapter;
+import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Divider.SimpleDividerItemDecoration;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
@@ -52,6 +53,7 @@ public class XD_ItemParametersFragment extends Fragment {
     private WHEditBox edit;
     private XD_ItemParametersFragment myFrag;
     private Button chkBtn;
+    private SelesterDatabase db;
 
 
     @Override
@@ -64,6 +66,7 @@ public class XD_ItemParametersFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myFrag = this;
         rootView = inflater.inflate(R.layout.frg_itemparameters, container, false);
+        db = SelesterDatabase.getDatabase(getContext());
         tranCode = SessionClass.getParam("tranCode");
         qBarcode = HelperClass.getArrayPosition("Barcode", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qEvidNum = HelperClass.getArrayPosition("EvidNum", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
@@ -129,11 +132,35 @@ public class XD_ItemParametersFragment extends Fragment {
 
     private void addNewPlacenumPanel() {
         if( !placeNumberTV.getText().toString().equals("") ){
-            XD_PlacenumberFragment newFrg = XD_PlacenumberFragment.newInstance(placeNumberTV.getText().toString());
-            newFrg.setParentFragment(myFrag);
-            ((XD_PlacenumberPagerAdapter)vp.getAdapter()).update(newFrg,placeNumberTV.getText().toString());
-            spl.setViewPager(vp);
-            placeNumberTV.setText("");
+            if( db.placesDao().getTransactID() > 0 ) {
+                if (db.placesDao().getPlacesData(placeNumberTV.getText().toString()) != null) {
+                    boolean hereItIs = false;
+                    for (int x = 0; x < vp.getAdapter().getCount(); x++) {
+                        Log.i("TAG", vp.getAdapter().getPageTitle(x) + " - " + placeNumberTV.getText());
+                        if (vp.getAdapter().getPageTitle(x).toString().equals(placeNumberTV.getText().toString())) {
+                            hereItIs = true;
+                        }
+                    }
+                    if (!hereItIs) {
+                        XD_PlacenumberFragment newFrg = XD_PlacenumberFragment.newInstance(placeNumberTV.getText().toString());
+                        newFrg.setParentFragment(myFrag);
+                        ((XD_PlacenumberPagerAdapter) vp.getAdapter()).update(newFrg, placeNumberTV.getText().toString());
+                        spl.setViewPager(vp);
+                        placeNumberTV.setText("");
+                        vp.setCurrentItem(vp.getAdapter().getCount(), true);
+                        edit.EDText.requestFocus();
+                    } else {
+                        HelperClass.messageBox(getActivity(), "CrossDock", "Már van ilyen nevű rakhely definiálva ennél az evidenciánál!", HelperClass.WARNING);
+                        placeNumberTV.setText("");
+                    }
+                } else {
+                    HelperClass.messageBox(getActivity(), "CrossDock", "Nincs ilyen nevű rakhely ebben a raktárban!", HelperClass.ERROR);
+                    placeNumberTV.setText("");
+                }
+            }else{
+                HelperClass.messageBox(getActivity(), "CrossDock", "Nem érhető el a rakhely törzs, kérem ellenőrizze a raktári beállításokat!", HelperClass.ERROR);
+                placeNumberTV.setText("");
+            }
         }else{
             HelperClass.messageBox(getActivity(),"CrossDock","Nincs rakhely meghatározva!",HelperClass.ERROR);
             //Toast.makeText(getContext(),"Nincs rakhely meghatározva!",Toast.LENGTH_LONG).show();
@@ -240,7 +267,7 @@ public class XD_ItemParametersFragment extends Fragment {
                                 SaveAllSessionTemp sst = new SaveAllSessionTemp(getContext());
                                 sst.start();
                             } else {
-                                HelperClass.messageBox(getActivity(),"CrossDock","Nincs rakhely kiválasztva!",HelperClass.ERROR);
+                                HelperClass.messageBox(getActivity(),"CrossDock","Nincs rakhely kiválasztva!", HelperClass.ERROR);
                                 //Toast.makeText(getContext(), "Nincs rakhely kiválasztva!", Toast.LENGTH_LONG).show();
                             }
                             itOK = true;
@@ -249,8 +276,20 @@ public class XD_ItemParametersFragment extends Fragment {
                     }
                 }
                 if (!itOK) {
-                    HelperClass.messageBox(getActivity(),"CrossDock","Nincs több ebből a termékből!",HelperClass.ERROR);
-                    //Toast.makeText(getContext(), "Nincs ebből a termékből több!", Toast.LENGTH_LONG).show();
+                    if( AllLinesData.isValidateValue(qBarcode, barcode) ){
+                        List<String[]> list = AllLinesData.findItemsFromMap(evidNum, qEvidNum);
+                        boolean hereItIs = false;
+                        for (int x = 0; x < list.size(); x++ ){
+                            if( list.get(x)[qBarcode].equals(barcode) ) hereItIs = true;
+                        }
+                        if( hereItIs ){
+                            HelperClass.messageBox(getActivity(),"CrossDock","Nincs több ebből a termékből!", HelperClass.WARNING);
+                        }else{
+                            HelperClass.messageBox(getActivity(),"CrossDock","Ez a termék nem ehhez az evidenciához tartozik!", HelperClass.ERROR);
+                        }
+                    } else {
+                        HelperClass.messageBox(getActivity(),"CrossDock","Nem létező termékkód!", HelperClass.ERROR);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();

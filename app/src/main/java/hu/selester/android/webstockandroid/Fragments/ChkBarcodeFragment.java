@@ -3,21 +3,13 @@ package hu.selester.android.webstockandroid.Fragments;
 
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.print.PrinterId;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
-import android.text.Editable;
 import android.text.InputType;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,24 +21,16 @@ import android.widget.ImageView;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.ServerError;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.HttpHeaderParser;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.JsonRequest;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.security.PrivilegedAction;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -277,10 +261,6 @@ public class ChkBarcodeFragment extends Fragment {
             public void onClick(View v) {
                 if (bar2Btn.EDText.isEnabled()) {
                     activeButton = 1;
-                    //bar1Btn.setBackgroundColor(Color.YELLOW);
-                    //bar1Btn.EDText.setTextColor(Color.BLACK);
-                    //bar2Btn.setBackgroundColor(Color.TRANSPARENT);
-                    //bar2Btn.EDText.setTextColor(Color.WHITE);
                     bar1Btn.EDText.requestFocus();
                 }
             }
@@ -293,10 +273,6 @@ public class ChkBarcodeFragment extends Fragment {
                     //Toast.makeText(getActivity(), "Nincs kiválasztva az eredeti vonalkód!", Toast.LENGTH_LONG).show();
                 } else {
                     activeButton = 2;
-                    //bar2Btn.setBackgroundColor(Color.YELLOW);
-                    //bar2Btn.EDText.setTextColor(Color.BLACK);
-                    //bar1Btn.setBackgroundColor(Color.TRANSPARENT);
-                    //bar1Btn.EDText.setTextColor(Color.WHITE);
                     bar2Btn.EDText.requestFocus();
                 }
             }

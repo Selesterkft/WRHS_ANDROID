@@ -80,7 +80,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     private String tranCode;
     private String tranID;
     private String movenum;
-    private int qNeed,qCurrent,qBarcode01,qMissing,qBarcode,qLineID,qRefLineID,qEvidNum,qTo_Place;
+    private int qNeed,qCurrent,qBarcode01,qMissing,qBarcode,qLineID,qRefLineID,qEvidNum,qTo_Place,qRampNum;
     private ImageButton saveDataBtn, lockBtn, selectBtn, flushBtn, createBtn, paramsBtn;
     private int qBreak, qCollection, qTakePhoto, qMAR;
     private String[] arrayBtnVisibility;
@@ -126,6 +126,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         qLineID     = HelperClass.getArrayPosition("Line_ID", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qRefLineID  = HelperClass.getArrayPosition("Ref_Line_ID", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qEvidNum  = HelperClass.getArrayPosition("EvidNum", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qRampNum  = HelperClass.getArrayPosition("Loading_Gate", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         if(tranCode.charAt(0)=='4'){
             qTo_Place  = HelperClass.getArrayPosition("From_place", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         }else{
@@ -604,6 +605,12 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                                 }
                             }
                         }
+                        if( qRampNum > -1 ){
+                            if( SessionClass.getParam("rampNum") != null && !SessionClass.getParam("rampNum").equals("") ){
+                                dataText[qRampNum] = SessionClass.getParam("rampNum");
+                            }
+                        }
+
                         AllLinesData.setParam(dataText[0],dataText);
                         tl.add(dataText);
                     }
@@ -759,7 +766,6 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 lockBtn.setClickable(false);
                 selectBtn.setClickable(false);
                 flushBtn.setClickable(false);
-
                 for (int i = 0; i <= count; i++) {
                     fromNum = i * db;
                     if (i == count) {
@@ -856,6 +862,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     }
 
     private void closeLine(){
+        pd = HelperClass.loadingDialogOn(getActivity());
         new UploadFilesThread(getContext(),tranCode,tranID,this).start();
         SessionClass.setParam("currentLineID","");
         KeyboardUtils.hideKeyboard(getActivity());
@@ -866,16 +873,21 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     }
 
     public void closeFragment(){
+        Log.i("TAG","CloseFragment");
         KeyboardUtils.hideKeyboard(getActivity());
-
+        db.sessionTempDao().deleteAllData();
+        pd.dismiss();
         if(SessionClass.getParam("collectionBtn").equals("1") ){
             ((MovesSubViewPager)getParentFragment()).closeFragment();
         }else{
             getFragmentManager().popBackStack();
         }
-
     }
-
+    public void errorClose() {
+        Log.i("TAG","ERRORClose");
+        KeyboardUtils.hideKeyboard(getActivity());
+        pd.dismiss();
+    }
 
     void placeDialog(final String id) {
         if ( AllLinesData.getParam(id)[qTo_Place] != null && ( AllLinesData.getParam(id)[qTo_Place].equals("") || AllLinesData.getParam(id)[qTo_Place].isEmpty()) ) {
