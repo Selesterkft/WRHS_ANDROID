@@ -17,7 +17,7 @@ class KT_HelperClass(){
         fun getSharedPreferences(act: Context, key: String): String{
             val prefs = act.getSharedPreferences("selTransport_logged", 0)
 
-            return prefs.getString(key,"")
+            return prefs.getString(key,"")!!
         }
 
         fun setSharedPreferences(act: Context, key: String, value: String){
@@ -55,8 +55,6 @@ class KT_HelperClass(){
             options.inScaled = true
             options.inSampleSize = scaledSize
             val bitmap = BitmapFactory.decodeFile(filePath, options)
-            val imageHeight = options.outHeight // 1024
-            val imageWidth = options.outWidth // 860
             var ei: ExifInterface? = null
             try {
                 ei = ExifInterface(filePath)
@@ -65,7 +63,7 @@ class KT_HelperClass(){
             }
 
             val orientation = ei!!.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_UNDEFINED)
-            var rotatedBitmap: Bitmap? = null
+            var rotatedBitmap: Bitmap?
             when (orientation) {
                 ExifInterface.ORIENTATION_ROTATE_90 -> rotatedBitmap = rotateImage(bitmap, 90f)
 

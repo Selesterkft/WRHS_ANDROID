@@ -49,7 +49,7 @@ interface PhotosDao {
     fun deletePhoto( id:Long )
 
     @Query("Select count(id) from PhotosTable")
-    fun getAllRowsNum() : Integer
+    fun getAllRowsNum() : Int
 
     @Query("Update PhotosTable set uploaded = :status where id= :id")
     fun setUploadStatus(id:Long, status:Int)

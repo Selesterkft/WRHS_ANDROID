@@ -168,19 +168,17 @@ class PhotoFragment:Fragment(){
         super.onActivityResult(requestCode, resultCode, data)
         Log.i(LOG_TAG, "ResultCode - $resultCode RequestCode - $requestCode")
         if (resultCode == Activity.RESULT_OK) {
-            val c = Calendar.getInstance()
-            val sdf = SimpleDateFormat("yyyy.MM.dd HH:mm")
             when (requestCode) {
                 REQUESTCODE_ACTION_PICK -> {
                     Log.i(LOG_TAG, "Action_Pick")
                     val selectedImage = data!!.data
-                    var mCurrPath = ""
+                    var mCurrPath : String
                     try {
                         Log.i("TAG",""+Build.VERSION.SDK_INT + ">=" + Build.VERSION_CODES.LOLLIPOP_MR1)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
-                            mCurrPath = getRealPathFromURI(activity!!.baseContext, selectedImage)
+                            mCurrPath = getRealPathFromURI(activity!!.baseContext, selectedImage!!)
                         } else {
-                            mCurrPath = getRealPathFromUri2(activity!!.baseContext, selectedImage)
+                            mCurrPath = getRealPathFromUri2(activity!!.baseContext, selectedImage!!)
                         }
                         if (mCurrPath == "") {
                             mCurrPath = getRealPathFromUri2(activity!!.baseContext, selectedImage)
@@ -255,12 +253,12 @@ class PhotoFragment:Fragment(){
         Log.i("TAG","DELDialog")
         val builder = AlertDialog.Builder(activity!!)
         builder.setTitle("Biztos, hogy törli a fotót?")
-        builder.setPositiveButton("IGEN") { dialog, which ->
+        builder.setPositiveButton("IGEN") { dialog, _ ->
             db.photosDao().deletePhoto( (rootView.transphoto_list.adapter!! as PhotosListAdapter).dataList[position].id!! )
             (rootView.transphoto_list.adapter!! as PhotosListAdapter).removeAt(position)
             dialog.cancel()
         }
-        builder.setNegativeButton("NEM") { dialog, which ->
+        builder.setNegativeButton("NEM") { dialog, _ ->
             dialog.cancel()
         }
         builder.show()
@@ -268,8 +266,8 @@ class PhotoFragment:Fragment(){
 
     private fun showPictureDialog(filePath: String){
         Log.i("TAG","SHOW PICTURES: "+filePath)
-        val settingsDialog = Dialog(context)
-        settingsDialog.window.requestFeature(Window.FEATURE_NO_TITLE)
+        val settingsDialog = Dialog(context!!)
+        settingsDialog.window!!.requestFeature(Window.FEATURE_NO_TITLE)
         val view = layoutInflater.inflate(R.layout.dialog_show_image, null)
         view.show_picture_dialog_image.setImageBitmap(KT_HelperClass.loadLocalImage(filePath,2))
         view.show_picture_dialog_btn.setOnClickListener {
