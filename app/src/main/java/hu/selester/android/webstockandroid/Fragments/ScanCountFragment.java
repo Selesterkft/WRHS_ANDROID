@@ -490,10 +490,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                                     textDataValue3.setText("" + def);
                                 }
                             } else {
-                                //                        if (tranCode.equals("21")) {
-                                //                            buildDialog();
-                                //
-                                //                   }else{
                                 String id = AllLinesData.searchFirstItem(findRow, qNeed, qCurrent, isBar);
                                 if (id != null) {
                                     refreshData(id);
@@ -510,19 +506,21 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                                     }
                                     isnew = !isnew;
                                 } else {
-                                    HelperClass.errorSound(getActivity());
                                     if( AllLinesData.isValidateValue(findRow, isBar) ) {
-                                        HelperClass.messageBox(getActivity(), "Részletek", "Nem létező vonalkód!", HelperClass.ERROR);
-                                    }else{
+                                        HelperClass.errorSound(getActivity());
                                         HelperClass.messageBox(getActivity(),"Részletek","Nem található több ebből a cikkből!",HelperClass.WARNING);
+                                    }else{
+                                        HelperClass.messageBox(getActivity(), "Részletek", "Nem létező vonalkód (1011)!", HelperClass.ERROR);
                                     }
-                                    //Toast.makeText(getContext(), "Nem tárolható ilyen tétel!", Toast.LENGTH_LONG).show();
                                 }
-                                //}
                             }
                         } else {
-                            HelperClass.errorSound(getActivity());
-                            HelperClass.messageBox(getActivity(),"Részletek","Nem létező vonalkód!",HelperClass.ERROR);
+                            if( AllLinesData.isValidateValue(findRow, isBar) ) {
+                                HelperClass.errorSound(getActivity());
+                                HelperClass.messageBox(getActivity(),"Részletek","Nem található több ebből a cikkből!",HelperClass.WARNING);
+                            }else{
+                                HelperClass.messageBox(getActivity(), "Részletek", "Nem létező vonalkód (1012)!", HelperClass.ERROR);
+                            }
                             //Toast.makeText(getContext(), "Nem létező vonalkód!", Toast.LENGTH_LONG).show();
                         }
                         findValue.removeTextChangedListener(textWatcher);

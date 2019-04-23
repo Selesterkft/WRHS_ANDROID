@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -49,7 +50,8 @@ public class XD_SelectFragment extends Fragment {
     private View rootView;
     private ProgressDialog pd;
     private TextView licencNum, sumWeight, sumCount, fp_text, fromPlaceTV;
-    private EditText rampNum, orderId;
+    private EditText rampNum;
+    private TextInputEditText orderId;
     private ImageView exitBtn, searchBtn, nextBtn;
     private int qBreak, qCollection;
     private String[] arrayBtnVisibility;
@@ -62,6 +64,11 @@ public class XD_SelectFragment extends Fragment {
         super.onCreate(savedInstanceState);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        orderId.setText("");
+    }
 
     @Nullable
     @Override
@@ -98,7 +105,6 @@ public class XD_SelectFragment extends Fragment {
                 return false;
             }
         });
-        orderId.setText("");
         rootView.findViewById(R.id.cd_datacontainer).setVisibility(View.GONE);
         rootView.findViewById(R.id.textInputLayout3).setVisibility(View.GONE);
 
