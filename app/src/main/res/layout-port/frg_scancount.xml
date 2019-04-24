@@ -225,7 +225,8 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout6"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/scancount_mar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/linearLayout5">
@@ -266,271 +267,297 @@
 
             <LinearLayout
                 android:id="@+id/scancount_param1_layer"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:paddingBottom="5dp"
+                android:orientation="horizontal"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:orientation="horizontal">
+                android:paddingBottom="5dp"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/scancount_data1_label"
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
+                    android:gravity="center_vertical"
                     android:text="Hiány" />
+
                 <TextView
                     android:id="@+id/scancount_data1_value"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:background="@drawable/logintext_et_shape_round"
                     android:gravity="center_vertical"
-                    android:paddingLeft="5dp"
-                    android:background="@drawable/logintext_et_shape_round" />
+                    android:paddingLeft="5dp" />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/scancount_param0_layer"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:orientation="horizontal"
-                android:paddingBottom="5dp"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp">
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp">
+
                 <TextView
                     android:id="@+id/scancount_data2_label"
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
+                    android:gravity="center_vertical"
                     android:paddingRight="5dp"
                     android:text="Darab" />
+
                 <EditText
-                    android:layout_weight="1"
                     android:id="@+id/scancount_data2_value1"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:paddingLeft="5sp"
-                    android:textSize="15sp"
-                    android:maxLines="1"
-                    android:inputType="number"
-                    android:background="@drawable/logintext_et_shape_round" />
-                <TextView
                     android:layout_weight="1"
+                    android:background="@drawable/logintext_et_shape_round"
+                    android:inputType="number"
+                    android:maxLines="1"
+                    android:paddingLeft="5sp"
+                    android:textSize="15sp" />
+
+                <TextView
                     android:id="@+id/scancount_data2_value2"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/logintext_et_shape_round"
                     android:gravity="center_vertical"
-                    android:paddingLeft="5dp"
-                    android:background="@drawable/logintext_et_shape_round" />
+                    android:paddingLeft="5dp" />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/scancount_param2_layer"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:paddingBottom="5dp"
+                android:orientation="horizontal"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:orientation="horizontal">
+                android:paddingBottom="5dp"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/scancount_param2_label"
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
+                    android:gravity="center_vertical"
                     android:text="Param4" />
+
                 <mobil.selester.wheditbox.WHEditBox
                     android:id="@+id/scancount_param2_value"
-                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     app:backgroundStyle="@drawable/logintext_et_shape_round"
+                    app:innerPadding="4dp"
                     app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
                     app:setDelBtn="true"
-                    app:innerPadding="4dp"
                     app:textSize="14sp"
                     app:writeType="ClickDialog"
 
                     />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/scancount_param3_layer"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:paddingBottom="5dp"
+                android:orientation="horizontal"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:orientation="horizontal">
+                android:paddingBottom="5dp"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/scancount_param3_label"
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
+                    android:gravity="center_vertical"
                     android:text="Param4" />
+
                 <mobil.selester.wheditbox.WHEditBox
                     android:id="@+id/scancount_param3_value"
-                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     app:backgroundStyle="@drawable/logintext_et_shape_round"
+                    app:innerPadding="4dp"
                     app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
                     app:setDelBtn="true"
-                    app:innerPadding="4dp"
                     app:textSize="14sp"
                     app:writeType="ClickDialog"
 
                     />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/scancount_param4_layer"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:paddingBottom="5dp"
+                android:orientation="horizontal"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:orientation="horizontal">
+                android:paddingBottom="5dp"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/scancount_param4_label"
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
+                    android:gravity="center_vertical"
                     android:text="Param5" />
+
                 <mobil.selester.wheditbox.WHEditBox
                     android:id="@+id/scancount_param4_value"
-                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     app:backgroundStyle="@drawable/logintext_et_shape_round"
+                    app:innerPadding="4dp"
                     app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
                     app:setDelBtn="true"
-                    app:innerPadding="4dp"
                     app:textSize="14sp"
                     app:writeType="ClickDialog"
 
                     />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/scancount_param5_layer"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:paddingBottom="5dp"
+                android:orientation="horizontal"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:orientation="horizontal">
+                android:paddingBottom="5dp"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/scancount_param5_label"
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
+                    android:gravity="center_vertical"
                     android:text="Param6" />
+
                 <mobil.selester.wheditbox.WHEditBox
                     android:id="@+id/scancount_param5_value"
-                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     app:backgroundStyle="@drawable/logintext_et_shape_round"
+                    app:innerPadding="4dp"
                     app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
                     app:setDelBtn="true"
-                    app:innerPadding="4dp"
                     app:textSize="14sp"
                     app:writeType="ClickDialog"
 
                     />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/scancount_param6_layer"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:paddingBottom="5dp"
+                android:orientation="horizontal"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:orientation="horizontal">
+                android:paddingBottom="5dp"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/scancount_param6_label"
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
+                    android:gravity="center_vertical"
                     android:text="Param7" />
+
                 <mobil.selester.wheditbox.WHEditBox
                     android:id="@+id/scancount_param6_value"
-                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     app:backgroundStyle="@drawable/logintext_et_shape_round"
+                    app:innerPadding="4dp"
                     app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
                     app:setDelBtn="true"
-                    app:innerPadding="4dp"
                     app:textSize="14sp"
                     app:writeType="ClickDialog"
 
                     />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/scancount_param7_layer"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:paddingBottom="5dp"
+                android:orientation="horizontal"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:orientation="horizontal">
+                android:paddingBottom="5dp"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/scancount_param7_label"
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
+                    android:gravity="center_vertical"
                     android:text="Param8" />
+
                 <mobil.selester.wheditbox.WHEditBox
                     android:id="@+id/scancount_param7_value"
-                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     app:backgroundStyle="@drawable/logintext_et_shape_round"
+                    app:innerPadding="4dp"
                     app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
                     app:setDelBtn="true"
-                    app:innerPadding="4dp"
                     app:textSize="14sp"
                     app:writeType="ClickDialog"
 
                     />
             </LinearLayout>
+
             <LinearLayout
                 android:id="@+id/scancount_param8_layer"
-                android:visibility="gone"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
-                android:paddingBottom="5dp"
+                android:orientation="horizontal"
                 android:paddingLeft="10dp"
                 android:paddingRight="10dp"
-                android:orientation="horizontal">
+                android:paddingBottom="5dp"
+                android:visibility="gone">
+
                 <TextView
                     android:id="@+id/scancount_param8_label"
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
+                    android:gravity="center_vertical"
                     android:text="Param8" />
+
                 <mobil.selester.wheditbox.WHEditBox
                     android:id="@+id/scancount_param8_value"
-                    android:gravity="center_vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:gravity="center_vertical"
                     app:backgroundStyle="@drawable/logintext_et_shape_round"
+                    app:innerPadding="4dp"
                     app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
                     app:setDelBtn="true"
-                    app:innerPadding="4dp"
                     app:textSize="14sp"
-                    app:writeType="ClickDialog"
-                    />
+                    app:writeType="ClickDialog" />
             </LinearLayout>
 
             <LinearLayout
@@ -538,63 +565,69 @@
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:orientation="horizontal"
-                android:paddingBottom="5dp"
                 android:paddingLeft="10dp"
-                android:paddingRight="10dp">
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp">
+
                 <TextView
                     android:id="@+id/scancount_data3_label"
                     android:layout_width="60dp"
                     android:layout_height="match_parent"
-                    android:gravity="center_vertical"
                     android:layout_marginRight="5dp"
+                    android:gravity="center_vertical"
                     android:paddingRight="5dp"
                     android:text="@string/collectorTV" />
+
                 <TextView
-                    android:layout_weight="1"
                     android:id="@+id/scancount_data3_value"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@drawable/logintext_et_shape_round"
                     android:paddingLeft="5sp"
-                    android:textSize="15sp"
                     android:paddingTop="5dp"
-                    android:background="@drawable/logintext_et_shape_round" />
+                    android:textSize="15sp" />
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/scancount_collectorBtn"
-                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="10dp"
-                android:elevation="2dp"
                 android:layout_marginRight="10dp"
                 android:background="@drawable/round_corner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:elevation="2dp"
+                android:orientation="horizontal">
+
                 <TextView
-                    android:layout_marginLeft="10dp"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:textColor="@color/whiteColor"
+                    android:layout_marginLeft="10dp"
                     android:gravity="center_vertical"
-                    android:textSize="23sp"
-                    android:text="+"/>
+                    android:text="+"
+                    android:textColor="@color/whiteColor"
+                    android:textSize="23sp" />
+
                 <ImageView
                     android:layout_width="40dp"
                     android:layout_height="50dp"
                     android:layout_marginLeft="5dp"
                     android:padding="0dp"
-                    android:src="@drawable/box"/>
+                    android:src="@drawable/box" />
+
                 <TextView
-                    android:layout_marginLeft="10dp"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:textColor="@color/whiteColor"
+                    android:layout_marginLeft="10dp"
                     android:gravity="center_vertical"
-                    android:text="Új gyűjtő hozzáadása"/>
+                    android:text="Új gyűjtő hozzáadása"
+                    android:textColor="@color/whiteColor" />
             </LinearLayout>
+
             <LinearLayout
-                android:layout_weight="1"
                 android:layout_width="match_parent"
-                android:layout_height="0dp">
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
             </LinearLayout>
         </LinearLayout>
