@@ -375,6 +375,15 @@ public class MainMenuFragment extends Fragment {
                     SessionClass.setParam("takePhotoBtn", "0");
                     SessionClass.setParam("marBtn", "0");
                 }
+                String trimText = SessionClass.getParam(tranCode+"_TrimmingBarcode");
+                Log.i("TAG","TrimmedText: "+trimText);
+                if( trimText.contains(",") ){
+                    SessionClass.setParam("trimFrom",  trimText.split(",")[0]);
+                    SessionClass.setParam("trimTo",  trimText.split(",")[1]);
+                }else{
+                    SessionClass.setParam("trimFrom", "0");
+                    SessionClass.setParam("trimTo", "0");
+                }
 
                 Fragment f;
                 FragmentTransaction ft;
@@ -404,7 +413,6 @@ public class MainMenuFragment extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 db.sessionTempDao().deleteAllData();
                 db.photosDao().deleteAll();
-
             }
         });
 

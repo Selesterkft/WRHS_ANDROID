@@ -44,6 +44,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
@@ -236,22 +237,46 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         lockBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(HelperClass.isOnline(getContext())) {
-                    if (v.isClickable()) {
-                        if( CheckedList.getSizeOfChecked() == 0 ) {
-                            closeDialog();
-                        }else{
-                            CheckedList.toLogString();
-                            //closeDialog();
-                            notSaveAll();
+            if(HelperClass.isOnline(getContext())) {
+                if (v.isClickable()) {
+                    if( CheckedList.getSizeOfChecked() == 0 ) {
+                        boolean error = false;
+                        String errorString = "";
+                        Log.i("TAG","TRANCODE: "+tranCode);
+                        if( tranCode.charAt(0) == '3' ) {
+                            for (Map.Entry<String, String[]> entry : AllLinesData.getAllParam().entrySet()) {
+                                if (!InsertedList.isInsert(entry.getKey())) {
+                                    if (!entry.getValue()[qCurrent].equals("0")) {
+                                        error = true;
+                                        errorString += entry.getValue()[qEvidNum] + ", ";
+                                    }
+                                }
+                            }
+                            if (!errorString.equals("")) errorString = "Nincs minden bevételezett tétel rakhelyre helyezve!\nEvidenciaszám(ok):\n"+errorString.substring(0, errorString.length() - 2);
+                        }else if( tranCode.charAt(0) == '4' ) {
+                            for (Map.Entry<String, String[]> entry : AllLinesData.getAllParam().entrySet()) {
+                                if ( !entry.getValue()[qCurrent].equals( entry.getValue()[qNeed] ) ) {
+                                    error = true;
+                                    errorString += entry.getValue()[qEvidNum] + ", ";
+                                }
+                            }
+                            if (!errorString.equals("")) errorString = "Nincs minden tétel kitárolva!\nEvidenciaszám(ok):\n"+errorString.substring(0, errorString.length() - 2);
                         }
+                        if(error){
+                            HelperClass.messageBox(getActivity(),"Feladat zárása",errorString,3);
+                        }else{
+                            closeDialog();
+                        }
+                    }else{
+                        CheckedList.toLogString();
+                        notSaveAll();
                     }
-                }else{
-                    Toast.makeText(getContext(),"Hálózati hiba!",Toast.LENGTH_LONG).show();
                 }
+            }else{
+                Toast.makeText(getContext(),"Hálózati hiba!",Toast.LENGTH_LONG).show();
+            }
             }
         });
-
         findValueBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -261,26 +286,23 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         delTextBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(HelperClass.isOnline(getContext())) {
-                    KeyboardUtils.hideKeyboard(getActivity());
-                    findValue.setText("");
-
-                    if (tranCode.charAt(0) == '3') {
-                        rowTempData = AllLinesData.getGroupByParam(qEvidNum, qNeed, qCurrent, qMissing);
-                    }else{
-                        rowTempData = AllLinesData.getAllDataList();
-                    }
-
-                    tablePanel.getAdapter().updateData(rowTempData);
+            if(HelperClass.isOnline(getContext())) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                findValue.setText("");
+                if (tranCode.charAt(0) == '3') {
+                    rowTempData = AllLinesData.getGroupByParam(qEvidNum, qNeed, qCurrent, qMissing);
                 }else{
-                    HelperClass.messageBox(getActivity(),"Feladatkezelés","Hálózati hiba!",HelperClass.ERROR);
-                    //Toast.makeText(getContext(),"Hálózati hiba!",Toast.LENGTH_LONG).show();
+                    rowTempData = AllLinesData.getAllDataList();
                 }
+                tablePanel.getAdapter().updateData(rowTempData);
+            }else{
+                HelperClass.messageBox(getActivity(),"Feladatkezelés","Hálózati hiba!",HelperClass.ERROR);
+            }
             }
         });
         selectBtn.setOnClickListener(this);
         findValue = rootView.findViewById(R.id.movessub_header_value);
-        findValue.requestFocus();
+        findValue.setOnFocusChangeListener(HelperClass.getFocusBorderListener(getContext()));
         saveDataBtn = rootView.findViewById(R.id.movessub_saveBtn);
         saveDataBtn.setEnabled(true);
         saveDataBtn.setOnClickListener(new View.OnClickListener() {
@@ -292,7 +314,6 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                     }
                 }else{
                     HelperClass.messageBox(getActivity(),"Feladatkezelés","Hálózati hiba!",HelperClass.ERROR);
-                    //Toast.makeText(getContext(),"Hálózati hiba!",Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -305,7 +326,6 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                     }
                 }else{
                     HelperClass.messageBox(getActivity(),"Feladatkezelés","Hálózati hiba!",HelperClass.ERROR);
-                    //Toast.makeText(getContext(),"Hálózati hiba!",Toast.LENGTH_LONG).show();
                 }
                 return true;
             }
@@ -313,6 +333,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         String[] temp2 = SessionClass.getParam(tranCode+"_Line_ListView_Widths").split(",",-1);
         headerWidth = new int[temp2.length];
         for(int i=0;i<temp2.length;i++){
+            temp2[i].replace(" ","");
             if(Integer.parseInt(temp2[i])>0){
                 headerWidth[i] = tablePanel.WRAP_MAX_COLUMN;
             }else{
@@ -350,7 +371,6 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         }else {
             if (AllLinesData.getLinesCount() > 0) {
                 new SaveCheckedDataThread(getContext()).start();
-                //CheckedList.toLogString();
                 if (tranCode.charAt(0) == '3') {
                     rowTempData = AllLinesData.getGroupByParam(qEvidNum, qNeed, qCurrent, qMissing);
                 }else{
@@ -397,6 +417,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         KeyboardUtils.hideKeyboard(getActivity());
         KeyboardUtils.hideKeyboardFrom(getContext(),rootView);
         InsertedList.toStringLog();
+        findValue.requestFocus();
         return rootView;
     }
 
@@ -436,6 +457,8 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     private void checkListElements(){
         isBar = HelperClass.isBarcode(findValue.getText().toString());
         if( isBar != null ){
+            isBar = HelperClass.getTrimmedText(isBar);
+            Log.i("TAG", isBar);
             List<String[]> resourceDataList = new ArrayList<>();
             ArrayList<String> findValueList = AllLinesData.findKeyFromMap(isBar,findRow);
             for (int i=0; i<findValueList.size();i++){
@@ -464,6 +487,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
 
     private void checkListElementsManual(){
         isBar = findValue.getText().toString();
+        //findValue.setText(isBar);
         if( isBar != null ){
             List<String[]> resourceDataList = new ArrayList<>();
             ArrayList<String> findValueList = AllLinesData.findKeyFromMap(isBar,findRow);
@@ -671,7 +695,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 List<String> chcekedList = tablePanel.getAdapter().getCheckedPosition(0);
 
                 if(chcekedList!=null && chcekedList.size()>0){
-                    //Toast.makeText(getContext(),"Kiválasztva: "+chcekedList.size()+" elem",Toast.LENGTH_LONG).show();
+
                 }else{
                     Toast.makeText(getContext(),"NINCS KIVÁLASZTVA SEMMI",Toast.LENGTH_LONG).show();
                 }

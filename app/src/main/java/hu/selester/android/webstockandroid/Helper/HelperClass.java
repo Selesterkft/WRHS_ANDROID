@@ -11,6 +11,7 @@ import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.provider.Settings;
+import android.se.omapi.SEService;
 import android.support.v4.app.Fragment;
 
 import android.support.v4.app.FragmentActivity;
@@ -189,6 +190,16 @@ public class HelperClass {
             }
         }
         return null;
+    }
+
+    public static String getTrimmedText(String str){
+        String get = "";
+        try{
+            get = str.substring( Integer.parseInt( SessionClass.getParam("trimFrom") ) , str.length() - Integer.parseInt( SessionClass.getParam("trimTo") ) );
+        }catch (Exception e ){
+
+        }
+        return get;
     }
 
     public static String isBarcodeALLTEXT(String barcode){
@@ -430,6 +441,32 @@ public class HelperClass {
         });
         builder.setCancelable(false);
         builder.show();
+    }
+
+    public static View.OnFocusChangeListener getFocusListener(final Context context){
+        return new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    v.setBackground(ContextCompat.getDrawable(context, R.drawable.et_shape_select));
+                } else {
+                    v.setBackground( null );
+                }
+            }
+        };
+    }
+
+    public static View.OnFocusChangeListener getFocusBorderListener(final Context context){
+        return new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    v.setBackground(ContextCompat.getDrawable(context, R.drawable.et_shape_select));
+                } else {
+                    v.setBackground( ContextCompat.getDrawable(context, R.drawable.et_shape) );
+                }
+            }
+        };
     }
 
 }

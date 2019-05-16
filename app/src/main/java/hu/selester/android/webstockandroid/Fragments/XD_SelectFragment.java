@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
@@ -84,6 +85,18 @@ public class XD_SelectFragment extends Fragment {
         searchBtn = rootView.findViewById(R.id.cd_search_icon);
         nextBtn   =  rootView.findViewById(R.id.cd_next);
 
+        final TextInputLayout TIL_orderId = rootView.findViewById(R.id.textInputLayout);
+        orderId.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    TIL_orderId.setBackground( ContextCompat.getDrawable(getContext(), R.drawable.et_shape_select) );
+                } else {
+                    TIL_orderId.setBackground( null );
+                }
+            }
+        });
+
         fp_text =  rootView.findViewById(R.id.cp_fp_text);
         fromPlaceTV =  rootView.findViewById(R.id.cd_fp);
         AllLinesData.clearDatas();
@@ -146,6 +159,22 @@ public class XD_SelectFragment extends Fragment {
                 return false;
             }
         });
+
+        final TextInputLayout TIL_rampNum = rootView.findViewById(R.id.textInputLayout3);
+        rampNum.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    TIL_rampNum.setBackground( ContextCompat.getDrawable(getContext(), R.drawable.et_shape_select) );
+                } else {
+                    TIL_rampNum.setBackground( null );
+                }
+            }
+        });
+
+        //rampNum.setOnFocusChangeListener(HelperClass.getFocusListener(getContext()));
+
+
         rampNum.addTextChangedListener(new DefaultTextWatcher(rampNum, new DefaultTextWatcher.TextChangedEvent() {
             @Override
             public void Changed() {

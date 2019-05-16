@@ -51,6 +51,7 @@
             app:writeType="ClickDialog"
             app:innerPadding="6dp"
             app:setDelBtn="true"
+            app:selectBackgroundStyle="@drawable/et_shape_select"
             />
 
         <Button

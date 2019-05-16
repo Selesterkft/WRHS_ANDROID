@@ -95,6 +95,15 @@ public class TasksFragment extends Fragment {
                             }else{
                                 f = new MovesTableFragment();
                             }
+                            String trimText = SessionClass.getParam(id+"_TrimmingBarcode");
+                            if( trimText.contains(",") ){
+                                SessionClass.setParam("trimFrom",  trimText.split(",")[0]);
+                                SessionClass.setParam("trimTo",  trimText.split(",")[1]);
+                            }else{
+                                SessionClass.setParam("trimFrom", "0");
+                                SessionClass.setParam("trimTo", "0");
+                            }
+                            Log.i("TAG", SessionClass.getParam("trimFrom") + " - " + SessionClass.getParam("trimTo") );
                             FragmentManager fm = getFragmentManager();
                             FragmentTransaction ft = fm.beginTransaction();
                             Bundle b = new Bundle();

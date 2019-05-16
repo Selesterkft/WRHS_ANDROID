@@ -82,7 +82,7 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frg_login,container,false);
         db = SelesterDatabase.getDatabase(getContext());
-        //db.systemDao().setValue(new SystemTable("WSUrl","http://192.168.1.103:8089/service1.svc"));
+        db.systemDao().setValue(new SystemTable("WSUrl","http://192.168.1.103:8089/service1.svc"));
         //db.systemDao().setValue(new SystemTable("WSUrl","https://web-restapi-services-01.conveyor.cloud/service1.svc"));
         //db.systemDao().setValue(new SystemTable("terminal","AdmAndrJ"));
         //db.systemDao().setValue(new SystemTable("barcodeSuffix","#&"));

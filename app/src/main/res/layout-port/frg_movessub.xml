@@ -83,7 +83,7 @@
                 android:inputType="text"
                 android:paddingLeft="5dp"
                 android:focusable="true"
-                android:background="@drawable/logintext_et_shape_round"
+                android:background="@drawable/et_shape"
                 />
             <Button
                 android:id="@+id/movessub_header_delbtn"

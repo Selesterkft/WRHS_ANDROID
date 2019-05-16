@@ -124,6 +124,7 @@ public class SaveDataThread_All extends Thread {
                 str = str + "[Line" + data.get(i)[4] + "[comm " + commandString;
             }
         }
+        Log.i("TAG",str);
         return str;
     }
 

@@ -103,6 +103,7 @@ public class AllLinesData {
                             e.printStackTrace();
 
                         }
+                        Log.i("TAG",bars[j] + " - " + find);
                         if (bars[j].equals(find)) {
                             if (!hit.contains(entry.getKey())) {
                                 hit.add(entry.getKey());
@@ -337,12 +338,15 @@ public class AllLinesData {
                 data[i] = entry.getValue()[i];
             }
             if( newParams.get(entry.getValue()[qGroupBy]) == null ){
+                data[missingId] = String.valueOf( Integer.parseInt(data[sumItemId]) - Integer.parseInt(data[currentId]) );
+                if( data[currentId].equals("0") || data[currentId].equals("") ) data[missingId] = "0";
                 newParams.put(entry.getValue()[qGroupBy], data);
             }else{
                 try {
                     data[sumItemId] = String.valueOf( Integer.parseInt(newParams.get(entry.getValue()[qGroupBy])[sumItemId]) + Integer.parseInt(entry.getValue()[sumItemId]) );
                     data[currentId] = String.valueOf( Integer.parseInt(newParams.get(entry.getValue()[qGroupBy])[currentId]) + Integer.parseInt(entry.getValue()[currentId]) );
                     data[missingId] = String.valueOf( Integer.parseInt(data[sumItemId]) - Integer.parseInt(data[currentId]) );
+                    if( data[currentId].equals("0") || data[currentId].equals("") ) data[missingId] = "0";
                     newParams.put(entry.getValue()[qGroupBy], data);
                 }catch (Exception e){
                     e.printStackTrace();

@@ -26,7 +26,7 @@ class UploadFilesThread(val context: Context?, val tranCode:String , val tranID:
 
     override fun run() {
         val list = db.photosDao().getAllNotUploadedData()
-        if(list.size > 0) {
+        if(list.isNotEmpty()) {
             allComplated = true
             list.forEach {
                 db.photosDao().setUploadStatus(it.id!!, 1)
@@ -39,14 +39,14 @@ class UploadFilesThread(val context: Context?, val tranCode:String , val tranID:
             }
             if (allComplated){
                 val dir = File( context!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.absolutePath )
-                if (dir.isDirectory()) {
+                if (dir.isDirectory) {
                     val children = dir.list()
                     for (i in children.indices) {
                         File(dir, children[i]).delete()
                     }
                 }
                 db.photosDao().deleteAll()
-                CloseLineThread(context,tranCode, tranID, f).start()
+                CloseLineThread(context, tranCode, tranID, f).start()
                 Log.i("TAG", "ALL COMPLATED!")
             }else{
                 Log.i("TAG","Lezárás nem sikerült, hiba a fájlok feltöltésekor!")
@@ -59,42 +59,40 @@ class UploadFilesThread(val context: Context?, val tranCode:String , val tranID:
     private fun uploadFile2(filePathString: String, addrID: Int, docType: Int, appId : Long){
         val selectedFileUri = Uri.parse(filePathString)
         if(selectedFileUri != null){
-            //Thread (Runnable{
-                val file = File(filePathString)
-                val filename = file.path.substring(file.path.lastIndexOf("/") + 1)
-                val appID = appId
-                Log.i("TAG", filename)
-                val options = BitmapFactory.Options()
-                options.inPreferredConfig = Bitmap.Config.ARGB_8888
-                val content_type = getMimeType(file.path)
-                val client = Multipart(URL(SessionClass.getParam("WSUrl") + "/PostImage"))
-                client.addFilePart("pic", file, filename, content_type!!)
-                client.addHeaderField("addrid", addrID.toString())
-                client.addHeaderField("doctypeid", "-1003")
-                Log.i("TAG", addrID.toString() + " - " + docType.toString())
-                client.upload(object : Multipart.OnFileUploadedListener {
-                    override fun onFileUploadingSuccess(response: String) {
-                        Log.i("TAG", response)
-                        val jsonText = JSONObject(response).getString("UploadFileResult")
-                        val jsonRoot = JSONObject(jsonText)
-                        Log.i("TAG", "ERROR CODE " + jsonRoot.getString("ERROR_CODE") )
-                        if( jsonRoot.getString("ERROR_CODE").equals("-1") ){
-                            db.photosDao().setUploadStatus(appID,2)
-                            Log.i("TAG","Upload OK")
-                        }else{
-                            errorUpload(appID)
-                            Log.i("TAG","Upload Tried")
-                        }
-                    }
-
-                    override fun onFileUploadingFailed(responseCode: Int) {
-                        allComplated = false
+            val file = File(filePathString)
+            val filename = file.path.substring(file.path.lastIndexOf("/") + 1)
+            val appID = appId
+            Log.i("TAG", filename)
+            val options = BitmapFactory.Options()
+            options.inPreferredConfig = Bitmap.Config.ARGB_8888
+            val content_type = getMimeType(file.path)
+            val client = Multipart(URL(SessionClass.getParam("WSUrl") + "/PostImage"))
+            client.addFilePart("pic", file, filename, content_type!!)
+            client.addHeaderField("addrid", addrID.toString())
+            client.addHeaderField("doctypeid", "-1003")
+            Log.i("TAG", "$addrID - $docType")
+            client.upload(object : Multipart.OnFileUploadedListener {
+                override fun onFileUploadingSuccess(response: String) {
+                    Log.i("TAG", response)
+                    val jsonText = JSONObject(response).getString("UploadFileResult")
+                    val jsonRoot = JSONObject(jsonText)
+                    Log.i("TAG", "ERROR CODE " + jsonRoot.getString("ERROR_CODE") )
+                    if(jsonRoot.getString("ERROR_CODE") == "-1"){
+                        db.photosDao().setUploadStatus(appID,2)
+                        Log.i("TAG","Upload OK")
+                    }else{
                         errorUpload(appID)
-                        Log.i("TAG","FAILD: "+appID)
-
+                        Log.i("TAG","Upload Tried")
                     }
-                })
-            //}).start()
+                }
+
+                override fun onFileUploadingFailed(responseCode: Int) {
+                    allComplated = false
+                    errorUpload(appID)
+                    Log.i("TAG","FAILD: $appID")
+
+                }
+            })
         }else{
 
         }

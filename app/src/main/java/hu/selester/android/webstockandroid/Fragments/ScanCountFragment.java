@@ -1,45 +1,38 @@
 package hu.selester.android.webstockandroid.Fragments;
 
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
-
-import org.w3c.dom.Text;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Database.Tables.LogTable;
-import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
+
 import hu.selester.android.webstockandroid.Dialogs.MessageDialog;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
@@ -47,7 +40,7 @@ import hu.selester.android.webstockandroid.Objects.ActiveFragment;
 import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.CheckedList;
 import hu.selester.android.webstockandroid.Objects.CustomTextWatcher;
-import hu.selester.android.webstockandroid.Objects.InsertedList;
+
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.Threads.SaveCheckedDataThread;
@@ -81,17 +74,18 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
     private boolean dialogActive = false;
     private int dataCounter;
     private WHEditBox[] whEditBoxes;
+    private boolean trimmed;
     private CustomTextWatcher[] customTextWatcherArray = new CustomTextWatcher[8];
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
+        trimmed = true;
         ActiveFragment.setFragment(this);
         lineID = getArguments().getString("lineID");
         tranCode = getArguments().getString("tranCode");
         WHEditBox.activity = getActivity();
         WHEditBox.suffix = SessionClass.getParam("barcodeSuffix");
-
         qBarcode01 = HelperClass.getArrayPosition("Barcode01", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qBarcode02 = HelperClass.getArrayPosition("Barcode02", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qTo_Place  = HelperClass.getArrayPosition("To_Place", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
@@ -100,10 +94,10 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         si = savedInstanceState;
         rootView = inflater.inflate(R.layout.frg_scancount,container,false);
 
-        arrayTextBoxLabels = SessionClass.getParam(tranCode + "_Detail_TextBox_Names").split(",");
-        arrayTextBoxEnableds = SessionClass.getParam(tranCode + "_Detail_TextBox_Enabled").split(",");
-        arrayTextBoxIndexes = SessionClass.getParam(tranCode + "_Detail_TextBox_Index").split(",");
-        arrayTextBoxSelect = SessionClass.getParam(tranCode + "_Detail_TextBox_SELECT").split(",");
+        arrayTextBoxLabels      = SessionClass.getParam(tranCode + "_Detail_TextBox_Names").split(",");
+        arrayTextBoxEnableds    = SessionClass.getParam(tranCode + "_Detail_TextBox_Enabled").split(",");
+        arrayTextBoxIndexes     = SessionClass.getParam(tranCode + "_Detail_TextBox_Index").split(",");
+        arrayTextBoxSelect      = SessionClass.getParam(tranCode + "_Detail_TextBox_SELECT").split(",");
 
         arrayLabelTextBox   = SessionClass.getParam(tranCode + "_Detail_Label_Info_Names").split(",");
         arrayLabelIndex     = SessionClass.getParam(tranCode + "_Detail_Label_Info_Index").split(",");
@@ -112,6 +106,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         newOpenWindow = true;
         try {
             counter = rootView.findViewById(R.id.scancount_count);
+            counter.setOnFocusChangeListener(HelperClass.getFocusBorderListener(getContext()));
             counter.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -165,7 +160,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             subHeadText3.setBackgroundResource(R.color.headerColor);
             findTvLabel = rootView.findViewById(R.id.scancount_header_label);
             findTvLabel.setText(SessionClass.getParam(tranCode+"_Detail_TextBox_Find_Text") + ":" );
-//        qNeed = Integer.parseInt(SessionClass.getParam(tranCode+"_Line_ListView_Qty_Control"));
             String[] temp = SessionClass.getParam(tranCode + "_Detail_TextBox_Index").split(",", -1);
             if (SessionClass.getParam(tranCode + "_Detail_TextBox_Index").equals("")) {
                 qMissing = 0;
@@ -182,6 +176,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             arrayTempType = SessionClass.getParam(tranCode + "_Detail_TextBox_DataType").split(",");
             arrayTempInt = SessionClass.getParam(tranCode + "_Detail_TextBox_Index").split(",");
             collectorBtn.setVisibility(View.GONE);
+            findValue.setOnFocusChangeListener(HelperClass.getFocusBorderListener(getContext()));
             /*
             if (tranCode.charAt(0) == '1') {
                 TextView textDataLabel = rootView.findViewById(R.id.scancount_data_label);
@@ -328,13 +323,10 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
 
         eanET.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
+            public void onTextChanged(CharSequence s, int start, int before, int count) { }
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -438,6 +430,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
 
     private void checkListElementsManual(){
         try {
+            trimmed = false;
             isBar = findValue.getText().toString();
             if (!isBar.isEmpty()) findValue.setText(isBar + SessionClass.getParam("barcodeSuffix"));
             refreshPlaceCounter();
@@ -459,7 +452,10 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             if(!dialogActive) {
                 try {
                     isBar = HelperClass.isBarcode(findValue.getText().toString());
+                    Log.i("TAG","IS BARCODE: " + isBar);
                     if (isBar != null) {
+                        if(trimmed) isBar = HelperClass.getTrimmedText(isBar);
+                        trimmed = true;
                         List<String[]> resourceDataList = new ArrayList<>();
                         ArrayList<String> findValueList = AllLinesData.findKeyFromMap(isBar, findRow);
                         if (findValueList != null) {
@@ -659,6 +655,11 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             textDataValue2 = rootView.findViewById(R.id.scancount_data2_value2);
             textDataValue2.setText(AllLinesData.getParam(lineID)[qNeed]);
             textDataValue3 = rootView.findViewById(R.id.scancount_data1_value);
+
+            textDataValue1.setOnFocusChangeListener(HelperClass.getFocusBorderListener(getContext()));
+            textDataValue2.setOnFocusChangeListener(HelperClass.getFocusBorderListener(getContext()));
+            textDataValue3.setOnFocusChangeListener(HelperClass.getFocusBorderListener(getContext()));
+
             def = Integer.parseInt(AllLinesData.getParam(lineID)[qCurrent]) - Integer.parseInt(AllLinesData.getParam(lineID)[qNeed]);
             if(AllLinesData.getParam(lineID)[qCurrent].equals("0")){def = 0;}
             textDataValue3.setText("" + def);
@@ -772,6 +773,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                         int resIDValue = getActivity().getResources().getIdentifier("scancount_param" + (i + 1) + "_value", "id", getActivity().getPackageName());
                         //WHEditBox value = rootView.findViewById(resIDValue);
                         whEditBoxes[i-1] = rootView.findViewById(resIDValue);
+                        whEditBoxes[i-1].setSelectBackgroundFunc(R.drawable.et_shape_select);
                         whEditBoxes[i-1].setOnDetectBarcodeListener(new WHEditBox.OnDetectBarcodeListener() {
                             @Override
                             public void OnDetectBarcode() { }

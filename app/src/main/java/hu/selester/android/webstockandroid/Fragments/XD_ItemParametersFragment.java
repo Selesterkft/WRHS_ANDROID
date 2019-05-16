@@ -4,7 +4,9 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputEditText;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -54,6 +56,7 @@ public class XD_ItemParametersFragment extends Fragment {
     private XD_ItemParametersFragment myFrag;
     private Button chkBtn;
     private SelesterDatabase db;
+    private boolean trimmed;
 
 
     @Override
@@ -65,20 +68,21 @@ public class XD_ItemParametersFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         myFrag = this;
+        trimmed = true;
         rootView = inflater.inflate(R.layout.frg_itemparameters, container, false);
         db = SelesterDatabase.getDatabase(getContext());
-        tranCode = SessionClass.getParam("tranCode");
-        qBarcode = HelperClass.getArrayPosition("Barcode", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
-        qEvidNum = HelperClass.getArrayPosition("EvidNum", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
-        qNeed = HelperClass.getArrayPosition("Needed_Qty", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
-        qCurrent = HelperClass.getArrayPosition("Current_Qty", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
-        qWeight  = HelperClass.getArrayPosition("Weight", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
-        qWidth   = HelperClass.getArrayPosition("Size_Width", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
-        qHeight  = HelperClass.getArrayPosition("Size_Height", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
-        qLength  = HelperClass.getArrayPosition("Size_Length", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
-        qToPlace  = HelperClass.getArrayPosition("To_Place", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
-        qRefLineId = HelperClass.getArrayPosition("Ref_Line_ID", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
-        evidNum = getArguments().getString("evidNum");
+        tranCode    = SessionClass.getParam("tranCode");
+        qBarcode    = HelperClass.getArrayPosition("Barcode",       SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qEvidNum    = HelperClass.getArrayPosition("EvidNum",       SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qNeed       = HelperClass.getArrayPosition("Needed_Qty",    SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qCurrent    = HelperClass.getArrayPosition("Current_Qty",   SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qWeight     = HelperClass.getArrayPosition("Weight",        SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qWidth      = HelperClass.getArrayPosition("Size_Width",    SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qHeight     = HelperClass.getArrayPosition("Size_Height",   SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qLength     = HelperClass.getArrayPosition("Size_Length",   SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qToPlace    = HelperClass.getArrayPosition("To_Place",      SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qRefLineId  = HelperClass.getArrayPosition("Ref_Line_ID",   SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        evidNum     = getArguments().getString("evidNum");
         List<XD_PlacenumberFragment> frgList = new ArrayList<>();
         List<String> pageTitleList = new ArrayList<>();
 
@@ -95,6 +99,19 @@ public class XD_ItemParametersFragment extends Fragment {
                 addNewPlacenumPanel();
             }
         }));
+
+        final TextInputLayout TIL_placeNumber = rootView.findViewById(R.id.textInputLayout4);
+        placeNumberTV.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    TIL_placeNumber.setBackground( ContextCompat.getDrawable(getContext(), R.drawable.et_shape_select) );
+                } else {
+                    TIL_placeNumber.setBackground( ContextCompat.getDrawable(getContext(), R.drawable.et_shape) );
+                }
+            }
+        });
+
         ImageView addPlaceNumberBtn = rootView.findViewById(R.id.ps_addplacenum_btn);
         addPlaceNumberBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -113,7 +130,7 @@ public class XD_ItemParametersFragment extends Fragment {
         chkBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                chkBarcode();
+                trimmed = false; chkBarcode();
             }
         });
         edit = rootView.findViewById(R.id.ps_header_value);
@@ -123,8 +140,10 @@ public class XD_ItemParametersFragment extends Fragment {
             @Override
             public void OnDetectBarcode() {
                 chkBarcode();
+                KeyboardUtils.hideKeyboard(getActivity());
             }
         });
+        edit.requestFocus();
         setViewPagerElement();
         getItems();
         return rootView;
@@ -136,7 +155,6 @@ public class XD_ItemParametersFragment extends Fragment {
                 if (db.placesDao().getPlacesData(placeNumberTV.getText().toString()) != null) {
                     boolean hereItIs = false;
                     for (int x = 0; x < vp.getAdapter().getCount(); x++) {
-                        Log.i("TAG", vp.getAdapter().getPageTitle(x) + " - " + placeNumberTV.getText());
                         if (vp.getAdapter().getPageTitle(x).toString().equals(placeNumberTV.getText().toString())) {
                             hereItIs = true;
                         }
@@ -163,7 +181,6 @@ public class XD_ItemParametersFragment extends Fragment {
             }
         }else{
             HelperClass.messageBox(getActivity(),"CrossDock","Nincs rakhely meghatározva!",HelperClass.ERROR);
-            //Toast.makeText(getContext(),"Nincs rakhely meghatározva!",Toast.LENGTH_LONG).show();
         }
         KeyboardUtils.hideKeyboard(getActivity());
     }
@@ -205,16 +222,14 @@ public class XD_ItemParametersFragment extends Fragment {
                 }
             }
         }
-/*        if( vp.getAdapter().getCount() > 0) {
-            (((XD_PlacenumberPagerAdapter) vp.getAdapter()).getItem(vp.getCurrentItem())).update();
-            ((XD_ItemsParametersListAdapter) itemsListContainer.getAdapter()).update("");
-        }*/
     }
 
     private void chkBarcode(){
         if( vp.getAdapter().getCount() > 0 ) {
             boolean itOK = false;
             String barcode = edit.EDText.getText().toString();
+            if (trimmed) barcode = HelperClass.getTrimmedText(barcode);
+            trimmed = true;
             String vpTitle = vp.getAdapter().getPageTitle(vp.getCurrentItem()).toString();
             List<String[]> data = AllLinesData.findItemsFromMap(barcode, qBarcode);
             String newId = "";
@@ -245,6 +260,7 @@ public class XD_ItemParametersFragment extends Fragment {
                                     newRow[qCurrent] = "1";
                                     newRow[qNeed] = "0";
                                     newRow[0] = newId;
+                                    if(qWeight != -1) newRow[qWeight] = String.valueOf( ( Float.parseFloat(data.get(i)[qWeight]) / Float.parseFloat(data.get(i)[qNeed]) ));
                                     newRow[qRefLineId] = data.get(i)[0];
                                     AllLinesData.setParam(newId, newRow);
                                 } else {
@@ -256,6 +272,7 @@ public class XD_ItemParametersFragment extends Fragment {
                                     newRow[qCurrent] = String.valueOf(Integer.parseInt(newRow[qCurrent]) + 1);
                                     newRow[qToPlace] = vp.getAdapter().getPageTitle(vp.getCurrentItem()).toString();
                                     newRow[qNeed] = "0";
+                                    if(qWeight != -1) newRow[qWeight] = String.valueOf( ( Float.parseFloat(data.get(i)[qWeight]) / Float.parseFloat(data.get(i)[qNeed]) ) * Float.parseFloat(newRow[qCurrent]));
                                     AllLinesData.setParam(newId, newRow);
                                 }
                                 if( InsertedList.getInsertElement(newId) == null ) {
@@ -268,7 +285,6 @@ public class XD_ItemParametersFragment extends Fragment {
                                 sst.start();
                             } else {
                                 HelperClass.messageBox(getActivity(),"CrossDock","Nincs rakhely kiválasztva!", HelperClass.ERROR);
-                                //Toast.makeText(getContext(), "Nincs rakhely kiválasztva!", Toast.LENGTH_LONG).show();
                             }
                             itOK = true;
                             break;
@@ -276,19 +292,21 @@ public class XD_ItemParametersFragment extends Fragment {
                     }
                 }
                 if (!itOK) {
-                    if( AllLinesData.isValidateValue(qBarcode, barcode) ){
-                        List<String[]> list = AllLinesData.findItemsFromMap(evidNum, qEvidNum);
-                        boolean hereItIs = false;
-                        for (int x = 0; x < list.size(); x++ ){
-                            if( list.get(x)[qBarcode].equals(barcode) ) hereItIs = true;
+                    if( !barcode.isEmpty() ) {
+                        if (AllLinesData.isValidateValue(qBarcode, barcode)) {
+                            List<String[]> list = AllLinesData.findItemsFromMap(evidNum, qEvidNum);
+                            boolean hereItIs = false;
+                            for (int x = 0; x < list.size(); x++) {
+                                if (list.get(x)[qBarcode].equals(barcode)) hereItIs = true;
+                            }
+                            if (hereItIs) {
+                                HelperClass.messageBox(getActivity(), "CrossDock", "Nincs több ebből a termékből!", HelperClass.WARNING);
+                            } else {
+                                HelperClass.messageBox(getActivity(), "CrossDock", "Ez a termék nem ehhez az evidenciához tartozik!", HelperClass.ERROR);
+                            }
+                        } else {
+                            HelperClass.messageBox(getActivity(), "CrossDock", "Nem létező termékkód!", HelperClass.ERROR);
                         }
-                        if( hereItIs ){
-                            HelperClass.messageBox(getActivity(),"CrossDock","Nincs több ebből a termékből!", HelperClass.WARNING);
-                        }else{
-                            HelperClass.messageBox(getActivity(),"CrossDock","Ez a termék nem ehhez az evidenciához tartozik!", HelperClass.ERROR);
-                        }
-                    } else {
-                        HelperClass.messageBox(getActivity(),"CrossDock","Nem létező termékkód!", HelperClass.ERROR);
                     }
                 }
             } catch (Exception e) {
@@ -304,7 +322,7 @@ public class XD_ItemParametersFragment extends Fragment {
     public void updateTopItems(){
         ((XD_ItemsParametersListAdapter)itemsListContainer.getAdapter()).update("");
         refreshPlace();
-        Toast.makeText(getContext(),"UpdateTopItems",Toast.LENGTH_LONG).show();
+        //Toast.makeText(getContext(),"UpdateTopItems",Toast.LENGTH_LONG).show();
     }
 
     public void setViewPagerElement(){
@@ -316,5 +334,4 @@ public class XD_ItemParametersFragment extends Fragment {
             spl.setViewPager(vp);
         }
     }
-
 }

@@ -13,6 +13,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SearchView;
@@ -122,7 +123,16 @@ public class CheckPlaceFragment extends Fragment {
         findValue = rootView.findViewById(R.id.checkplace_header_value);
         findValue.requestFocus();
         findValue.addTextChangedListener(textWatcher);
-
+        findValue.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus){
+                    findValue.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.et_shape_select));
+                } else {
+                    findValue.setBackground( null );
+                }
+            }
+        });
         findValueEAN = rootView.findViewById(R.id.checkplace_EAN_header_value);
         findValueEAN.addTextChangedListener(textWatcherEAN);
         Button findValueBtnEAN = rootView.findViewById(R.id.checkplace_EAN_header_btn);

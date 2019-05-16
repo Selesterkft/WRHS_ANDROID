@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import hu.selester.android.webstockandroid.Adapters.TreeView.TreeViewPalettAdapter;
@@ -170,12 +171,14 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
         builder.setPositiveButton("Igen", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Toast.makeText(context, "" + delID, Toast.LENGTH_LONG).show();
+                //Toast.makeText(context, "" + delID, Toast.LENGTH_LONG).show();
                 int curr = Integer.parseInt( AllLinesData.getParam(delID)[qCurrent] );
                 String parentID = AllLinesData.getParam(delID)[qBarcode];
                 AllLinesData.delRow(delID);
                 InsertedList.removeInsertElement(delID);
+                Log.i("TAG","ParentID: "+parentID);
                 String[] data = AllLinesData.getParam(parentID);
+                Log.i("TAG", Arrays.toString(data));
                 data[qCurrent] = String.valueOf( Integer.parseInt( data[qCurrent] ) + curr );
                 update("");
                 SaveAllSessionTemp sst = new SaveAllSessionTemp(context);
