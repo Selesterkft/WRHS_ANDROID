@@ -469,4 +469,13 @@ public class HelperClass {
         };
     }
 
+    public static Float convertStringToFloat(String str) throws NumberFormatException{
+        Log.i("TAG","STRING TO FLOAT: "+str);
+        if( str == null ){
+            return null;
+        }else{
+            return Float.parseFloat( str );
+        }
+    }
+
 }

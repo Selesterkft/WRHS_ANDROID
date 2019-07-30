@@ -10,6 +10,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -40,6 +42,7 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
     private int qEvidNum, qNeed, qCurrent, qWeight, qWidth, qHeight, qLength, qBarcode, qToPlace, qMissing;
     private String tranCode, evidNum;
     private OnEventUpdate onEventUpdate;
+    private Long checkNum;
     private Activity activity;
 
     public void setActivity(Activity activity) {
@@ -58,6 +61,8 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
         public void onUpdatePanel();
     }
 
+
+
     public String getEvidNum() {
         return evidNum;
     }
@@ -69,18 +74,20 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public TextView item_sumpcs, item_pcs, item_weight, item_length, item_width, item_height;
         public ImageView delBtn;
+        public CheckBox checkBox;
         public LinearLayout container;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            container = itemView.findViewById(R.id.row_line_container);
+            container   = itemView.findViewById(R.id.row_line_container);
             item_sumpcs = itemView.findViewById(R.id.row_line_sumpcs);
-            item_pcs = itemView.findViewById(R.id.row_line_pcs);
+            item_pcs    = itemView.findViewById(R.id.row_line_pcs);
             item_weight = itemView.findViewById(R.id.row_line_weight);
             item_length = itemView.findViewById(R.id.row_line_length);
-            item_width = itemView.findViewById(R.id.row_line_width);
+            item_width  = itemView.findViewById(R.id.row_line_width);
             item_height = itemView.findViewById(R.id.row_line_height);
-            delBtn = itemView.findViewById(R.id.row_line_del);
+            delBtn      = itemView.findViewById(R.id.row_line_del);
+            checkBox    = itemView.findViewById(R.id.row_line_check);
         }
     }
 
@@ -106,6 +113,7 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
         holder.container.setTag("container_" + position);
         holder.item_sumpcs.setVisibility(View.VISIBLE);
         holder.delBtn.setVisibility(View.GONE);
+        holder.checkBox.setVisibility(View.GONE);
         if (adapterType == 1) {
             holder.item_sumpcs.setVisibility(View.GONE);
             holder.delBtn.setVisibility(View.VISIBLE);
@@ -113,6 +121,25 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
                 @Override
                 public void onClick(View view) {
                     delItem(String.valueOf(dataList.get(position).getItem_id()));
+                }
+            });
+            holder.checkBox.setVisibility(View.VISIBLE);
+            if(SessionClass.getParam("XD_CHECKED")==null) SessionClass.setParam("XD_CHECKED","0");
+            Log.i("CHECKED",SessionClass.getParam("XD_CHECKED"));
+            if(SessionClass.getParam("XD_CHECKED").equals(""+dataList.get(position).getItem_id())){
+                holder.checkBox.setChecked(true);
+            }else{
+                holder.checkBox.setChecked(false);
+            }
+
+            holder.checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if( ((CheckBox) v).isChecked() ) {
+                        SessionClass.setParam("XD_CHECKED", "" + dataList.get(position).getItem_id());
+                    }else{
+                        SessionClass.setParam("XD_CHECKED", "0");
+                    }
                 }
             });
         }else{
@@ -125,10 +152,10 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
         }
         holder.item_sumpcs.setText("" + dataList.get(position).getItem_sumpcs());
         holder.item_pcs.setText("" + dataList.get(position).getItem_pcs());
-        holder.item_weight.setText("" + dataList.get(position).getItem_weight());
-        holder.item_width.setText("" + dataList.get(position).getItem_width());
-        holder.item_height.setText("" + dataList.get(position).getItem_height());
-        holder.item_length.setText("" + dataList.get(position).getItem_length());
+        if( dataList.get(position).getItem_weight() == null) holder.item_weight.setText(""); else holder.item_weight.setText("" + dataList.get(position).getItem_weight());
+        if( dataList.get(position).getItem_width()  == null) holder.item_width.setText("");  else holder.item_width.setText( "" + dataList.get(position).getItem_width());
+        if( dataList.get(position).getItem_height() == null) holder.item_height.setText(""); else holder.item_height.setText("" + dataList.get(position).getItem_height());
+        if( dataList.get(position).getItem_length() == null) holder.item_length.setText(""); else holder.item_length.setText("" + dataList.get(position).getItem_length());
     }
 
     @NonNull
@@ -149,7 +176,12 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
         if( resDataList != null && resDataList.size() > 0 ){
             for(int i=0; i < resDataList.size(); i++){
                 if( resDataList.get(i)[qToPlace].equals(queryPlace) ) {
-                    itemsList.add(new XD_ItemsParameters(Long.parseLong(resDataList.get(i)[0]),Integer.parseInt(resDataList.get(i)[qNeed]), Integer.parseInt(resDataList.get(i)[qCurrent]), Float.parseFloat(resDataList.get(i)[qWeight]), Float.parseFloat(resDataList.get(i)[qLength]), Float.parseFloat(resDataList.get(i)[qWidth]), Float.parseFloat(resDataList.get(i)[qHeight])));
+                    try {
+                        itemsList.add(new XD_ItemsParameters(Long.parseLong(resDataList.get(i)[0]), Integer.parseInt(resDataList.get(i)[qNeed]), Integer.parseInt(resDataList.get(i)[qCurrent]), HelperClass.convertStringToFloat(resDataList.get(i)[qWeight]), HelperClass.convertStringToFloat(resDataList.get(i)[qLength]), HelperClass.convertStringToFloat(resDataList.get(i)[qWidth]), HelperClass.convertStringToFloat(resDataList.get(i)[qHeight])));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        HelperClass.messageBox(activity,"Adatmegadás","Hibás érték formátum " , HelperClass.ERROR);
+                    }
                 }
             }
         }
@@ -162,6 +194,10 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
         dataList.clear();
         dataList = data;
         notifyDataSetChanged();
+    }
+
+    public Long getCheckNum() {
+        return checkNum;
     }
 
     void delItem(final String delID) {
@@ -205,10 +241,10 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
         final EditText ED2 = dialogView.findViewById(R.id.dialog_xd_item_editText2);
         final EditText ED3 = dialogView.findViewById(R.id.dialog_xd_item_editText3);
         final EditText ED4 = dialogView.findViewById(R.id.dialog_xd_item_editText4);
-        ED1.setText( String.valueOf(dataList.get(position).getItem_weight()) );
-        ED2.setText( String.valueOf(dataList.get(position).getItem_length()) );
-        ED3.setText( String.valueOf(dataList.get(position).getItem_width()) );
-        ED4.setText( String.valueOf(dataList.get(position).getItem_height()) );
+        if (dataList.get(position).getItem_weight() == null ) ED1.setText( "" ); else ED1.setText( String.valueOf(dataList.get(position).getItem_weight()) );
+        if (dataList.get(position).getItem_length() == null ) ED2.setText( "" ); else ED2.setText( String.valueOf(dataList.get(position).getItem_length()) );
+        if (dataList.get(position).getItem_width()  == null ) ED3.setText( "" ); else ED3.setText( String.valueOf(dataList.get(position).getItem_width()) );
+        if (dataList.get(position).getItem_height() == null ) ED4.setText( "" ); else ED4.setText( String.valueOf(dataList.get(position).getItem_height()) );
         builder.setView(dialogView);
         builder.setNegativeButton("mégsem", new DialogInterface.OnClickListener() {
             @Override
@@ -220,10 +256,10 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
         builder.setPositiveButton("módosítom", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                AllLinesData.setParamsPosition(qBarcode,qWeight, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qBarcode], ED1.getText().toString());
-                AllLinesData.setParamsPosition(qBarcode,qLength, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qBarcode], ED2.getText().toString());
-                AllLinesData.setParamsPosition(qBarcode,qWidth, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qBarcode], ED3.getText().toString());
-                AllLinesData.setParamsPosition(qBarcode,qHeight, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qBarcode], ED4.getText().toString());
+                if( !ED1.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qBarcode,qWeight, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qBarcode], ED1.getText().toString());
+                if( !ED2.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qBarcode,qLength, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qBarcode], ED2.getText().toString());
+                if( !ED3.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qBarcode,qWidth,  AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qBarcode], ED3.getText().toString());
+                if( !ED4.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qBarcode,qHeight, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qBarcode], ED4.getText().toString());
                 update("");
                 KeyboardUtils.hideKeyboard(activity);
                 onEventUpdate.onUpdatePanel();

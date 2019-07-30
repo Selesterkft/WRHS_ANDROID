@@ -118,16 +118,16 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         db = SelesterDatabase.getDatabase(getContext());
         tranCode = getArguments().getString("tranCode");
         SessionClass.setParam("tranCode", ""+tranCode);
-        tranID = getArguments().getString("tranid");
-        movenum = getArguments().getString("movenum");
-        reload = getArguments().getString("reload");
+        tranID      = getArguments().getString("tranid");
+        movenum     = getArguments().getString("movenum");
+        reload      = getArguments().getString("reload");
         qBarcode01  = HelperClass.getArrayPosition("Barcode01", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qBarcode    = HelperClass.getArrayPosition("Barcode", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qMissing    = HelperClass.getArrayPosition("Missing_Qty", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qLineID     = HelperClass.getArrayPosition("Line_ID", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qRefLineID  = HelperClass.getArrayPosition("Ref_Line_ID", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
-        qEvidNum  = HelperClass.getArrayPosition("EvidNum", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
-        qRampNum  = HelperClass.getArrayPosition("Loading_Gate", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qEvidNum    = HelperClass.getArrayPosition("EvidNum", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qRampNum    = HelperClass.getArrayPosition("Loading_Gate", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         if(tranCode.charAt(0)=='4'){
             qTo_Place  = HelperClass.getArrayPosition("From_place", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         }else{
@@ -144,23 +144,23 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         }else{
             qCurrent = Integer.parseInt(SessionClass.getParam(tranCode+"_Detail_TextBox_Current_Qty_Index"));
         }
-        findRow = Integer.parseInt(SessionClass.getParam(tranCode+"_Line_TextBox_Find_Index"));
-        rootView = inflater.inflate(R.layout.frg_movessub, container, false);
-        functLayout = rootView.findViewById(R.id.movessub_tableRoot);
-        uploadpbar = rootView.findViewById(R.id.movessub_progressBar);
-        progressLayout = rootView.findViewById(R.id.movessub_progressLayout);
+        findRow         = Integer.parseInt(SessionClass.getParam(tranCode+"_Line_TextBox_Find_Index"));
+        rootView        = inflater.inflate(R.layout.frg_movessub, container, false);
+        functLayout     = rootView.findViewById(R.id.movessub_tableRoot);
+        uploadpbar      = rootView.findViewById(R.id.movessub_progressBar);
+        progressLayout  = rootView.findViewById(R.id.movessub_progressLayout);
         progressPercent = rootView.findViewById(R.id.movessub_progresspercent);
-        findTvLabel = rootView.findViewById(R.id.movessub_header_label);
+        findTvLabel     = rootView.findViewById(R.id.movessub_header_label);
         findTvLabel.setText(SessionClass.getParam(tranCode + "_Line_TextBox_Find_Text"));
         progressLayout.setVisibility(View.GONE);
         SessionClass.setParam("currentPlace","");
-        selectBtn = rootView.findViewById(R.id.movessub_selectBtn);
-        Button delTextBtn = rootView.findViewById(R.id.movessub_header_delbtn);
+        selectBtn           = rootView.findViewById(R.id.movessub_selectBtn);
+        Button delTextBtn   = rootView.findViewById(R.id.movessub_header_delbtn);
         Button findValueBtn = rootView.findViewById(R.id.movessub_header_btn);
-        lockBtn = rootView.findViewById(R.id.movessub_lockBtn);
-        flushBtn = rootView.findViewById(R.id.movessub_flushBtn);
-        createBtn = rootView.findViewById(R.id.movessub_createBtn);
-        paramsBtn = rootView.findViewById(R.id.movessub_paramsBtn);
+        lockBtn             = rootView.findViewById(R.id.movessub_lockBtn);
+        flushBtn            = rootView.findViewById(R.id.movessub_flushBtn);
+        createBtn           = rootView.findViewById(R.id.movessub_createBtn);
+        paramsBtn           = rootView.findViewById(R.id.movessub_paramsBtn);
 
         if(SessionClass.getParam(tranCode + "_Detail_Button_IsVisible") != null) {
             arrayBtnVisibility  = SessionClass.getParam(tranCode + "_Detail_Button_IsVisible").split(",");

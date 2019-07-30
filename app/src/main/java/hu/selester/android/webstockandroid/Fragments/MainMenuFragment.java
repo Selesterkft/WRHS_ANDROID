@@ -64,15 +64,13 @@ public class MainMenuFragment extends Fragment {
         db = SelesterDatabase.getDatabase(getContext());
         int size = db.sessionTempDao().getDataSize();
         pd = HelperClass.loadingDialogOn(getActivity());
-        if(size > 0){
-            buildReloadDialog();
-        }
-
+        SessionClass.setParam("barcodeSuffix", db.systemDao().getValue("barcodeSuffix"));
         if( db.systemDao().getValue("barcodeSuffix")!=null) {
             if( !db.systemDao().getValue("barcodeSuffix").equals("") ) {
                 SessionClass.setParam("barcodeSuffix", db.systemDao().getValue("barcodeSuffix"));
             }
         }
+        if(size > 0) buildReloadDialog();
         AllLinesData.delParams();
         InsertedList.clearAll();
         CheckedList.clearAllData();

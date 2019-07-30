@@ -7,13 +7,18 @@
         android:layout_width="match_parent"
         android:layout_height="30dp"
         android:orientation="horizontal">
+        <android.support.v7.widget.AppCompatCheckBox
+            android:id="@+id/row_line_check"
+            android:layout_width="30dp"
+            android:background="@drawable/tablepanel_row_back1"
+            android:layout_height="match_parent" />
         <TextView
             android:id="@+id/row_line_sumpcs"
             android:layout_weight="1"
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@drawable/tablepanel_row_back1"
+            android:background="@drawable/tablepanel_row_back"
             android:text="1"/>
         <TextView
             android:id="@+id/row_line_pcs"

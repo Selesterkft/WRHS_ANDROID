@@ -1,5 +1,6 @@
 package hu.selester.android.webstockandroid.Fragments;
 
+import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -85,7 +86,7 @@ public class XD_ItemParametersFragment extends Fragment {
         evidNum     = getArguments().getString("evidNum");
         List<XD_PlacenumberFragment> frgList = new ArrayList<>();
         List<String> pageTitleList = new ArrayList<>();
-
+        SessionClass.setParam("XD_CHECKED","0");
         vp = rootView.findViewById(R.id.ps_pager);
         XD_PlacenumberPagerAdapter ppa = new XD_PlacenumberPagerAdapter(getFragmentManager(), frgList, pageTitleList);
         vp.setAdapter( ppa );
@@ -99,6 +100,39 @@ public class XD_ItemParametersFragment extends Fragment {
                 addNewPlacenumPanel();
             }
         }));
+
+        ImageView plusBtn = rootView.findViewById(R.id.ps_plus);
+        ImageView minusBtn = rootView.findViewById(R.id.ps_minus);
+
+        plusBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if( SessionClass.getParam("XD_CHECKED") != null && !SessionClass.getParam("XD_CHECKED" ).equals("0") && !SessionClass.getParam("XD_CHECKED" ).isEmpty() ) {
+                    List<String[]> result = AllLinesData.findItemsFromMap(SessionClass.getParam("XD_CHECKED"), 0);
+                    if (result.size() > 0) {
+                        Log.i("RESULT", result.get(0)[qBarcode]);
+                        chkBarcode_add(String.valueOf(result.get(0)[qBarcode]));
+                    } else {
+                        Toast.makeText(getContext(), "Nincs tétel kiválasztva!", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
+
+        minusBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if( SessionClass.getParam("XD_CHECKED") != null && !SessionClass.getParam("XD_CHECKED" ).equals("0") && !SessionClass.getParam("XD_CHECKED" ).isEmpty() ) {
+                    List<String[]> result = AllLinesData.findItemsFromMap(SessionClass.getParam("XD_CHECKED"), 0);
+                    if (result.size() > 0) {
+                        Log.i("RESULT", result.get(0)[qBarcode]);
+                        chkBarcode_minus(String.valueOf(result.get(0)[qBarcode]));
+                    } else {
+                        Toast.makeText(getContext(), "Nincs tétel kiválasztva!", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
 
         final TextInputLayout TIL_placeNumber = rootView.findViewById(R.id.textInputLayout4);
         placeNumberTV.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -133,12 +167,14 @@ public class XD_ItemParametersFragment extends Fragment {
                 trimmed = false; chkBarcode();
             }
         });
-        edit = rootView.findViewById(R.id.ps_header_value);
+        edit = rootView.  findViewById(R.id.ps_header_value);
         edit.activity = getActivity();
+        WHEditBox.suffix="#&";
         edit.setDialogTitle("Barcode");
         edit.setOnDetectBarcodeListener(new WHEditBox.OnDetectBarcodeListener() {
             @Override
             public void OnDetectBarcode() {
+                Log.i("BARCODE","EVENT");
                 chkBarcode();
                 KeyboardUtils.hideKeyboard(getActivity());
             }
@@ -192,7 +228,12 @@ public class XD_ItemParametersFragment extends Fragment {
         if( dataList != null && dataList.size() > 0 ){
             for(int i=0; i < dataList.size(); i++){
                 if( dataList.get(i)[qToPlace].equals("") ) {
-                    itemsList.add(new XD_ItemsParameters(Long.parseLong(dataList.get(i)[0]),Integer.parseInt(dataList.get(i)[qNeed]), Integer.parseInt(dataList.get(i)[qCurrent]), Float.parseFloat(dataList.get(i)[qWeight]), Float.parseFloat(dataList.get(i)[qLength]), Float.parseFloat(dataList.get(i)[qWidth]), Float.parseFloat(dataList.get(i)[qHeight])));
+                    try {
+                        itemsList.add(new XD_ItemsParameters(Long.parseLong(dataList.get(i)[0]), Integer.parseInt(dataList.get(i)[qNeed]), Integer.parseInt(dataList.get(i)[qCurrent]), HelperClass.convertStringToFloat(dataList.get(i)[qWeight]), HelperClass.convertStringToFloat(dataList.get(i)[qLength]), HelperClass.convertStringToFloat(dataList.get(i)[qWidth]), HelperClass.convertStringToFloat(dataList.get(i)[qHeight])));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        HelperClass.messageBox(getActivity(),"Adatmegadás","Hibás érték formátum " , HelperClass.ERROR);
+                    }
                 }
             }
         }
@@ -319,6 +360,175 @@ public class XD_ItemParametersFragment extends Fragment {
         edit.EDText.setText("");
     }
 
+    private void chkBarcode_add(String barcode){
+        if( vp.getAdapter().getCount() > 0 ) {
+            boolean itOK = false;
+            trimmed = false;
+            String vpTitle = vp.getAdapter().getPageTitle(vp.getCurrentItem()).toString();
+            List<String[]> data = AllLinesData.findItemsFromMap(barcode, qBarcode);
+            String newId = "";
+            try {
+                for (int i = 0; i < data.size(); i++) {
+                    if ( data.get(i)[qEvidNum].equals(evidNum) && data.get(i)[qToPlace].equals("") ) {
+                        if (Integer.parseInt(data.get(i)[qCurrent]) > 0) {
+                            if (vp.getAdapter().getPageTitle(vp.getCurrentItem()) != null) {
+                                data.get(i)[qCurrent] = String.valueOf(Integer.parseInt(data.get(i)[qCurrent]) - 1);
+                                List<String[]> dataList = AllLinesData.findItemsFromMap(evidNum, qEvidNum);
+                                if (dataList != null && dataList.size() > 0) {
+                                    for (int j = 0; j < dataList.size(); j++) {
+                                        if (dataList.get(j)[qBarcode].equals(barcode) && dataList.get(j)[qToPlace].equals(vpTitle)) {
+                                            newId = dataList.get(j)[0];
+                                        }
+                                    }
+                                }
+                                if (newId.equals("")) {
+                                    Random r = new Random();
+                                    newId = String.valueOf(-1 * Long.parseLong(data.get(i)[0]) + 1000000000 + (r.nextInt(900000 - 100000) + 100000));
+                                }
+                                if (AllLinesData.getParam(newId) == null) {
+                                    String[] newRow = new String[data.get(i).length];
+                                    for (int x = 0; x < data.get(i).length; x++) {
+                                        newRow[x] = data.get(i)[x];
+                                    }
+                                    newRow[qToPlace] = vpTitle;
+                                    newRow[qCurrent] = "1";
+                                    newRow[qNeed] = "0";
+                                    newRow[0] = newId;
+                                    if(qWeight != -1) newRow[qWeight] = String.valueOf( ( Float.parseFloat(data.get(i)[qWeight]) / Float.parseFloat(data.get(i)[qNeed]) ));
+                                    newRow[qRefLineId] = data.get(i)[0];
+                                    AllLinesData.setParam(newId, newRow);
+                                } else {
+                                    String[] selectData = AllLinesData.getParam(newId);
+                                    String[] newRow = new String[selectData.length];
+                                    for (int x = 0; x < selectData.length; x++) {
+                                        newRow[x] = selectData[x];
+                                    }
+                                    newRow[qCurrent] = String.valueOf(Integer.parseInt(newRow[qCurrent]) + 1);
+                                    newRow[qToPlace] = vp.getAdapter().getPageTitle(vp.getCurrentItem()).toString();
+                                    newRow[qNeed] = "0";
+                                    if(qWeight != -1) newRow[qWeight] = String.valueOf( ( Float.parseFloat(data.get(i)[qWeight]) / Float.parseFloat(data.get(i)[qNeed]) ) * Float.parseFloat(newRow[qCurrent]));
+                                    AllLinesData.setParam(newId, newRow);
+                                }
+                                if( InsertedList.getInsertElement(newId) == null ) {
+                                    InsertedList.setInsertElement(newId, "0");
+                                }
+                                CheckedList.setParamItem( data.get(i)[0],1);
+                                AllLinesData.toStringLog();
+                                refreshPlace();
+                                SaveAllSessionTemp sst = new SaveAllSessionTemp(getContext());
+                                sst.start();
+                            } else {
+                                HelperClass.messageBox(getActivity(),"CrossDock","Nincs rakhely kiválasztva!", HelperClass.ERROR);
+                            }
+                            itOK = true;
+                            break;
+                        }
+                    }
+                }
+                if (!itOK) {
+                    if( !barcode.isEmpty() ) {
+                        if (AllLinesData.isValidateValue(qBarcode, barcode)) {
+                            List<String[]> list = AllLinesData.findItemsFromMap(evidNum, qEvidNum);
+                            boolean hereItIs = false;
+                            for (int x = 0; x < list.size(); x++) {
+                                if (list.get(x)[qBarcode].equals(barcode)) hereItIs = true;
+                            }
+                            if (hereItIs) {
+                                HelperClass.messageBox(getActivity(), "CrossDock", "Nincs több ebből a termékből!", HelperClass.WARNING);
+                            } else {
+                                HelperClass.messageBox(getActivity(), "CrossDock", "Ez a termék nem ehhez az evidenciához tartozik!", HelperClass.ERROR);
+                            }
+                        } else {
+                            HelperClass.messageBox(getActivity(), "CrossDock", "Nem létező termékkód!", HelperClass.ERROR);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else{
+            HelperClass.messageBox(getActivity(),"CrossDock","Nincs rakhely definiálva!",HelperClass.ERROR);
+            //Toast.makeText(getContext(), "Nincs rakhely definiálva!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void chkBarcode_minus(String barcode){
+        if( vp.getAdapter().getCount() > 0 ) {
+            boolean itOK = false;
+            trimmed = false;
+            String vpTitle = vp.getAdapter().getPageTitle(vp.getCurrentItem()).toString();
+            List<String[]> data = AllLinesData.findItemsFromMap(barcode, qBarcode);
+            String newId = "";
+            try {
+                for (int i = 0; i < data.size(); i++) {
+                    if ( data.get(i)[qEvidNum].equals(evidNum) && data.get(i)[qToPlace].equals("") ) {
+                        if (vp.getAdapter().getPageTitle(vp.getCurrentItem()) != null) {
+                            data.get(i)[qCurrent] = String.valueOf(Integer.parseInt(data.get(i)[qCurrent]) + 1);
+                            List<String[]> dataList = AllLinesData.findItemsFromMap(evidNum, qEvidNum);
+                            if (dataList != null && dataList.size() > 0) {
+                                for (int j = 0; j < dataList.size(); j++) {
+                                    if (dataList.get(j)[qBarcode].equals(barcode) && dataList.get(j)[qToPlace].equals(vpTitle)) {
+                                        newId = dataList.get(j)[0];
+                                    }
+                                }
+                            }
+                            if (newId.equals("")) {
+                                Random r = new Random();
+                                newId = String.valueOf(-1 * Long.parseLong(data.get(i)[0]) + 1000000000 + (r.nextInt(900000 - 100000) + 100000));
+                            }
+                            String[] selectData = AllLinesData.getParam(newId);
+                            String[] newRow = new String[selectData.length];
+                            for (int x = 0; x < selectData.length; x++) {
+                                newRow[x] = selectData[x];
+                            }
+                            newRow[qCurrent] = String.valueOf(Integer.parseInt(newRow[qCurrent]) - 1);
+                            newRow[qToPlace] = vp.getAdapter().getPageTitle(vp.getCurrentItem()).toString();
+                            newRow[qNeed] = "0";
+                            if(qWeight != -1) newRow[qWeight] = String.valueOf( ( Float.parseFloat(data.get(i)[qWeight]) / Float.parseFloat(data.get(i)[qNeed]) ) * Float.parseFloat(newRow[qCurrent]));
+                            if(newRow[qCurrent].equals("0")){data.get(i)[qCurrent] = String.valueOf(Integer.parseInt(data.get(i)[qCurrent]) - 1);break;}
+                            AllLinesData.setParam(newId, newRow);
+                            if( InsertedList.getInsertElement(newId) == null ) {
+                                InsertedList.setInsertElement(newId, "0");
+                            }
+                            CheckedList.setParamItem( data.get(i)[0],1);
+                            AllLinesData.toStringLog();
+                            refreshPlace();
+                            SaveAllSessionTemp sst = new SaveAllSessionTemp(getContext());
+                            sst.start();
+                        } else {
+                            HelperClass.messageBox(getActivity(),"CrossDock","Nincs rakhely kiválasztva!", HelperClass.ERROR);
+                        }
+                        itOK = true;
+                        break;
+
+                    }
+                }
+                if (!itOK) {
+                    if( !barcode.isEmpty() ) {
+                        if (AllLinesData.isValidateValue(qBarcode, barcode)) {
+                            List<String[]> list = AllLinesData.findItemsFromMap(evidNum, qEvidNum);
+                            boolean hereItIs = false;
+                            for (int x = 0; x < list.size(); x++) {
+                                if (list.get(x)[qBarcode].equals(barcode)) hereItIs = true;
+                            }
+                            if (hereItIs) {
+                                HelperClass.messageBox(getActivity(), "CrossDock", "Nincs több ebből a termékből!", HelperClass.WARNING);
+                            } else {
+                                HelperClass.messageBox(getActivity(), "CrossDock", "Ez a termék nem ehhez az evidenciához tartozik!", HelperClass.ERROR);
+                            }
+                        } else {
+                            HelperClass.messageBox(getActivity(), "CrossDock", "Nem létező termékkód!", HelperClass.ERROR);
+                        }
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else{
+            HelperClass.messageBox(getActivity(),"CrossDock","Nincs rakhely definiálva!",HelperClass.ERROR);
+            //Toast.makeText(getContext(), "Nincs rakhely definiálva!", Toast.LENGTH_LONG).show();
+        }
+    }
     public void updateTopItems(){
         ((XD_ItemsParametersListAdapter)itemsListContainer.getAdapter()).update("");
         refreshPlace();

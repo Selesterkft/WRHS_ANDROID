@@ -5,12 +5,12 @@ public class XD_ItemsParameters {
     private Long item_id;
     private int item_sumpcs;
     private int item_pcs;
-    private float item_weight;
-    private float item_length;
-    private float item_width;
-    private float item_height;
+    private Float item_weight;
+    private Float item_length;
+    private Float item_width;
+    private Float item_height;
 
-    public XD_ItemsParameters(Long item_id, int item_sumpcs,int item_pcs, float item_weight, float item_length, float item_width, float item_height) {
+    public XD_ItemsParameters(Long item_id, int item_sumpcs,int item_pcs, Float item_weight, Float item_length, Float item_width, Float item_height) {
         this.item_id = item_id;
         this.item_pcs = item_pcs;
         this.item_weight = item_weight;
@@ -44,35 +44,35 @@ public class XD_ItemsParameters {
         this.item_pcs = item_pcs;
     }
 
-    public float getItem_weight() {
+    public Float getItem_weight() {
         return item_weight;
     }
 
-    public void setItem_weight(float item_weight) {
+    public void setItem_weight(Float item_weight) {
         this.item_weight = item_weight;
     }
 
-    public float getItem_length() {
+    public Float getItem_length() {
         return item_length;
     }
 
-    public void setItem_length(float item_length) {
+    public void setItem_length(Float item_length) {
         this.item_length = item_length;
     }
 
-    public float getItem_width() {
+    public Float getItem_width() {
         return item_width;
     }
 
-    public void setItem_width(float item_width) {
+    public void setItem_width(Float item_width) {
         this.item_width = item_width;
     }
 
-    public float getItem_height() {
+    public Float getItem_height() {
         return item_height;
     }
 
-    public void setItem_height(float item_height) {
+    public void setItem_height(Float item_height) {
         this.item_height = item_height;
     }
 

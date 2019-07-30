@@ -192,7 +192,7 @@ public class XD_PlacenumberFragment extends Fragment {
         if (dataList != null && dataList.size() > 0) {
             for (int i = 0; i < dataList.size(); i++) {
                 if (dataList.get(i)[qToPlace].equals(title)) {
-                    itemsList.add(new XD_ItemsParameters(Long.parseLong(dataList.get(i)[0]),Integer.parseInt(dataList.get(i)[qNeed]), Integer.parseInt(dataList.get(i)[qCurrent]), Float.parseFloat(dataList.get(i)[qWeight]), Float.parseFloat(dataList.get(i)[qLength]), Float.parseFloat(dataList.get(i)[qWidth]), Float.parseFloat(dataList.get(i)[qHeight])));
+                    itemsList.add(new XD_ItemsParameters(Long.parseLong(dataList.get(i)[0]),Integer.parseInt(dataList.get(i)[qNeed]), Integer.parseInt(dataList.get(i)[qCurrent]), HelperClass.convertStringToFloat(dataList.get(i)[qWeight]), HelperClass.convertStringToFloat(dataList.get(i)[qLength]), HelperClass.convertStringToFloat(dataList.get(i)[qWidth]), HelperClass.convertStringToFloat(dataList.get(i)[qHeight])));
                 }
             }
         }
@@ -209,4 +209,5 @@ public class XD_PlacenumberFragment extends Fragment {
         SimpleDividerItemDecoration itemDecor = new SimpleDividerItemDecoration(getContext());
         itemsListContainer.addItemDecoration(itemDecor);
     }
+
 }

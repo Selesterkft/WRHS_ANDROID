@@ -15,9 +15,14 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
+import hu.selester.android.webstockandroid.Helper.HelperClass;
+import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.TablePanel.TablePanel;
@@ -39,7 +44,7 @@ public class TablePanelAdapter extends RecyclerView.Adapter<TablePanelAdapter.Vi
     private int qNeed = 0;
     private int qCurrent = 0;
     private String tranCode;
-
+    private int qEvidNum;
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
 
@@ -69,9 +74,11 @@ public class TablePanelAdapter extends RecyclerView.Adapter<TablePanelAdapter.Vi
             this.checkedList[i] = false;
         }
         columnCount = columnWidth.length;
+        tranCode = SessionClass.getParam("tranCode");
         if(tranCode != null) {
             try {
                 if (SessionClass.getParam("tranCode") != null && !SessionClass.getParam("tranCode").equals("")) {
+                    qEvidNum  = HelperClass.getArrayPosition("EvidNum", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
                     if (SessionClass.getParam(tranCode + "_Detail_TextBox_Needed_Qty_Index").equals("")) {
                         qNeed = 0;
                     } else {
@@ -145,6 +152,27 @@ public class TablePanelAdapter extends RecyclerView.Adapter<TablePanelAdapter.Vi
             bc = R.color.backcolorTablePanelDefault;
             fc = R.color.fontcolorTablePanelDefault;
         }
+        if (!SessionClass.getParam("XD").isEmpty() && SessionClass.getParam("XD") != null){
+            List<String[]> dataListItem = AllLinesData.findItemsFromMap(list.get(position)[qEvidNum],qEvidNum);
+            Log.i("TAGS","------------" + dataListItem.size() );
+            if( dataListItem != null && dataListItem.size() > 0 ){
+                boolean change = false;
+                for(int i = 0; i < dataListItem.size(); i++ ){
+                    Log.i("TAGS", Arrays.toString( dataListItem.get(i) ) );
+                    if( dataListItem.get(i)[2].equals("0") && dataListItem.get(i)[qCurrent].equals("0") ) {
+                        for(int j = i+1 ; j < dataListItem.size(); j++ ){
+                            if( !dataListItem.get(j)[2].equals("0") ){
+                                change = true;
+                                break;
+                            }
+                        }
+
+                    }
+                }
+                if(change) bc = R.color.dkGrayColor;
+            }
+        }
+
         rootLayout.setBackgroundResource(bc);
 
         if(tablePanelSetting.isCheckable()){

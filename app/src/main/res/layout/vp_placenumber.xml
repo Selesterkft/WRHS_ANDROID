@@ -11,6 +11,12 @@
         android:layout_marginEnd="10dp"
         android:layout_marginTop="10dp"
         android:background="@drawable/xd_items_header">
+
+        <TextView
+            android:layout_width="30dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/tablepanel_header_back"
+            />
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
