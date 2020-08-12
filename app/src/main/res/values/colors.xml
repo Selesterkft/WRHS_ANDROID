@@ -19,6 +19,7 @@
     <color name="btnIconColor">#0071ad</color>
     <color name="warningColor">#ff8e5b</color>
 
+    <color name="productRowINBack">#3274E6</color>
     <color name="productRowOKBack">#5500ff00</color>
     <color name="productRowPHBack">#aad3d3ff</color>
     <color name="productRowNOTBack">#ffffff</color>
@@ -28,5 +29,6 @@
     <color name="backcolorTablePanelDefault">#00FFFFFF</color>
     <color name="fontcolorTablePanelDefault">#FF000000</color>
     <color name="colorDivider">#DADADA</color>
+    <color name="colorGreen">#44cc44</color>
 
 </resources>

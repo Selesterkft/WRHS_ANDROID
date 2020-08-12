@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/checkstore_headlabel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/headerColor"
+        android:gravity="center"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:text="Keresés cimke alapján"
+        android:textColor="@color/whiteColor"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/checkstore_finderlabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Barcode:"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/checkstore_headlabel"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+    <mobil.selester.wheditbox.WHEditBox
+        android:id="@+id/checkstore_header_value"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        app:backgroundStyle="@drawable/logintext_et_shape_round"
+        app:innerPadding="4dp"
+        app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+        app:setDelBtn="true"
+        app:textSize="16sp"
+        app:writeType="None"
+        app:layout_constraintTop_toBottomOf="@id/checkstore_headlabel"
+        app:layout_constraintStart_toEndOf="@id/checkstore_finderlabel"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <LinearLayout
+        android:id="@+id/checkstore_mainLayout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintTop_toBottomOf="@+id/checkstore_header_value"
+        app:layout_constraintBottom_toTopOf="@id/checkstore_close"
+        />
+
+    <ImageView
+        android:id="@+id/checkstore_close"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginBottom="10dp"
+        android:src="@drawable/but_cancel_44x44"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

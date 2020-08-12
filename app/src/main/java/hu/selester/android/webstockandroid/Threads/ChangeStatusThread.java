@@ -29,6 +29,7 @@ public class ChangeStatusThread extends Thread{
     private MovesSubTableFragment f;
 
     public ChangeStatusThread(Context context,  String status, String tranCode, String tranID, MovesSubTableFragment f){
+        Log.i("TAG","ChangeStatusThread");
         this.tranID = tranID;
         this.context = context;
         this.status = status;
@@ -38,7 +39,9 @@ public class ChangeStatusThread extends Thread{
 
     @Override
     public void run() {
-        if(tranCode.charAt(0)!='3' && tranCode.charAt(0)!='4') {
+        Log.i("TAG","ChangeStatusThread RUN");
+        if(tranCode.charAt(0)!='3') {
+            Log.i("TAG","ChangeStatusThread RUN");
             RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
             String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_setStatus";
             HashMap<String, String> map = new HashMap<>();
@@ -48,7 +51,7 @@ public class ChangeStatusThread extends Thread{
             map.put("Tran_code", tranCode);
             map.put("where", "ID=" + tranID);
             map.put("NewStatus", status);
-            Log.i("URL", url);
+            Log.i("URL",url);
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -61,6 +64,9 @@ public class ChangeStatusThread extends Thread{
                                 //Toast.makeText(context,"Státusz váltása sikeres: "+status+"!",Toast.LENGTH_LONG).show();
                                 if (status.equals("PDA")) {
                                     new DeleteTempThread(context, tranCode, f).start();
+                                }
+                                if (status.equals("XD_PDA")) {
+                                    f.closeFragment();
                                 }
                             } else {
 

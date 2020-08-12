@@ -20,7 +20,10 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.util.List;
+
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
+import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
 import hu.selester.android.webstockandroid.Fragments.CheckPlaceFragment;
 import hu.selester.android.webstockandroid.Fragments.ChkBarcodeFragment;
 import hu.selester.android.webstockandroid.Fragments.DialogFragment;
@@ -30,6 +33,7 @@ import hu.selester.android.webstockandroid.Fragments.ScanCountFragment;
 import hu.selester.android.webstockandroid.Fragments.SettingsFragment;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Objects.ActiveFragment;
+import hu.selester.android.webstockandroid.Objects.AllLinesData;
 
 public class MainActivity extends FragmentActivity {
 
@@ -61,6 +65,17 @@ public class MainActivity extends FragmentActivity {
             @Override
             public void onClick(View v) {
                 HelperClass.tooltipBuild(getSupportFragmentManager().getFragments().get(0).getContext(), v,"Tartsa lenyomva az adott gombon az újad és megjelenik a segítség!", R.style.ToolTipLayoutCustomStyle);
+                AllLinesData.toStringLog();
+            }
+        });
+        helpBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                List<SessionTemp> list = db.sessionTempDao().getAllData();
+                for(int i=0; i < list.size(); i++){
+                    Log.i("Dabatase ST:", list.get(i).toString());
+                }
+                return true;
             }
         });
     }

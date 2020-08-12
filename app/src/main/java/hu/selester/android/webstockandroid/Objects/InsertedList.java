@@ -67,13 +67,11 @@ public class InsertedList {
     }
 
     public static void toStringLog(){
-        Log.i("TAG","INSERT STRING START");
         String str="";
         for (Map.Entry<String, String> entry : params.entrySet())
         {
             Log.i("INSERT_LIST",entry.getKey() + " : " + entry.getValue());
         }
-        Log.i("TAG","INSERT STRING END");
     }
 
 

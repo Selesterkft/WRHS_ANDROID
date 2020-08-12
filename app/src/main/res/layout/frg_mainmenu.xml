@@ -56,6 +56,30 @@
                 android:textSize="18sp"
                 android:text="Vonalkód ellenőrzés"/>
             <Button
+                android:id="@+id/menu_checkstoreBtn"
+                android:textColor="@color/whiteColor"
+                android:backgroundTint="@color/secondColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textSize="18sp"
+                android:text="Keresés cimke alapján"/>
+            <Button
+                android:id="@+id/menu_cslocationBtn"
+                android:textColor="@color/whiteColor"
+                android:backgroundTint="@color/secondColor"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="15dp"
+                android:paddingBottom="15dp"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:textSize="18sp"
+                android:text="Keresés tárhely alapján"/>
+            <Button
                 android:id="@+id/menu_inventoryBtn"
                 android:backgroundTint="@color/secondColor"
                 android:layout_width="match_parent"

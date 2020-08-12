@@ -36,12 +36,14 @@ import java.util.List;
 
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Database.Tables.PlacesTable;
+import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
 import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.CheckedList;
 import hu.selester.android.webstockandroid.Objects.InsertedList;
+import hu.selester.android.webstockandroid.Objects.NotCloseList;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.Threads.LoadEANDatasThread;
@@ -53,6 +55,7 @@ public class MainMenuFragment extends Fragment {
     private String[] arrayBtnVisibility;
     private boolean settingLoded;
     private ProgressDialog pd;
+    private int reloadSize;
 
     @Nullable
     @Override
@@ -62,6 +65,7 @@ public class MainMenuFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.frg_mainmenu,container,false);
         db = SelesterDatabase.getDatabase(getContext());
+        reloadSize = db.sessionTempDao().getDataSize();
         int size = db.sessionTempDao().getDataSize();
         pd = HelperClass.loadingDialogOn(getActivity());
         SessionClass.setParam("barcodeSuffix", db.systemDao().getValue("barcodeSuffix"));
@@ -70,10 +74,10 @@ public class MainMenuFragment extends Fragment {
                 SessionClass.setParam("barcodeSuffix", db.systemDao().getValue("barcodeSuffix"));
             }
         }
-        if(size > 0) buildReloadDialog();
         AllLinesData.delParams();
         InsertedList.clearAll();
         CheckedList.clearAllData();
+        NotCloseList.clearAllData();
         Button tasksBtn = rootView.findViewById(R.id.menu_tasksBtn);
         tasksBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -128,7 +132,6 @@ public class MainMenuFragment extends Fragment {
                 ft.commit();
             }
         });
-
         Button checkPlaceBtn = rootView.findViewById(R.id.menu_checkplaceBtn);
         checkPlaceBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -152,6 +155,34 @@ public class MainMenuFragment extends Fragment {
                 ft.replace(R.id.fragments,f);
                 ft.addToBackStack("app");
                 ft.commit();
+            }
+        });
+
+        Button chkStoreBtn = rootView.findViewById(R.id.menu_checkstoreBtn);
+        chkStoreBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment f = new QueryDataByValueFragment();
+                Bundle b = new Bundle();
+                b.putString("queryLabel", "Barcode");
+                b.putString("queryEndURL", "WRHS_PDA_XD_CHECK_STORE_BY_LABEL_EAN");
+                b.putInt("queryValueTrimFrom", 4);
+                b.putInt("queryValueTrimTo", 12);
+                f.setArguments(b);
+                getActivity().getSupportFragmentManager().beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE).replace(R.id.fragments, f).addToBackStack("app").commit();
+            }
+        });
+
+        Button chkLocationBtn = rootView.findViewById(R.id.menu_cslocationBtn);
+        chkLocationBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment f = new QueryDataByValueFragment();
+                Bundle b = new Bundle();
+                b.putString("queryLabel", "Tárhely");
+                b.putString("queryEndURL", "WRHS_PDA_XD_CHECK_STORE_BY_LOCATION");
+                f.setArguments(b);
+                getActivity().getSupportFragmentManager().beginTransaction().setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE).replace(R.id.fragments, f).addToBackStack("app").commit();
             }
         });
 
@@ -185,6 +216,7 @@ public class MainMenuFragment extends Fragment {
         String url=SessionClass.getParam("WSUrl")+"/log_out/"+account+"/"+psw+"/"+terminal+"/"+pda;
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
         JSONObject jsonObject = null;
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new  JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -249,6 +281,7 @@ public class MainMenuFragment extends Fragment {
                             }
                         }
                         pd.dismiss();
+                        if(reloadSize > 0){ buildReloadDialog(); }
                     }else{
                         pd.dismiss();
                         HelperClass.messageBox(getActivity(),"Beállítások betöltése","Tranzakciós beállítások nem érvényesek!",HelperClass.ERROR);
@@ -305,7 +338,6 @@ public class MainMenuFragment extends Fragment {
                             String _name = jsonArray.getJSONObject(i).getString("NameInEinFeld");
                             long _tranid = jsonArray.getJSONObject(i).getLong("TransactID");
                             list.add(new PlacesTable(_id, _name, _tranid));
-                            Log.i("TAG","" + _id + ", " + _name + ", " + _tranid);
                         }
                         db.placesDao().setPlacesData(list);
                     }else{
@@ -346,6 +378,13 @@ public class MainMenuFragment extends Fragment {
     }
 
     void buildReloadDialog() {
+
+        List<SessionTemp>  list = db.sessionTempDao().getAllData();
+        for(int i = 0; i<list.size(); i++){
+            Log.i("TAG", ""+i+": "+list.get(i).toString());
+        }
+
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Félbehagyott feladat");
         builder.setMessage("Törlés esetén az eddig felvett adatok törlődnek!");
@@ -353,6 +392,9 @@ public class MainMenuFragment extends Fragment {
         builder.setPositiveButton("Betölt", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                InsertedList.clearAll();
+                CheckedList.clearAllData();
+                NotCloseList.clearAllData();
                 SharedPreferences sharedPref = getActivity().getPreferences(getContext().MODE_PRIVATE);
                 String tranID   = sharedPref.getString("whrs_selexped_tranID","");
                 String tranCode = sharedPref.getString("whrs_selexped_tranCode","");
@@ -374,7 +416,6 @@ public class MainMenuFragment extends Fragment {
                     SessionClass.setParam("marBtn", "0");
                 }
                 String trimText = SessionClass.getParam(tranCode+"_TrimmingBarcode");
-                Log.i("TAG","TrimmedText: "+trimText);
                 if( trimText.contains(",") ){
                     SessionClass.setParam("trimFrom",  trimText.split(",")[0]);
                     SessionClass.setParam("trimTo",  trimText.split(",")[1]);
@@ -382,7 +423,6 @@ public class MainMenuFragment extends Fragment {
                     SessionClass.setParam("trimFrom", "0");
                     SessionClass.setParam("trimTo", "0");
                 }
-
                 Fragment f;
                 FragmentTransaction ft;
                 Bundle b;

@@ -23,7 +23,7 @@ import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
 import hu.selester.android.webstockandroid.Database.Tables.SystemTable;
 import hu.selester.android.webstockandroid.Database.Tables.UsersTable;
 
-@Database(entities = {ProductData.class, SystemTable.class, UsersTable.class, EansTable.class,SessionTemp.class, LogTable.class, PhotosTable.class, PlacesTable.class}, version = 28)
+@Database(entities = {ProductData.class, SystemTable.class, UsersTable.class, EansTable.class,SessionTemp.class, LogTable.class, PhotosTable.class, PlacesTable.class}, version = 30)
 public abstract class SelesterDatabase extends RoomDatabase{
     private static SelesterDatabase INSTANCE;
 

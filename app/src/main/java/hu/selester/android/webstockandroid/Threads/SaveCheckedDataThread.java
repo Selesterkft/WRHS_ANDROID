@@ -52,7 +52,7 @@ public class SaveCheckedDataThread extends Thread{
 
     @Override
     public void run() {
-        Log.i("TAG", "SaveCheckedData");
+        Log.i("TAG THREAD","SaveCheckedThread");
         db = SelesterDatabase.getDatabase(context);
         datas = AllLinesData.getAllDataList();
         String str="";
@@ -100,7 +100,7 @@ public class SaveCheckedDataThread extends Thread{
         }
 
         if( !str.isEmpty() ) {
-
+            Log.i("TAG - Update",str);
             RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
             String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_SaveLineData_ByGroup";
             HashMap<String, String> map = new HashMap<>();
@@ -112,6 +112,7 @@ public class SaveCheckedDataThread extends Thread{
             map.put("Head_ID",headID);
             map.put("cmd", str);
             if(HelperClass.isOnline(context)) {
+                Log.i("URL",url);
                 JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

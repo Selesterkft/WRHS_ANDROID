@@ -26,6 +26,8 @@ import java.util.Locale;
 
 import hu.selester.android.webstockandroid.Adapters.TablePanelAdapter;
 import hu.selester.android.webstockandroid.Divider.SimpleDividerItemDecoration;
+import hu.selester.android.webstockandroid.Helper.HelperClass;
+import hu.selester.android.webstockandroid.Objects.NotCloseList;
 import hu.selester.android.webstockandroid.R;
 
 public class TablePanel {
@@ -291,7 +293,16 @@ public class TablePanel {
         LinearLayout headerLayout = rootView.findViewById(R.id.tablePanel_header);
         sortSignView = rootView.findViewById(R.id.tablepanel_sort_sign);
         sortSignView.setVisibility(View.GONE);
-        LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(dpToPx(context, 10), dpToPx(context, 10));
+        if( NotCloseList.getSizeOfChecked() > 0) {
+            LinearLayout.LayoutParams layoutParams1 = new LinearLayout.LayoutParams(dpToPx(context, 10), dpToPx(context, 10));
+            TextView tv1 = new TextView(context);
+            LinearLayout.LayoutParams layoutP = new LinearLayout.LayoutParams(HelperClass.dpToPx(context, 20), LinearLayout.LayoutParams.WRAP_CONTENT);
+            tv1.setLayoutParams(layoutP);
+            tv1.setTag(-1);
+            tv1.setBackgroundResource(tablePanelSetting.getHeaderBackground());
+            tv1.setPadding(tablePanelSetting.getCellLeftRightPadding(), tablePanelSetting.getCellTopBottomPadding(), tablePanelSetting.getCellLeftRightPadding(), tablePanelSetting.getCellTopBottomPadding());
+            headerLayout.addView(tv1);
+        }
         if(tablePanelSetting.isCheckable()){
             TextView tv = new TextView( context );
             LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(getChkWidth(), LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -302,6 +313,7 @@ public class TablePanel {
             headerLayout.addView(tv);
 
         }
+
         for(int col = 0 ;col < widths.length; col++){
             TextView tv = new TextView( context );
             tv.setTextSize(tablePanelSetting.getFontSize());

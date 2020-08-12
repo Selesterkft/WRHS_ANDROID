@@ -47,6 +47,7 @@ public class SaveDataThread_All_INSERT extends Thread {
     }
 
     private void createInsertData(){
+        Log.i("TAG THREAD","SaveDataThread_All_Insert");
         if( SessionClass.getParam("breakBtn").equals("1") ) {
             int barcodeCount = 0;
             int qBarcode = HelperClass.getArrayPosition("Barcode", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
@@ -57,8 +58,8 @@ public class SaveDataThread_All_INSERT extends Thread {
             }
             RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
             String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_getNewBarcode/" + SessionClass.getParam("terminal") + "/"+barcodeCount;
-            Log.i("URL",url);
             if(HelperClass.isOnline(context)) {
+                Log.i("URL",url);
                 JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -105,6 +106,7 @@ public class SaveDataThread_All_INSERT extends Thread {
     }
 
     public void insertData(){
+        Log.i("TAG","insertData");
         int barcodeCounter = 0;
         String str = "";
         for (int i = 0; i < data.size(); i++) {
@@ -127,9 +129,9 @@ public class SaveDataThread_All_INSERT extends Thread {
                 str = str + "[Line" + data.get(i)[4] + "[comm " + commandString;
             }
         }
+        Log.i("TAG - INSERT",str);
         RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
         String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_SaveLineData_ByGroup";
-        Log.i("URL",url);
         HashMap<String,String> map = new HashMap<>();
         map.put("Terminal",SessionClass.getParam("terminal"));
         map.put("User_id",SessionClass.getParam("userid"));
@@ -139,6 +141,7 @@ public class SaveDataThread_All_INSERT extends Thread {
         map.put("Head_ID",data.get(0)[3]);
         map.put("cmd",str);
         if(HelperClass.isOnline(context)) {
+            Log.i("URL",url);
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -161,8 +164,6 @@ public class SaveDataThread_All_INSERT extends Thread {
                         Toast.makeText(context, "Adatok áttöltése sikertelen, kérem jelezze a Selesternek!", Toast.LENGTH_LONG).show();
                         e.printStackTrace();
                     }
-
-
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -173,7 +174,7 @@ public class SaveDataThread_All_INSERT extends Thread {
                     }
                 }
             });
-            jr.setRetryPolicy(new DefaultRetryPolicy(50000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            jr.setRetryPolicy(new DefaultRetryPolicy(120000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
             rq.add(jr);
         }else{
             Toast.makeText(context, "Nincs hálózat, mentés nem történt meg!", Toast.LENGTH_LONG).show();

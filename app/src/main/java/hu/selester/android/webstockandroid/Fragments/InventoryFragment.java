@@ -404,9 +404,9 @@ public class InventoryFragment extends Fragment {
         if (HelperClass.isOnline(getContext())) {
             WHListLoaded = false;
             String url = SessionClass.getParam("WSUrl") + "/whs/0";
-            Log.i("URL", url);
             RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
             JSONObject jsonObject = null;
+            Log.i("URL",url);
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -458,9 +458,9 @@ public class InventoryFragment extends Fragment {
     private void loadVirtWHData() {
         if (HelperClass.isOnline(getContext())) {
             String url = SessionClass.getParam("WSUrl") + "/whs/1";
-            Log.i("URL", url);
             RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
             JSONObject jsonObject = null;
+            Log.i("URL",url);
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -508,9 +508,9 @@ public class InventoryFragment extends Fragment {
     private void loadRenterData() {
         if (HelperClass.isOnline(getContext())) {
             String url = SessionClass.getParam("WSUrl") + "/WRHS_RENTER";
-            Log.i("URL", url);
             RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
             JSONObject jsonObject = null;
+            Log.i("URL",url);
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -558,9 +558,9 @@ public class InventoryFragment extends Fragment {
     private void loadGoodFromBarcode() {
         if (HelperClass.isOnline(getContext())) {
             String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_getGoodFromBarcode/" + itemIdET.getText().toString() + "/" + selectRenterID + "/0/0/0";
-            Log.i("URL", url);
             RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
             JSONObject jsonObject = null;
+            Log.i("URL",url);
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -643,9 +643,9 @@ public class InventoryFragment extends Fragment {
             WHListLoaded = false;
             String terminal = SessionClass.getParam("terminal");
             String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_getParams/" + terminal;
-            Log.i("URL", url);
             RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
             JSONObject jsonObject = null;
+            Log.i("URL",url);
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -698,9 +698,9 @@ public class InventoryFragment extends Fragment {
     private void loadLocsControl() {
         String terminal = SessionClass.getParam("terminal");
         String url = SessionClass.getParam("WSUrl") + "/Locs_Control_LocName/" + placeIdET.getText().toString() + "/" + selectWHID;
-        Log.i("URL", url);
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
         JSONObject jsonObject = null;
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -752,6 +752,7 @@ public class InventoryFragment extends Fragment {
         map.put("Vector_VirtualLagerID", Vector_VirtualLagerID_ParamStr );
 
         if (HelperClass.isOnline(getContext())) {
+            Log.i("URL",url);
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {

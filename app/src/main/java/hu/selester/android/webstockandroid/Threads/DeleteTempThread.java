@@ -47,6 +47,7 @@ public class DeleteTempThread extends Thread{
         map.put("PDA_ID","123");
         map.put("Tran_code",tranCode);
         map.put("Table_Name",SessionClass.getParam(tranCode + "_Line_ListView_FROM"));
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
@@ -23,6 +24,7 @@ public class SaveAllSessionTemp extends Thread{
 
     @Override
     public void run() {
+        Log.i("TAG THREAD","SaveAllSessionTemp");
         try {
             db.sessionTempDao().deleteAllData();
             List<SessionTemp> stList = new ArrayList<>();
@@ -35,7 +37,7 @@ public class SaveAllSessionTemp extends Thread{
             db.sessionTempDao().setDatas(stList);
         }catch (Exception e){
             e.printStackTrace();
-            Toast.makeText(context,"Hiba az ideiglenes adatok mentésénél!",Toast.LENGTH_LONG).show();
+//            Toast.makeText(context,"Hiba az ideiglenes adatok mentésénél!",Toast.LENGTH_LONG).show();
         }
     }
 }

@@ -300,9 +300,9 @@ public class CheckPlaceFragment extends Fragment {
                 KeyboardUtils.hideKeyboard(getActivity());
                 String terminal = SessionClass.getParam("terminal");
                 String url = SessionClass.getParam("WSUrl") + "/randominventory/" + locsname + "/" + terminal + "/" + selectWHItem.getId();
-                Log.i("URL", url);
                 RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
                 JSONObject jsonObject = null;
+                Log.i("URL",url);
                 JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
@@ -364,10 +364,10 @@ public class CheckPlaceFragment extends Fragment {
 
     private void loadWHList(){
         String url = SessionClass.getParam("WSUrl") + "/warehouses";
-        Log.i("URL", url);
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
         JSONObject jsonObject = null;
         whList = new ArrayList<WHItem>();
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

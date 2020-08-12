@@ -66,6 +66,7 @@ public class TasksFragment extends Fragment {
         });
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
         JSONObject jsonObject=null;
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new  JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -95,15 +96,19 @@ public class TasksFragment extends Fragment {
                             }else{
                                 f = new MovesTableFragment();
                             }
-                            String trimText = SessionClass.getParam(id+"_TrimmingBarcode");
-                            if( trimText.contains(",") ){
-                                SessionClass.setParam("trimFrom",  trimText.split(",")[0]);
-                                SessionClass.setParam("trimTo",  trimText.split(",")[1]);
+                            if( SessionClass.getParam(id+"_TrimmingBarcode")!=null ) {
+                                String trimText = SessionClass.getParam(id + "_TrimmingBarcode");
+                                if (trimText.contains(",")) {
+                                    SessionClass.setParam("trimFrom", trimText.split(",")[0]);
+                                    SessionClass.setParam("trimTo", trimText.split(",")[1]);
+                                } else {
+                                    SessionClass.setParam("trimFrom", "0");
+                                    SessionClass.setParam("trimTo", "0");
+                                }
                             }else{
                                 SessionClass.setParam("trimFrom", "0");
                                 SessionClass.setParam("trimTo", "0");
                             }
-                            Log.i("TAG", SessionClass.getParam("trimFrom") + " - " + SessionClass.getParam("trimTo") );
                             FragmentManager fm = getFragmentManager();
                             FragmentTransaction ft = fm.beginTransaction();
                             Bundle b = new Bundle();

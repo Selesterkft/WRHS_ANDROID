@@ -158,68 +158,78 @@
                 android:text="Új raklap hozzáadása"/>
         </LinearLayout>
     </LinearLayout>
-    <LinearLayout
+
+    <ScrollView
         android:id="@+id/movessub_btncontainer"
         android:layout_width="75dp"
         android:layout_height="0dp"
-        android:paddingBottom="6dp"
-        android:paddingLeft="5dp"
-        android:orientation="vertical"
-        app:layout_constraintTop_toBottomOf="@+id/movessub_headertext"
+        android:background="@color/headerColor"
+        android:paddingStart="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:background="@color/headerColor">
-        <ImageButton
-            android:src="@drawable/but_cancel_44x44"
-            android:background="@null"
-            android:padding="0dp"
-            android:scaleType="fitCenter"
-            android:id="@+id/movessub_flushBtn"
+        app:layout_constraintTop_toBottomOf="@+id/movessub_headertext">
+        <LinearLayout
             android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:text="ELDOBÁS"/>
-        <ImageButton
-            android:src="@drawable/but_lock_44x44"
-            android:background="@null"
-            android:scaleType="fitCenter"
-            android:id="@+id/movessub_lockBtn"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:enabled="false"
-            android:text="Végleges lezárás"/>
-        <ImageButton
-            android:src="@drawable/but_save_44x44"
-            android:background="@null"
-            android:scaleType="fitCenter"
-            android:id="@+id/movessub_saveBtn"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:enabled="false"
-            android:text="Mentés"/>
-        <ImageButton
-            android:src="@drawable/create_line_44x44"
-            android:background="@null"
-            android:scaleType="fitCenter"
-            android:id="@+id/movessub_createBtn"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:text="Kiválasztás"/>
-        <ImageButton
-            android:src="@drawable/but_stock_v2_44x44"
-            android:background="@null"
-            android:scaleType="fitCenter"
-            android:id="@+id/movessub_paramsBtn"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:text="Paraméterezés"/>
-        <ImageButton
-            android:src="@drawable/but_ok_44x44"
-            android:background="@null"
-            android:scaleType="fitCenter"
-            android:id="@+id/movessub_selectBtn"
-            android:layout_width="65dp"
-            android:layout_height="65dp"
-            android:text="Kiválasztás"/>
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/movessub_flushBtn"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@null"
+                android:padding="0dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/but_cancel_44x44"
+                android:text="ELDOBÁS" />
+
+            <ImageButton
+                android:id="@+id/movessub_lockBtn"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@null"
+                android:enabled="false"
+                android:scaleType="fitCenter"
+                android:src="@drawable/but_lock_44x44"
+                android:text="Végleges lezárás" />
+
+            <ImageButton
+                android:id="@+id/movessub_saveBtn"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@null"
+                android:enabled="false"
+                android:scaleType="fitCenter"
+                android:src="@drawable/but_save_44x44"
+                android:text="Mentés" />
+
+            <ImageButton
+                android:id="@+id/movessub_createBtn"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/create_line_44x44"
+                android:text="Kiválasztás" />
+
+            <ImageButton
+                android:id="@+id/movessub_paramsBtn"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/but_stock_v2_44x44"
+                android:text="Paraméterezés" />
+
+            <ImageButton
+                android:id="@+id/movessub_selectBtn"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                android:src="@drawable/but_ok_44x44"
+                android:text="Kiválasztás" />
+        </LinearLayout>
+    </ScrollView>
 
 </android.support.constraint.ConstraintLayout>

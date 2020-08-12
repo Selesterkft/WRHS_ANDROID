@@ -236,6 +236,33 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <LinearLayout
+                android:id="@+id/scancount_notclose"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:orientation="horizontal"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:paddingBottom="5dp">
+                <TextView
+                    android:id="@+id/scancount_notclose_label"
+                    android:layout_width="100dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginRight="5dp"
+                    android:gravity="center_vertical"
+                    android:paddingRight="5dp"
+                    android:text="Átküldés" />
+                <android.support.v7.widget.SwitchCompat
+                    android:id="@+id/scancount_notclose_switch"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:checked="true"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:thumb="@drawable/switch_custom_selector"
+                    app:track="@drawable/switch_custom_track"/>
+
+            </LinearLayout>
+
             <!--
             <LinearLayout
                 android:id="@+id/scancount_param1_layer"
@@ -277,7 +304,7 @@
 
                 <TextView
                     android:id="@+id/scancount_data1_label"
-                    android:layout_width="60dp"
+                    android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="5dp"
                     android:gravity="center_vertical"
@@ -303,7 +330,7 @@
 
                 <TextView
                     android:id="@+id/scancount_data2_label"
-                    android:layout_width="60dp"
+                    android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="5dp"
                     android:gravity="center_vertical"
@@ -343,7 +370,7 @@
 
                 <TextView
                     android:id="@+id/scancount_param2_label"
-                    android:layout_width="60dp"
+                    android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="5dp"
                     android:gravity="center_vertical"
@@ -356,10 +383,10 @@
                     android:gravity="center_vertical"
                     app:backgroundStyle="@drawable/logintext_et_shape_round"
                     app:innerPadding="4dp"
-                    app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+                    app:selectBackgroundStyle="@drawable/et_shape_select"
                     app:setDelBtn="true"
                     app:textSize="14sp"
-                    app:writeType="ClickDialog"
+                    app:writeType="None"
 
                     />
             </LinearLayout>
@@ -376,7 +403,7 @@
 
                 <TextView
                     android:id="@+id/scancount_param3_label"
-                    android:layout_width="60dp"
+                    android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="5dp"
                     android:gravity="center_vertical"
@@ -389,10 +416,10 @@
                     android:gravity="center_vertical"
                     app:backgroundStyle="@drawable/logintext_et_shape_round"
                     app:innerPadding="4dp"
-                    app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+                    app:selectBackgroundStyle="@drawable/et_shape_select"
                     app:setDelBtn="true"
                     app:textSize="14sp"
-                    app:writeType="ClickDialog"
+                    app:writeType="None"
 
                     />
             </LinearLayout>
@@ -409,7 +436,7 @@
 
                 <TextView
                     android:id="@+id/scancount_param4_label"
-                    android:layout_width="60dp"
+                    android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="5dp"
                     android:gravity="center_vertical"
@@ -422,10 +449,10 @@
                     android:gravity="center_vertical"
                     app:backgroundStyle="@drawable/logintext_et_shape_round"
                     app:innerPadding="4dp"
-                    app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+                    app:selectBackgroundStyle="@drawable/et_shape_select"
                     app:setDelBtn="true"
                     app:textSize="14sp"
-                    app:writeType="ClickDialog"
+                    app:writeType="None"
 
                     />
             </LinearLayout>
@@ -442,7 +469,7 @@
 
                 <TextView
                     android:id="@+id/scancount_param5_label"
-                    android:layout_width="60dp"
+                    android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="5dp"
                     android:gravity="center_vertical"
@@ -455,10 +482,10 @@
                     android:gravity="center_vertical"
                     app:backgroundStyle="@drawable/logintext_et_shape_round"
                     app:innerPadding="4dp"
-                    app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+                    app:selectBackgroundStyle="@drawable/et_shape_select"
                     app:setDelBtn="true"
                     app:textSize="14sp"
-                    app:writeType="ClickDialog"
+                    app:writeType="None"
 
                     />
             </LinearLayout>
@@ -475,7 +502,7 @@
 
                 <TextView
                     android:id="@+id/scancount_param6_label"
-                    android:layout_width="60dp"
+                    android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="5dp"
                     android:gravity="center_vertical"
@@ -488,10 +515,10 @@
                     android:gravity="center_vertical"
                     app:backgroundStyle="@drawable/logintext_et_shape_round"
                     app:innerPadding="4dp"
-                    app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+                    app:selectBackgroundStyle="@drawable/et_shape_select"
                     app:setDelBtn="true"
                     app:textSize="14sp"
-                    app:writeType="ClickDialog"
+                    app:writeType="None"
 
                     />
             </LinearLayout>
@@ -508,7 +535,7 @@
 
                 <TextView
                     android:id="@+id/scancount_param7_label"
-                    android:layout_width="60dp"
+                    android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="5dp"
                     android:gravity="center_vertical"
@@ -521,10 +548,10 @@
                     android:gravity="center_vertical"
                     app:backgroundStyle="@drawable/logintext_et_shape_round"
                     app:innerPadding="4dp"
-                    app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+                    app:selectBackgroundStyle="@drawable/et_shape_select"
                     app:setDelBtn="true"
                     app:textSize="14sp"
-                    app:writeType="ClickDialog"
+                    app:writeType="None"
 
                     />
             </LinearLayout>
@@ -541,7 +568,7 @@
 
                 <TextView
                     android:id="@+id/scancount_param8_label"
-                    android:layout_width="60dp"
+                    android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="5dp"
                     android:gravity="center_vertical"
@@ -554,10 +581,10 @@
                     android:gravity="center_vertical"
                     app:backgroundStyle="@drawable/logintext_et_shape_round"
                     app:innerPadding="4dp"
-                    app:selectBackgroundStyle="@drawable/logintext_et_shape_round"
+                    app:selectBackgroundStyle="@drawable/et_shape_select"
                     app:setDelBtn="true"
                     app:textSize="14sp"
-                    app:writeType="ClickDialog" />
+                    app:writeType="None" />
             </LinearLayout>
 
             <LinearLayout
@@ -571,7 +598,7 @@
 
                 <TextView
                     android:id="@+id/scancount_data3_label"
-                    android:layout_width="60dp"
+                    android:layout_width="100dp"
                     android:layout_height="match_parent"
                     android:layout_marginRight="5dp"
                     android:gravity="center_vertical"
@@ -676,7 +703,7 @@
     </LinearLayout>
 
     <ImageButton
-        android:src="@drawable/but_cancel_44x44"
+        android:src="@drawable/but_ok_44x44"
         android:layout_weight="3"
         android:background="@null"
         android:padding="0dp"

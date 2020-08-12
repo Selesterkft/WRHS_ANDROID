@@ -58,6 +58,7 @@ public class SaveDataThread extends Thread {
 
     @Override
     public void run() {
+        Log.i("TAG THREAD","SaveDataThread");
         db = SelesterDatabase.getDatabase(context);
         LogTable log = new LogTable(LogTable.LogType_Message,"SaveDataThread","","LOGUSER",null,null);
         String str="";
@@ -82,6 +83,7 @@ public class SaveDataThread extends Thread {
                 }
             }
         }
+        Log.i("TAG - UPDATE",str);
         db.logDao().addLog(log);
         if( !str.equals("") ){
             RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
@@ -99,6 +101,7 @@ public class SaveDataThread extends Thread {
             }
             map.put("cmd",str);
             if(HelperClass.isOnline(context)) {
+                Log.i("URL",url);
                 JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {

@@ -31,14 +31,14 @@ public class SaveIdSessionTemp extends Thread{
     @Override
     public void run() {
         try {
-
+            AllLinesData.toStringLog();
             for(int i = 0; i < id.size(); i++ ) {
                 String[] s = AllLinesData.getParam(String.valueOf(id.get(i)));
                 SessionTemp st = db.sessionTempDao().getData(id.get(i));
+
                 if (st != null) {
                     db.sessionTempDao().setData(HelperClass.createSessionTempFormat(id.get(i), st.getNum(), s));
                 }
-
             }
         }catch (Exception e){
             e.printStackTrace();

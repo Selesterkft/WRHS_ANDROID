@@ -81,6 +81,7 @@ public class CheckPlaceSaveThread extends Thread {
         }catch (Exception e){
             e.printStackTrace();
         }
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, job , new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

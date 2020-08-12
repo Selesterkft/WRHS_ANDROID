@@ -28,6 +28,7 @@ import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
 import hu.selester.android.webstockandroid.Objects.CheckedList;
 import hu.selester.android.webstockandroid.Objects.InsertedList;
+import hu.selester.android.webstockandroid.Objects.NotCloseList;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 
 public class SaveDataThread_All extends Thread {
@@ -58,7 +59,6 @@ public class SaveDataThread_All extends Thread {
         if( InsertedList.getAllEmptyElement().size() > 0 ){
             RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
             String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_getNewids/" + SessionClass.getParam("terminal") + "/" + InsertedList.getAllEmptyElement().size();
-            Log.i("URL", url);
             if (HelperClass.isOnline(context)) {
                 JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                     @Override
@@ -100,6 +100,7 @@ public class SaveDataThread_All extends Thread {
         }else{
             saveItems();
         }*/
+        Log.i("TAG THREAD","SaveDataThread_All");
         saveItems();
     }
 
@@ -124,7 +125,7 @@ public class SaveDataThread_All extends Thread {
                 str = str + "[Line" + data.get(i)[4] + "[comm " + commandString;
             }
         }
-        Log.i("TAG",str);
+        Log.i("TAG - UPDATE",str);
         return str;
     }
 

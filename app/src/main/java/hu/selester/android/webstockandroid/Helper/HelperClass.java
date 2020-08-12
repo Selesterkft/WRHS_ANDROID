@@ -23,8 +23,13 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
@@ -34,9 +39,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
@@ -47,12 +56,18 @@ import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.CheckedList;
 import hu.selester.android.webstockandroid.Objects.InsertedList;
 import hu.selester.android.webstockandroid.Objects.MessageBoxSettingsObject;
+import hu.selester.android.webstockandroid.Objects.NotCloseList;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.Threads.ChangeStatusThread;
 import it.sephiroth.android.library.tooltip.Tooltip;
 
 public class HelperClass {
+
+    public interface OnMessageEvent{
+        void onEventYes();
+        void onEventNo();
+    }
 
     public static final String SelexpedVersion="V01";
 
@@ -175,6 +190,7 @@ public class HelperClass {
         if(barcode.length()>1){
             if(!barcode.isEmpty()) {
                 barcode = barcode.replace(" ","");
+                Log.i("TAG",SessionClass.getParam("barcodeSuffix"));
                 int suffixLen = SessionClass.getParam("barcodeSuffix").length();
                 if ((barcode.substring(barcode.length() - suffixLen, barcode.length()).equals(SessionClass.getParam("barcodeSuffix")))) {
                     String bar = barcode.substring(0, barcode.length() - suffixLen);
@@ -222,8 +238,8 @@ public class HelperClass {
                 new Tooltip.Builder(101)
                         .anchor(aView, Tooltip.Gravity.LEFT)
                         .closePolicy(new Tooltip.ClosePolicy()
-                                .insidePolicy(true, false)
-                                .outsidePolicy(true, false), 5000)
+                        .insidePolicy(true, false)
+                        .outsidePolicy(true, false), 5000)
                         .activateDelay(0)
                         .showDelay(300)
                         .text(text)
@@ -284,9 +300,9 @@ public class HelperClass {
                 if( datacount > 39 ) strArray[39] = tempList.get(i).getParam39();
 
                 AllLinesData.setParam(String.valueOf(tempList.get(i).getId()), strArray);
+                NotCloseList.setParamItem(strArray[0],tempList.get(i).getNotClose());
                 CheckedList.setParamItem(strArray[0],tempList.get(i).getStatus());
                 if( tempList.get(i).isInsertRow() ) {
-                    Log.i("INSERT SAVE DATA", "" + String.valueOf(tempList.get(i).getId()) );
                     InsertedList.setInsertElement(String.valueOf(tempList.get(i).getId()), "0");
                 }
             }
@@ -297,6 +313,7 @@ public class HelperClass {
     }
 
     public static SessionTemp createSessionTempFormat(long id, int num, String[] data){
+        Log.i("TAG","createSessionTempFormat");
         String[] tempdata = new String[40];
         for(int i=0; i<40; i++){
             tempdata[i] = "not";
@@ -310,9 +327,9 @@ public class HelperClass {
                 tempdata[18] + " - " + tempdata[19] + " - " + tempdata[20] + " - " + tempdata[21] + " - " + tempdata[22] + " - " + tempdata[23] + " - " + tempdata[24] + " - " +
                 tempdata[25] + " - " + tempdata[26] + " - " + tempdata[27] + " - " + tempdata[28] + " - " + tempdata[29] + " - " + tempdata[30] + " - " +
                 tempdata[31] + " - " + tempdata[32] + " - " + tempdata[33] + " - " + tempdata[34] + " - " + tempdata[35] + " - " + tempdata[36] + " - " +
-                tempdata[37] + " - " + tempdata[38] + " - " + tempdata[39] + " - " +  CheckedList.getParamItem(tempdata[0]) + " - " +  InsertedList.isInsert(String.valueOf(id))
+                tempdata[37] + " - " + tempdata[38] + " - " + tempdata[39] + " - " +  CheckedList.getParamItem(tempdata[0]) + " - " +  InsertedList.isInsert(String.valueOf(id)) + " - " + NotCloseList.getParamItem(tempdata[0])
         );
-        return new SessionTemp(id,num,tempdata[0],tempdata[1],tempdata[2],tempdata[3],tempdata[4],tempdata[5],tempdata[6],tempdata[7],tempdata[8],tempdata[9],tempdata[10],tempdata[11],tempdata[12],tempdata[13],tempdata[14],tempdata[15],tempdata[16],tempdata[17],tempdata[18],tempdata[19],tempdata[20],tempdata[21],tempdata[22],tempdata[23],tempdata[24],tempdata[25],tempdata[26],tempdata[27],tempdata[28],tempdata[29],tempdata[30],tempdata[31],tempdata[32],tempdata[33],tempdata[34],tempdata[35],tempdata[36],tempdata[37],tempdata[38],tempdata[39], CheckedList.getParamItem(tempdata[0]), InsertedList.isInsert(String.valueOf(id)) );
+        return new SessionTemp(id,num,tempdata[0],tempdata[1],tempdata[2],tempdata[3],tempdata[4],tempdata[5],tempdata[6],tempdata[7],tempdata[8],tempdata[9],tempdata[10],tempdata[11],tempdata[12],tempdata[13],tempdata[14],tempdata[15],tempdata[16],tempdata[17],tempdata[18],tempdata[19],tempdata[20],tempdata[21],tempdata[22],tempdata[23],tempdata[24],tempdata[25],tempdata[26],tempdata[27],tempdata[28],tempdata[29],tempdata[30],tempdata[31],tempdata[32],tempdata[33],tempdata[34],tempdata[35],tempdata[36],tempdata[37],tempdata[38],tempdata[39], CheckedList.getParamItem(tempdata[0]), InsertedList.isInsert(String.valueOf(id)), NotCloseList.getParamItem(tempdata[0]) );
     }
 
     public static ProgressDialog loadingDialogOn(Activity activity){
@@ -456,6 +473,92 @@ public class HelperClass {
         };
     }
 
+    public static void messageBox(final Activity activity, String title, String message, int status, final EditText ed) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        View rootView = LayoutInflater.from(activity).inflate(R.layout.dialog_messagebox, null, false);
+        TextView titleTV = rootView.findViewById(R.id.dialog_messagebox_title);
+        titleTV.setText(title);
+        TextView contentTV = rootView.findViewById(R.id.dialog_messagebox_content);
+        contentTV.setText(message);
+        ImageView statusImg = rootView.findViewById(R.id.dialog_messagebox_image);
+        titleTV.setBackgroundColor(ContextCompat.getColor(activity, R.color.secondColor));
+        switch (status) {
+            case 0:
+                statusImg.setBackground(ContextCompat.getDrawable(activity, R.drawable.dialog_done));
+                break;
+            case 1:
+                statusImg.setBackground(ContextCompat.getDrawable(activity, R.drawable.dialog_warning));
+                titleTV.setBackgroundColor(ContextCompat.getColor(activity, R.color.warningColor));
+                break;
+            case 2:
+                statusImg.setBackground(ContextCompat.getDrawable(activity, R.drawable.dialog_error));
+                titleTV.setBackgroundColor(ContextCompat.getColor(activity, R.color.errorColor));
+                break;
+            case 3:
+                statusImg.setBackground(ContextCompat.getDrawable(activity, R.drawable.dialog_delete));
+                titleTV.setBackgroundColor(ContextCompat.getColor(activity, R.color.errorColor));
+                break;
+        }
+        builder.setView(rootView);
+        builder.setNegativeButton("Rendben", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(activity);
+                ed.requestFocus();
+                dialog.cancel();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
+    public static void messageBox(final Activity activity, String title, String message, int status, final OnMessageEvent onMessageEvent) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        View rootView = LayoutInflater.from(activity).inflate(R.layout.dialog_messagebox, null, false);
+        TextView titleTV = rootView.findViewById(R.id.dialog_messagebox_title);
+        titleTV.setText(title);
+        TextView contentTV = rootView.findViewById(R.id.dialog_messagebox_content);
+        contentTV.setText(message);
+        ImageView statusImg = rootView.findViewById(R.id.dialog_messagebox_image);
+        titleTV.setBackgroundColor(ContextCompat.getColor(activity, R.color.secondColor));
+        switch (status) {
+            case 0:
+                statusImg.setBackground(ContextCompat.getDrawable(activity, R.drawable.dialog_done));
+                break;
+            case 1:
+                statusImg.setBackground(ContextCompat.getDrawable(activity, R.drawable.dialog_warning));
+                titleTV.setBackgroundColor(ContextCompat.getColor(activity, R.color.warningColor));
+                break;
+            case 2:
+                statusImg.setBackground(ContextCompat.getDrawable(activity, R.drawable.dialog_error));
+                titleTV.setBackgroundColor(ContextCompat.getColor(activity, R.color.errorColor));
+                break;
+            case 3:
+                statusImg.setBackground(ContextCompat.getDrawable(activity, R.drawable.dialog_delete));
+                titleTV.setBackgroundColor(ContextCompat.getColor(activity, R.color.errorColor));
+                break;
+        }
+        builder.setView(rootView);
+        builder.setPositiveButton("Rendben", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(activity);
+                onMessageEvent.onEventYes();
+                dialog.cancel();
+            }
+        });
+        builder.setNegativeButton("Mégsem", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(activity);
+                onMessageEvent.onEventNo();
+                dialog.cancel();
+            }
+        });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
     public static View.OnFocusChangeListener getFocusBorderListener(final Context context){
         return new View.OnFocusChangeListener() {
             @Override
@@ -470,12 +573,67 @@ public class HelperClass {
     }
 
     public static Float convertStringToFloat(String str) throws NumberFormatException{
-        Log.i("TAG","STRING TO FLOAT: "+str);
         if( str == null ){
             return null;
         }else{
             return Float.parseFloat( str );
         }
+    }
+
+    public static void printHashMap(Map map){
+        Set keys = map.keySet();
+
+        for (Iterator i = keys.iterator(); i.hasNext(); ) {
+            String key = (String) i.next();
+            String value = (String) map.get(key);
+            Log.i("print MAP", key + " = " + value);
+        }
+    }
+
+    public static Map<String, Object> jsonToMap(JSONObject json) throws JSONException {
+        Map<String, Object> retMap = new LinkedHashMap<String, Object>();
+
+        if(json != JSONObject.NULL) {
+            retMap = toMap(json);
+        }
+        return retMap;
+    }
+
+    public static Map<String, Object> toMap(JSONObject object) throws JSONException {
+        Map<String, Object> map = new LinkedHashMap<String, Object>();
+
+        Iterator<String> keysItr = object.keys();
+        while(keysItr.hasNext()) {
+            String key = keysItr.next();
+            Object value = object.get(key);
+
+
+            if(value instanceof JSONArray) {
+                value = toList((JSONArray) value);
+            }
+
+            else if(value instanceof JSONObject) {
+                value = toMap((JSONObject) value);
+            }
+            map.put(key, value);
+        }
+        return map;
+    }
+
+    public static List<Object> toList(JSONArray array) throws JSONException {
+        List<Object> list = new ArrayList<Object>();
+        for(int i = 0; i < array.length(); i++) {
+            Object value = array.get(i);
+            if(value instanceof JSONArray) {
+                value = toList((JSONArray) value);
+            }
+
+            else if(value instanceof JSONObject) {
+                value = toMap((JSONObject) value);
+            }
+            list.add(value);
+        }
+        return list;
     }
 
 }

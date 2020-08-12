@@ -61,7 +61,6 @@ class PhotoFragment:Fragment(){
 
     val listener = object : PhotosListAdapter.OnItemClickListener{
         override fun onItemClick(item: String) {
-            Log.i("TAG","SHOW")
             showPictureDialog(item)
         }
 
@@ -82,7 +81,6 @@ class PhotoFragment:Fragment(){
         if( SessionClass.getParam( tranCode + "_Line_ListView_SELECT") != null || !SessionClass.getParam(tranCode + "_Line_ListView_SELECT").equals("") ){
             qPhotoID = HelperClass.getArrayPosition(SessionClass.getParam( tranCode + "_Detail_TakePhoto_ID"), SessionClass.getParam(tranCode + "_Line_ListView_SELECT"))
             attrId = Integer.parseInt( AllLinesData.getParam(SessionClass.getParam("selectLineID"))[qPhotoID] )
-            //Log.i("TAG",""+qPhotoID + " " + SessionClass.getParam( tranCode + "_Detail_TakePhoto_ID") + " - "  + attrId )
         }
         val adapter = PhotosListAdapter(context as Context, db.photosDao().getPositionData( orderId, attrId ) as MutableList<PhotosTable>, listener)
         rootView.transphoto_list.addItemDecoration(DividerItemDecoration(context, DividerItemDecoration.VERTICAL))
@@ -100,7 +98,6 @@ class PhotoFragment:Fragment(){
     }
 
     private fun loadPicsPanel() {
-        Log.i("TAG","loadPicsPanel")
         val photoPickerIntent = Intent(Intent.ACTION_GET_CONTENT)
         photoPickerIntent.type = "image/*"
         startActivityForResult(photoPickerIntent, REQUESTCODE_ACTION_PICK)
@@ -117,7 +114,6 @@ class PhotoFragment:Fragment(){
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        Log.i(LOG_TAG, "RequestCode - $requestCode")
         if (requestCode == REQUESTCODE_ACTION_IMAGE_CAPTURE) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 dispatchTakePictureIntent()
@@ -139,7 +135,6 @@ class PhotoFragment:Fragment(){
         storageDir.mkdirs()
         val image = File.createTempFile(imageFileName, ".jpg", storageDir)
         mCurrentPhotoPath = image.absolutePath
-        Log.i(LOG_TAG, mCurrentPhotoPath)
         return image
     }
 
@@ -166,15 +161,12 @@ class PhotoFragment:Fragment(){
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.i(LOG_TAG, "ResultCode - $resultCode RequestCode - $requestCode")
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 REQUESTCODE_ACTION_PICK -> {
-                    Log.i(LOG_TAG, "Action_Pick")
                     val selectedImage = data!!.data
                     var mCurrPath : String
                     try {
-                        Log.i("TAG",""+Build.VERSION.SDK_INT + ">=" + Build.VERSION_CODES.LOLLIPOP_MR1)
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP_MR1) {
                             mCurrPath = getRealPathFromURI(activity!!.baseContext, selectedImage!!)
                         } else {
@@ -183,8 +175,6 @@ class PhotoFragment:Fragment(){
                         if (mCurrPath == "") {
                             mCurrPath = getRealPathFromUri2(activity!!.baseContext, selectedImage)
                         }
-
-                        Log.i("TAG",mCurrPath)
                         mCurrentPhotoPath = mCurrPath
                     } catch (e: Exception) {
                         Log.i(LOG_TAG, "Some exception $e")
@@ -220,7 +210,6 @@ class PhotoFragment:Fragment(){
     }
 
     private fun getRealPathFromURI(context: Context, uri: Uri): String {
-        Log.i("TAG", uri.toString())
         var filePath = ""
         val wholeID = DocumentsContract.getDocumentId(uri)
         val id = wholeID.split(":".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[1]
@@ -250,7 +239,6 @@ class PhotoFragment:Fragment(){
     }
 
     private fun delQuestionDialog(position: Int) {
-        Log.i("TAG","DELDialog")
         val builder = AlertDialog.Builder(activity!!)
         builder.setTitle("Biztos, hogy törli a fotót?")
         builder.setPositiveButton("IGEN") { dialog, _ ->
@@ -265,7 +253,6 @@ class PhotoFragment:Fragment(){
     }
 
     private fun showPictureDialog(filePath: String){
-        Log.i("TAG","SHOW PICTURES: "+filePath)
         val settingsDialog = Dialog(context!!)
         settingsDialog.window!!.requestFeature(Window.FEATURE_NO_TITLE)
         val view = layoutInflater.inflate(R.layout.dialog_show_image, null)
@@ -293,7 +280,6 @@ class PhotoFragment:Fragment(){
     val runnable = Runnable { photoListRefresh() }
 
     fun photoListRefresh() {
-        Log.i("TAG","handler")
         (rootView.transphoto_list.adapter!! as PhotosListAdapter).refreshList(
             db.photosDao().getPositionData(
                 orderId,

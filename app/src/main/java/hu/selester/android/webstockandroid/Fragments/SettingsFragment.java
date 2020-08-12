@@ -17,6 +17,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +32,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -39,6 +42,7 @@ import com.android.volley.toolbox.JsonRequest;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,13 +54,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import hu.selester.android.webstockandroid.Adapters.ImageListAdapter;
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Database.Tables.ProductData;
+import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
 import hu.selester.android.webstockandroid.Database.Tables.SystemTable;
+import hu.selester.android.webstockandroid.Divider.SimpleDividerItemDecoration;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
 import hu.selester.android.webstockandroid.Objects.ActiveFragment;
+import hu.selester.android.webstockandroid.Objects.ImageObject;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 
@@ -76,6 +84,9 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
     public int scanBtnCode;
     private EditText barCodeSuffix;
     private int orientation;
+    private List<ImageObject> imageHeadlist = new ArrayList<>();
+    private LinearLayoutManager mLayountManager;
+
 
     @Nullable
     @Override
@@ -99,6 +110,14 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
         barCodeSuffix = rootView.findViewById(R.id.setting_barcodesuffix);
         landscapeBtn = rootView.findViewById(R.id.setting_landscape);
         portraitBtn = rootView.findViewById(R.id.setting_portait);
+        Button loadimageBtn = rootView.findViewById(R.id.setting_imageloadBtn);
+        loadimageBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadSessionTempHead();
+            }
+        });
+
         if( db.systemDao().getValue("orientation") != null && !db.systemDao().getValue("orientation").equals("") ) {
             orientation = Integer.parseInt(db.systemDao().getValue("orientation"));
         }else{
@@ -211,6 +230,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
             RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
             String url = urlText.getText() + "/teszt";
             JSONObject jsonObject = null;
+            Log.i("URL",url);
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -298,6 +318,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
         String url = urlText.getText()+"/teszt";
         JSONObject jsonObject=null;
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -388,6 +409,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
         map.put("Terminal",terminalText.getText().toString());
         map.put("Computername", HelperClass.getAndroidID(getContext()));
         map.put("StartupPath","/data/data/" + getContext().getPackageName());
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -546,5 +568,197 @@ public class SettingsFragment extends Fragment implements View.OnClickListener{
             }
         });
         builder.show();
+    }
+
+    private void loadImageListDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Állapot betöltés");
+        View v = LayoutInflater.from(getContext()).inflate(R.layout.dialog_image, null);
+        RecyclerView rv = v.findViewById(R.id.dialog_image_rv);
+
+        if(imageHeadlist.size() > 0 ){
+            mLayountManager = new LinearLayoutManager(getContext());
+            ImageListAdapter lla = new ImageListAdapter(getContext(),imageHeadlist);
+            lla.setActivity(getActivity());
+            rv.setLayoutManager(mLayountManager);
+            rv.addItemDecoration(new SimpleDividerItemDecoration(getContext()));
+            rv.setAdapter(lla);
+        }
+
+        builder.setView(v);
+        builder.setNegativeButton("Mégsem", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                dialog.cancel();
+            }
+        });
+        builder.setPositiveButton("Betöltés", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                if( !SessionClass.getParam("Select_ImageID").equals("0") ){
+                    loadSessionTempdata();
+                }else{
+                    Toast.makeText(getContext(),"Nincs kiválasztva a betöltendő állomány!", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        builder.show();
+    }
+
+    private void loadSessionTempdata() {
+        String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_LOG_GET_DATA/"+SessionClass.getParam("Select_ImageID");
+        Log.i("URL",url);
+        JSONObject jsonObject=null;
+        RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
+        JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    String rootText=response.getString("WRHS_PDA_LOG_GET_DATAResult");
+                    Log.i("TAG", rootText);
+                    if(!rootText.isEmpty()){
+                        JSONArray root=new JSONArray(rootText);
+                        getSessionTempHead(root);
+                    }else{
+                        Toast.makeText(getContext(),"Hiba a kapcsolódáskor", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    Toast.makeText(getContext(),"Hiba a kapcsolódáskor", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if(error!=null){
+                    Toast.makeText(getContext(),"Hiba a kapcsolódáskor", Toast.LENGTH_LONG).show();
+                    error.printStackTrace();
+                }
+            }
+        });
+        jr.setRetryPolicy(new DefaultRetryPolicy(50000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        rq.add(jr);
+    }
+
+    private void getSessionTempHead(JSONArray root) {
+        List<SessionTemp> list = new ArrayList<>();
+        try {
+            for (int i = 0; i < root.length(); i++) {
+
+                int status =0;
+                if( !root.getJSONObject(i).getString("STATUS").equals("null") && !root.getJSONObject(i).getString("STATUS").equals("") ){
+                    status = root.getJSONObject(i).getInt("STATUS");
+                }
+                SessionTemp st = new SessionTemp(
+                        root.getJSONObject(i).getInt("id"),
+                        root.getJSONObject(i).getInt("num"),
+                        root.getJSONObject(i).getString("param0"),
+                        root.getJSONObject(i).getString("param1"),
+                        root.getJSONObject(i).getString("param2"),
+                        root.getJSONObject(i).getString("param3"),
+                        root.getJSONObject(i).getString("param4"),
+                        root.getJSONObject(i).getString("param5"),
+                        root.getJSONObject(i).getString("param6"),
+                        root.getJSONObject(i).getString("param7"),
+                        root.getJSONObject(i).getString("param8"),
+                        root.getJSONObject(i).getString("param9"),
+                        root.getJSONObject(i).getString("param10"),
+                        root.getJSONObject(i).getString("param11"),
+                        root.getJSONObject(i).getString("param12"),
+                        root.getJSONObject(i).getString("param13"),
+                        root.getJSONObject(i).getString("param14"),
+                        root.getJSONObject(i).getString("param15"),
+                        root.getJSONObject(i).getString("param16"),
+                        root.getJSONObject(i).getString("param17"),
+                        root.getJSONObject(i).getString("param18"),
+                        root.getJSONObject(i).getString("param19"),
+                        root.getJSONObject(i).getString("param20"),
+                        root.getJSONObject(i).getString("param21"),
+                        root.getJSONObject(i).getString("param22"),
+                        root.getJSONObject(i).getString("param23"),
+                        root.getJSONObject(i).getString("param24"),
+                        root.getJSONObject(i).getString("param25"),
+                        root.getJSONObject(i).getString("param26"),
+                        root.getJSONObject(i).getString("param27"),
+                        root.getJSONObject(i).getString("param28"),
+                        root.getJSONObject(i).getString("param29"),
+                        root.getJSONObject(i).getString("param30"),
+                        root.getJSONObject(i).getString("param31"),
+                        root.getJSONObject(i).getString("param32"),
+                        root.getJSONObject(i).getString("param33"),
+                        root.getJSONObject(i).getString("param34"),
+                        root.getJSONObject(i).getString("param35"),
+                        root.getJSONObject(i).getString("param36"),
+                        root.getJSONObject(i).getString("param37"),
+                        root.getJSONObject(i).getString("param38"),
+                        root.getJSONObject(i).getString("param39"),
+                        status,
+                        root.getJSONObject(i).getBoolean("insertRow"),
+                        root.getJSONObject(i).getInt("notClose")
+                );
+                list.add( st );
+            }
+            SelesterDatabase db = SelesterDatabase.getDatabase(getContext());
+            db.sessionTempDao().deleteAllData();
+            db.sessionTempDao().setDatas(list);
+            Toast.makeText(getContext(),"Betöltés megtörtént! Lépjen be a programba", Toast.LENGTH_LONG).show();
+        }catch (JSONException e){
+            e.printStackTrace();
+            Toast.makeText(getContext(),"Hiba a mentés közben!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void loadSessionTempHead(){
+        SessionClass.setParam("Select_ImageID","0");
+        String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_LOG_GET_HEADS";
+        Log.i("URL",url);
+        JSONObject jsonObject=null;
+        RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
+        JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    String rootText=response.getString("WRHS_PDA_LOG_GET_HEADSResult");
+                    if(!rootText.isEmpty()){
+                        JSONArray root=new JSONArray(rootText);
+                        getSessionTempHeadData(root);
+                    }else{
+                        Toast.makeText(getContext(),"Hiba a kapcsolódáskor", Toast.LENGTH_LONG).show();
+                    }
+                } catch (JSONException e) {
+                    Toast.makeText(getContext(),"Hiba a kapcsolódáskor", Toast.LENGTH_LONG).show();
+                    e.printStackTrace();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                if(error!=null){
+                    Toast.makeText(getContext(),"Hiba a kapcsolódáskor", Toast.LENGTH_LONG).show();
+                    error.printStackTrace();
+                }
+            }
+        });
+        jr.setRetryPolicy(new DefaultRetryPolicy(50000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        rq.add(jr);
+    }
+
+    private void getSessionTempHeadData(JSONArray jsonArray) throws JSONException{
+        imageHeadlist.clear();
+        for(int i=0; i < jsonArray.length(); i++){
+            imageHeadlist.add(
+                    new ImageObject(
+                            jsonArray.getJSONObject(i).getLong("ID"),
+                            jsonArray.getJSONObject(i).getString("ACTION_DATE"),
+                            jsonArray.getJSONObject(i).getInt("MOVE_NUM"),
+                            jsonArray.getJSONObject(i).getInt("TRAN_CODE"),
+                            jsonArray.getJSONObject(i).getInt("USERID"),
+                            jsonArray.getJSONObject(i).getString("TERMINAL")
+                    )
+            );
+        }
+        loadImageListDialog();
     }
 }

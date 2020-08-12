@@ -1,5 +1,6 @@
 package hu.selester.android.webstockandroid.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -42,6 +43,7 @@ import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.CheckedList;
 import hu.selester.android.webstockandroid.Objects.InsertedList;
 import hu.selester.android.webstockandroid.Objects.ListSettings;
+import hu.selester.android.webstockandroid.Objects.NotCloseList;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.TablePanel.TablePanel;
@@ -100,14 +102,11 @@ MovesTableFragment extends Fragment implements View.OnClickListener {
             SessionClass.setParam("takePhotoBtn", "0");
             SessionClass.setParam("marBtn", "0");
         }
-        //Log.i("TAG",""+SessionClass.getParam("breakBtn")+" - "+SessionClass.getParam("collectionBtn"));
+//        Log.i("TAG","BREAK: "+SessionClass.getParam("breakBtn")+" - CollectionBtn: "+SessionClass.getParam("collectionBtn"));
 
         if(!SessionClass.getParam(tranCode+"_Head_ListView_SELECT").isEmpty()) SessionClass.setParam(tranCode+"_Head_ListView_SELECT",SessionClass.getParam(tranCode+"_Head_ListView_SELECT").replace(" ",""));
+
         // ---------------------------- Header --------------------------------
-
-
-        //table = new TableView(getContext(),rootView);
-
 
         String[] temp = SessionClass.getParam(tranCode+"_Head_ListView_Widths").split(",");
         final int[] headerWidth = new int[temp.length];
@@ -137,8 +136,8 @@ MovesTableFragment extends Fragment implements View.OnClickListener {
         String listOrder = SessionClass.getParam(tranCode+"_Head_ListView_ORDER_BY");
         String url = SessionClass.getParam("WSUrl")+"/get_task_head/"+terminal+"/"+userid+"/"+pdaid+"/"+listSelect+"/"+listFrom+"/"+listOrder+"/"+tranCode;
         url = url.replace(" ","");
-        Log.i("URL",url);
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new  JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -151,7 +150,6 @@ MovesTableFragment extends Fragment implements View.OnClickListener {
                         String[] dataText = new String[10];
                         for(int j=0;j<columnName.length;j++){
                             dataText[j] = jsonObj.getString(columnName[j]);
-
                         }
                         tl.add(dataText);
                     }
@@ -188,6 +186,7 @@ MovesTableFragment extends Fragment implements View.OnClickListener {
         tps.setCellTopBottomPadding(HelperClass.dpToPx(getContext(),6));
         tps.setCheckable(true);
         tps.setOnRowClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceType")
             @Override
             public void onClick(View v) {
                 // Itt volt a HIBA
@@ -235,6 +234,9 @@ MovesTableFragment extends Fragment implements View.OnClickListener {
         switch (v.getId()){
             case R.id.moves_selectBtn:
                 if(tablePanel.getAdapter().getCheckedPosition(1) != null && tablePanel.getAdapter().getCheckedPosition(1).size()>0){
+                    InsertedList.clearAll();
+                    CheckedList.clearAllData();
+                    NotCloseList.clearAllData();
                     f = new ChkBarcodeFragment();
                     ft = getActivity().getSupportFragmentManager().beginTransaction();
                     ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_CLOSE);
@@ -251,6 +253,9 @@ MovesTableFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.moves_selectBtn1:
                 if(tablePanel.getAdapter().getCheckedPosition(1) != null && tablePanel.getAdapter().getCheckedPosition(1).size()>0){
+                    InsertedList.clearAll();
+                    CheckedList.clearAllData();
+                    NotCloseList.clearAllData();
                     if( SessionClass.getParam("collectionBtn").equals("1") ){
                         f = new MovesSubViewPager();
                     }else{

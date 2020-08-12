@@ -88,6 +88,12 @@
             app:layout_constraintTop_toBottomOf="@id/linearLayout5">
 
             <TextView
+                android:layout_width="30dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/tablepanel_header_back"
+                android:gravity="center"
+                android:text="" />
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -139,9 +145,10 @@
         <android.support.v7.widget.RecyclerView
             android:id="@+id/ps_rv_items_list"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             android:layout_marginStart="10dp"
             android:layout_marginEnd="10dp"
+            android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toTopOf="@+id/ps_addplacenum"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -211,6 +218,7 @@
             android:layout_height="wrap_content"
             android:elevation="2dp"
             android:orientation="vertical"
+            android:layout_marginBottom="5dp"
             app:layout_constraintBottom_toTopOf="@+id/ps_pager"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
@@ -219,9 +227,8 @@
             android:id="@+id/ps_pager"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_constraintBottom_toTopOf="@+id/ps_exit"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            android:background="@color/blackColor"
+            />
     </LinearLayout>
 
     <ImageView
@@ -253,6 +260,16 @@
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/ps_plus" />
+
+    <ImageView
+        android:id="@+id/ps_explode"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginEnd="8dp"
+        android:src="@drawable/create_line_44x44"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/ps_minus" />
 
     <android.support.constraint.Guideline
         android:id="@+id/guideline"

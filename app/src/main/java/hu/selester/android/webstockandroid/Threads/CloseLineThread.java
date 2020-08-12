@@ -27,6 +27,7 @@ import hu.selester.android.webstockandroid.Helper.MySingleton;
 import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.InsertedList;
 import hu.selester.android.webstockandroid.Objects.ListSettings;
+import hu.selester.android.webstockandroid.Objects.NotCloseList;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
 
 public class CloseLineThread extends Thread {
@@ -60,21 +61,18 @@ public class CloseLineThread extends Thread {
 
     private void getBarcodesData(){
         if( SessionClass.getParam("breakBtn").equals("1") || tranCode.charAt(0) == '3' )  {
-            Log.i("TAG","0");
             if( qBarcode > -1 ) {
-                Log.i("TAG","1");
                 int barcodeCount = 0;
                 for (int i = 0; i < data.size(); i++) {
                     if (InsertedList.isInsert( data.get(i)[0] ) && data.get(i)[qBarcode].equals("")) {
                         barcodeCount++;
                     }
                 }
-                Log.i("TAG","" + barcodeCount);
                 if (barcodeCount > 0 && tranCode.charAt(0) != '3') {
                     RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
                     String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_getNewBarcode/" + SessionClass.getParam("terminal") + "/" + barcodeCount;
-                    Log.i("URL", url);
                     if (HelperClass.isOnline(context)) {
+                        Log.i("URL",url);
                         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                             @Override
                             public void onResponse(JSONObject response) {
@@ -136,8 +134,8 @@ public class CloseLineThread extends Thread {
             if( lineIDCount > 0 ) {
                 RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
                 String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_getNewids/" + SessionClass.getParam("terminal") + "/" + lineIDCount;
-                Log.i("URL", url);
                 if (HelperClass.isOnline(context)) {
+                    Log.i("URL",url);
                     JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
                         @Override
                         public void onResponse(JSONObject response) {
@@ -189,7 +187,7 @@ public class CloseLineThread extends Thread {
         int lineIDCounter = 0;
         String str = "";
         for (int i = 0; i < data.size(); i++) {
-            if ( InsertedList.isInsert(data.get(i)[0]) ) {
+            if ( InsertedList.isInsert(data.get(i)[0]) && NotCloseList.getParamItem(data.get(i)[0]) == 0 ) {
                 if( qBarcode > -1 ) {
                     if( data.get(i)[qBarcode].equals("") ) {
                         if (barcodeList.get(barcodeCounter) != null)
@@ -211,11 +209,11 @@ public class CloseLineThread extends Thread {
                     }
                 }
                 str = str + "[Line" + data.get(i)[qLineID] + "[comm " + commandString;
+                Log.i("TAG - INSERT", "[Line" + data.get(i)[qLineID] + "[comm " + commandString);
             }
         }
         RequestQueue rq = MySingleton.getInstance(context).getRequestQueue();
         String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_SaveLineData_ByGroup";
-        Log.i("URL",url);
         HashMap<String,String> map = new HashMap<>();
         map.put("Terminal",SessionClass.getParam("terminal"));
         map.put("User_id",SessionClass.getParam("userid"));
@@ -228,7 +226,9 @@ public class CloseLineThread extends Thread {
             map.put("Head_ID",data.get(0)[3]);
         }
         map.put("cmd",str);
+
         if(HelperClass.isOnline(context)) {
+            Log.i("URL",url);
             JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
                 @Override
                 public void onResponse(JSONObject response) {
@@ -281,13 +281,15 @@ public class CloseLineThread extends Thread {
         map.put("Terminal",SessionClass.getParam("terminal"));
         map.put("User_id",SessionClass.getParam("userid"));
         map.put("PDA_ID","123");
+        map.put("IDs",NotCloseList.getParamsString());
         map.put("Tran_code",tranCode);
-        Log.i("URL", url);
         HelperClass.logMapParamteres(map);
-        JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
+        Log.i("URL",url);
+        JSONObject json = new JSONObject(map);
+        Log.i("MAP", json.toString());
+        JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, json, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.i("TAG",response.toString());
                 try {
                     String rootText = "";
                     if( tranCode.charAt(0) == '3' || tranCode.charAt(0) == '4' ) {

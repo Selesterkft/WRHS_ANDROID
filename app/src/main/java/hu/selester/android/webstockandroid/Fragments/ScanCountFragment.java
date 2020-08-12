@@ -7,11 +7,13 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SwitchCompat;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -19,9 +21,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -30,10 +34,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import hu.selester.android.webstockandroid.Adapters.XD_Dialog_ItemsParametersListAdapter;
+import hu.selester.android.webstockandroid.Adapters.XD_ItemsParametersListAdapter;
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Database.Tables.LogTable;
 
 import hu.selester.android.webstockandroid.Dialogs.MessageDialog;
+import hu.selester.android.webstockandroid.Divider.SimpleDividerItemDecoration;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Objects.ActiveFragment;
@@ -41,7 +48,9 @@ import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.CheckedList;
 import hu.selester.android.webstockandroid.Objects.CustomTextWatcher;
 
+import hu.selester.android.webstockandroid.Objects.NotCloseList;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
+import hu.selester.android.webstockandroid.Objects.XD_Dialog_ItemsParameters;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.Threads.SaveCheckedDataThread;
 import hu.selester.android.webstockandroid.Threads.SaveIdSessionTemp;
@@ -59,13 +68,15 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
     private TextView textDataValue2,textDataValue3,getTextDataValue3;
     private LinearLayout collectorBtn, collectorLabel;
     private MessageDialog message;
+    private SwitchCompat notCloseSwitch;
     private Bundle si;
     private View rootView;
     private ArrayList<String> inBar;
     private String tranCode, Head_ID;
-    private int qNeed,qCurrent,qMissing,qBarcode01,qBarcode02,qTo_Place;
+    private int selectedComboVal;
+    private int qNeed,qCurrent,qMissing,qBarcode01,qBarcode02,qTo_Place, qWeight, qWidth, qHeight, qLength, qToPlace, qRefLineId, qBarcode;
     private EditText textDataValue;
-    private String[] arrayTempInt, arrayTempNames, arrayTempType, arrayTextBoxLabels, arrayTextBoxEnableds, arrayTextBoxIndexes, arrayTextBoxSelect, arrayLabelTextBox, arrayLabelIndex, arrayLabelSelect;
+    private String[] arrayTempInt, arrayTempNames, arrayTempType, arrayTextBoxLabels, arrayTextBoxEnableds, arrayTextBoxIndexes, arrayTextBoxSelect, arrayLabelTextBox, arrayLabelIndex, arrayLabelSelect, arrayTextBoxTypes, arrayComboSelect;;
     private TextView headerText, findTvLabel;
     private LinearLayout subHeadText1, subHeadText2, subHeadText3;
     private boolean newOpenWindow;
@@ -76,6 +87,10 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
     private WHEditBox[] whEditBoxes;
     private boolean trimmed;
     private CustomTextWatcher[] customTextWatcherArray = new CustomTextWatcher[8];
+    private AlertDialog.Builder builderSelect;
+    private String dialogSelectItem;
+    private List<String[]> dataDialog;
+
 
     @Nullable
     @Override
@@ -86,8 +101,17 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         tranCode = getArguments().getString("tranCode");
         WHEditBox.activity = getActivity();
         WHEditBox.suffix = SessionClass.getParam("barcodeSuffix");
+        selectedComboVal = 0;
+        qWeight     = HelperClass.getArrayPosition("Weight",        SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qWidth      = HelperClass.getArrayPosition("Size_Width",    SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qHeight     = HelperClass.getArrayPosition("Size_Height",   SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qLength     = HelperClass.getArrayPosition("Size_Length",   SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qToPlace    = HelperClass.getArrayPosition("To_Place",      SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qRefLineId  = HelperClass.getArrayPosition("Ref_Line_ID",   SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+
         qBarcode01 = HelperClass.getArrayPosition("Barcode01", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qBarcode02 = HelperClass.getArrayPosition("Barcode02", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qBarcode    = HelperClass.getArrayPosition("Barcode", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qTo_Place  = HelperClass.getArrayPosition("To_Place", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         CheckedList.setParamItem(lineID,1);
         dataCounter = 0;
@@ -98,10 +122,12 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         arrayTextBoxEnableds    = SessionClass.getParam(tranCode + "_Detail_TextBox_Enabled").split(",");
         arrayTextBoxIndexes     = SessionClass.getParam(tranCode + "_Detail_TextBox_Index").split(",");
         arrayTextBoxSelect      = SessionClass.getParam(tranCode + "_Detail_TextBox_SELECT").split(",");
+        arrayTextBoxTypes       = SessionClass.getParam(tranCode + "_Detail_TextBox_DataType").split(",");
 
         arrayLabelTextBox   = SessionClass.getParam(tranCode + "_Detail_Label_Info_Names").split(",");
         arrayLabelIndex     = SessionClass.getParam(tranCode + "_Detail_Label_Info_Index").split(",");
         arrayLabelSelect    = SessionClass.getParam(tranCode + "_Detail_Label_Info_SELECT").split(",");
+        if( SessionClass.getParam(tranCode + "_Detail_Combo_Values") != null ) {arrayComboSelect = SessionClass.getParam(tranCode + "_Detail_Combo_Values").split("\\|"); }else{ arrayComboSelect = new String[]{"1","1"}; }
 
         newOpenWindow = true;
         try {
@@ -121,7 +147,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                 @Override
                 public void afterTextChanged(Editable s) {
                     if (s.toString().isEmpty() || s.toString().charAt(0) == '0') {
-                        counter.setText("1");
+//                        counter.setText("1");
                     }
                 }
             });
@@ -170,6 +196,19 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                     qMissing = Integer.parseInt(temp[0]);
                 }
             }
+            notCloseSwitch = rootView.findViewById(R.id.scancount_notclose_switch);
+            notCloseSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    if(isChecked){
+                        Log.i("NCL",lineID + "0");
+                        NotCloseList.setParamItem(lineID,0);
+                    }else{
+                        Log.i("NCL",lineID + "1");
+                        NotCloseList.setParamItem(lineID,1);
+                    }
+                }
+            });
             findRow = Integer.parseInt(SessionClass.getParam(tranCode + "_Detail_TextBox_Find_Index"));
             findValue = rootView.findViewById(R.id.scancount_header_value);
             arrayTempNames = SessionClass.getParam(tranCode + "_Detail_TextBox_Names").split(",");
@@ -373,46 +412,60 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
     @Override
     public void onClick(View v) {
         try {
-            int now = Integer.parseInt(textDataValue1.getText().toString());
-            int x1;
-            int x2 = Integer.parseInt(textDataValue2.getText().toString());
+            int now = 0;
+            int x1; int x2;
             switch (v.getId()) {
                 case R.id.scancount_addBtn:
-                    textDataValue1.setText("" + (now + Integer.parseInt(counter.getText().toString())));
-                    x1 = Integer.parseInt(textDataValue1.getText().toString());
-                    if (x1 > x2) {
-                        textDataValue1.setText("" + x2);
-                        AllLinesData.setItemParams(lineID, qCurrent, "" + x2);
-                        AllLinesData.setItemParams(lineID, qMissing, "" + 0);
-                        textDataValue3.setText("" + 0);
+                    if (counter.getText().toString().isEmpty()) {
+                        counter.setText("1");
+                    }
+                    if( counter.getText().charAt(0)!='0') {
+                        now = Integer.parseInt(textDataValue1.getText().toString());
+                        textDataValue1.setText("" + (now + Integer.parseInt(counter.getText().toString())));
+                        x1 = Integer.parseInt(textDataValue1.getText().toString());
+                        x2 = Integer.parseInt(textDataValue2.getText().toString());
+                        if (x1 > x2) {
+                            textDataValue1.setText("" + x2);
+                            AllLinesData.setItemParams(lineID, qCurrent, "" + x2);
+                            AllLinesData.setItemParams(lineID, qMissing, "" + 0);
+                            textDataValue3.setText("" + 0);
 
-                    } else {
-                        textDataValue3.setText("" + (x1 - x2));
-                        if (qCurrent != 0) {
-                            AllLinesData.setItemParams(lineID, qCurrent, "" + x1);
-                        }
-                        if (qMissing != 0) {
-                            AllLinesData.setItemParams(lineID, qMissing, "" + (x1 - x2));
+                        } else {
+                            textDataValue3.setText("" + (x1 - x2));
+                            if (qCurrent != 0) {
+                                AllLinesData.setItemParams(lineID, qCurrent, "" + x1);
+                            }
+                            if (qMissing != 0) {
+                                AllLinesData.setItemParams(lineID, qMissing, "" + (x1 - x2));
+                            }
                         }
                     }
                     break;
                 case R.id.scancount_removeBtn:
-                    textDataValue1.setText("" + (now - Integer.parseInt(counter.getText().toString())));
-                    x1 = Integer.parseInt(textDataValue1.getText().toString());
-                    if (x1 <= 0) {
-                        textDataValue1.setText("0");
-                        AllLinesData.setItemParams(lineID, qCurrent, "" + 0);
-                        AllLinesData.setItemParams(lineID, qMissing, "" + x1);
-                        textDataValue3.setText("0");
-                    } else {
-                        textDataValue3.setText("" + (x1 - x2));
-                        if (qCurrent != 0) {
-                            AllLinesData.setItemParams(lineID, qCurrent, "" + x1);
-                            if (qMissing != 0) {
-                                AllLinesData.setItemParams(lineID, qMissing, "" + (x1 - x2));
+                    if (!counter.getText().toString().isEmpty()) {
+                        if (counter.getText().charAt(0) != '0') {
+                            now = Integer.parseInt(textDataValue1.getText().toString());
+                            x2 = Integer.parseInt(textDataValue2.getText().toString());
+
+                            textDataValue1.setText("" + (now - Integer.parseInt(counter.getText().toString())));
+                            x1 = Integer.parseInt(textDataValue1.getText().toString());
+
+                            if (x1 <= 0) {
+                                textDataValue1.setText("0");
+                                AllLinesData.setItemParams(lineID, qCurrent, "" + 0);
+                                AllLinesData.setItemParams(lineID, qMissing, "" + x1);
+                                textDataValue3.setText("0");
+                            } else {
+                                textDataValue3.setText("" + (x1 - x2));
+                                if (qCurrent != 0) {
+                                    AllLinesData.setItemParams(lineID, qCurrent, "" + x1);
+                                    if (qMissing != 0) {
+                                        AllLinesData.setItemParams(lineID, qMissing, "" + (x1 - x2));
+                                    }
+                                } else {
+                                    AllLinesData.setItemParams(lineID, qMissing, "0");
+                                }
                             }
-                        }else{
-                            AllLinesData.setItemParams(lineID, qMissing, "0");
                         }
                     }
                     break;
@@ -452,7 +505,6 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             if(!dialogActive) {
                 try {
                     isBar = HelperClass.isBarcode(findValue.getText().toString());
-                    Log.i("TAG","IS BARCODE: " + isBar);
                     if (isBar != null) {
                         if(trimmed) isBar = HelperClass.getTrimmedText(isBar);
                         trimmed = true;
@@ -466,9 +518,20 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                                 int itemCount = Integer.parseInt(AllLinesData.getParam(lineID)[qCurrent]);
                                 int maxItemCount = Integer.parseInt(AllLinesData.getParam(lineID)[qNeed]);
                                 if ((itemCount + Integer.parseInt(counter.getText().toString())) > maxItemCount) {
-                                    String id = AllLinesData.searchFirstItem(findRow, qNeed, qCurrent, isBar);
+                                    String id = null;
+                                    try {
+                                        id = AllLinesData.findKeyFromMap(isBar, findRow).get(0);
+                                    }catch(Exception e ){ }
                                     if (id != null) {
-                                        refreshData(id);
+                                        String[] barcodes = AllLinesData.getParam(id);
+                                        List<String[]> data = AllLinesData.findSameUniqueItemsFromMap(barcodes[qBarcode] , qBarcode, qRefLineId);
+                                        if(data.size() > 1){
+                                            showSelectItemDialog("", data);
+                                        }else if(data.size() == 1){
+                                            buildFullDialog(id);
+                                        }else if(data.size() == 0){
+                                            HelperClass.messageBox(getActivity(),"Feladatkezelés","Az adott tétel már rakhelyen van!\nHa változtatni szeretné kérem törölje a rakhelyről!",HelperClass.WARNING);
+                                        }
                                     } else {
                                         HelperClass.messageBox(getActivity(),"Részletek","Nem található több ebből a cikkből!",HelperClass.WARNING);
                                         //buildFullDialog();
@@ -488,7 +551,16 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                             } else {
                                 String id = AllLinesData.searchFirstItem(findRow, qNeed, qCurrent, isBar);
                                 if (id != null) {
-                                    refreshData(id);
+                                    String[] barcodes = AllLinesData.getParam(id);
+                                    List<String[]> data = AllLinesData.findSameUniqueItemsFromMap(barcodes[qBarcode] , qBarcode, qRefLineId);
+                                    if(data.size() > 1) {
+                                        showSelectItemDialog("", data);
+                                    }else if(data.size() == 1){
+                                        refreshData(id);
+                                    }else if(data.size() == 0){
+                                        HelperClass.messageBox(getActivity(),"Feladatkezelés","Az adott tétel már rakhelyen van!\nHa változtatni szeretné kérem törölje a rakhelyről!",HelperClass.WARNING);
+                                    }
+
                                     if (isnew) {
                                         headerText.setBackgroundResource(R.color.headerColor);
                                         subHeadText1.setBackgroundResource(R.color.headerColor);
@@ -506,7 +578,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                                         HelperClass.errorSound(getActivity());
                                         HelperClass.messageBox(getActivity(),"Részletek","Nem található több ebből a cikkből!",HelperClass.WARNING);
                                     }else{
-                                        HelperClass.messageBox(getActivity(), "Részletek", "Nem létező vonalkód (1011)!", HelperClass.ERROR);
+                                        //HelperClass.messageBox(getActivity(), "Részletek", "Nem létező vonalkód (1011)!", HelperClass.ERROR);
+                                        HelperClass.messageBox(getActivity(), "Részletek", "Nem létező vonalkód!\nEAN kód: "+isBar, HelperClass.ERROR);
                                     }
                                 }
                             }
@@ -515,7 +588,8 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                                 HelperClass.errorSound(getActivity());
                                 HelperClass.messageBox(getActivity(),"Részletek","Nem található több ebből a cikkből!",HelperClass.WARNING);
                             }else{
-                                HelperClass.messageBox(getActivity(), "Részletek", "Nem létező vonalkód (1012)!", HelperClass.ERROR);
+                                //HelperClass.messageBox(getActivity(), "Részletek", "Nem létező vonalkód (1012)!", HelperClass.ERROR);
+                                HelperClass.messageBox(getActivity(), "Részletek", "Nem létező vonalkód!\nEAN kód: "+isBar, HelperClass.ERROR);
                             }
                             //Toast.makeText(getContext(), "Nem létező vonalkód!", Toast.LENGTH_LONG).show();
                         }
@@ -570,8 +644,7 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                     }
                 }else{
                     HelperClass.errorSound(getActivity());
-                    HelperClass.messageBox(getActivity(),"Részletek","Nem létező vonalkód!",HelperClass.ERROR);
-                    //Toast.makeText(getContext(), "Nem létező vonalkód!", Toast.LENGTH_LONG).show();
+                    HelperClass.messageBox(getActivity(), "Részletek", "Nem létező vonalkód!\nEAN kód: "+isBar, HelperClass.ERROR);
                 }
             }
         });
@@ -594,6 +667,11 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
             SharedPreferences sharedPref = getActivity().getPreferences(getContext().MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString("whrs_selexped_currentLineID", lineID);
+            if( NotCloseList.getParamItem(lineID) == 0 ){
+                notCloseSwitch.setChecked(true);
+            }else{
+                notCloseSwitch.setChecked(false);
+            }
             editor.commit();
             KeyboardUtils.hideKeyboard(getActivity());
             String findItems = AllLinesData.getParam(lineID)[findRow];
@@ -773,10 +851,30 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                         int resIDValue = getActivity().getResources().getIdentifier("scancount_param" + (i + 1) + "_value", "id", getActivity().getPackageName());
                         //WHEditBox value = rootView.findViewById(resIDValue);
                         whEditBoxes[i-1] = rootView.findViewById(resIDValue);
-                        whEditBoxes[i-1].setSelectBackgroundFunc(R.drawable.et_shape_select);
+                        //whEditBoxes[i-1].setSelectBackgroundFunc(R.drawable.et_shape_select);
+                        if(arrayTextBoxTypes[i] != null && arrayTextBoxTypes[i].equals("NUM")){
+                            whEditBoxes[i-1].EDText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                        }
                         whEditBoxes[i-1].setOnDetectBarcodeListener(new WHEditBox.OnDetectBarcodeListener() {
                             @Override
-                            public void OnDetectBarcode() { }
+                            public void OnDetectBarcode(String value) {
+
+                            }
+
+                            @Override
+                            public void OnDetectError(String errorResult, String value) {
+
+                            }
+
+                            @Override
+                            public void OnFocusOutListener(String value) {
+
+                            }
+
+                            @Override
+                            public void OnFocusInListener(String value) {
+
+                            }
                         });
                         label.setText(arrayTextBoxLabels[i]);
 
@@ -792,6 +890,23 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
                         } else {
                             whEditBoxes[i-1].EDText.setText(AllLinesData.getParam(lineID)[Integer.parseInt(arrayTextBoxIndexes[i])]);
                         }
+                        /*
+                        if( arrayTextBoxTypes[i] != null){
+                            if( arrayTextBoxTypes[i].equals("COMBO")) {
+                                whEditBoxes[i - 1].EDText.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+                                    @Override
+                                    public void onFocusChange(View v, boolean hasFocus) {
+                                        if (hasFocus) show((EditText) v);
+                                    }
+                                });
+                                whEditBoxes[i - 1].EDText.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        show((EditText) v);
+                                    }
+                                });
+                            }
+                        }*/
                     }
                 }
                 for (int i = 0; i < arrayTextBoxIndexes.length-2; i++) {
@@ -878,21 +993,129 @@ public class ScanCountFragment extends Fragment implements View.OnClickListener{
         sit.start();
     }
 
-    void buildFullDialog() {
+    void buildFullDialog(final String id) {
         dialogActive = true;
         KeyboardUtils.hideKeyboard(getActivity());
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Nem található több ebből a cikkből!");
-        builder.setNegativeButton("Rendben", new DialogInterface.OnClickListener() {
+        builder.setTitle("Figyelem több tétel jött be mint a rendszerben rögzített!");
+        builder.setPositiveButton("Rendben", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                int itemCount = Integer.parseInt(AllLinesData.getParam(lineID)[qCurrent]);
+                AllLinesData.setItemParams(lineID, qCurrent, "" + (itemCount + Integer.parseInt(counter.getText().toString())));
+                if (qMissing != 0) {
+                    AllLinesData.setItemParams(lineID, qMissing, "" + (Integer.parseInt(AllLinesData.getParam(lineID)[qCurrent]) - Integer.parseInt(AllLinesData.getParam(lineID)[qNeed])));
+                }
+                textDataValue1.setText(AllLinesData.getParam(lineID)[qCurrent]);
+                textDataValue2.setText(AllLinesData.getParam(lineID)[qNeed]);
+                def = Integer.parseInt(AllLinesData.getParam(lineID)[qCurrent]) - Integer.parseInt(AllLinesData.getParam(lineID)[qNeed]);
+
+                if(AllLinesData.getParam(lineID)[qCurrent].equals("0")){def = 0;}
+                textDataValue3.setText("" + def);
+                refreshData(id);
+
                 dialogActive = false;
                 dialog.cancel();
             }
         });
-
+        builder.setNegativeButton("Mégsem", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                refreshData(id);
+                dialogActive = false;
+                dialog.cancel();
+            }
+        });
         builder.show();
-
     }
 
+    private void showSelectItemDialog(final String barcode, final List<String[]> data){
+        dialogSelectItem = "";
+        builderSelect = new AlertDialog.Builder(getActivity());
+        builderSelect.setTitle("Tétel kiválasztás");
+        builderSelect.setMessage("Ez a vonalkód több különböző tételsort is meghatároz, kérem válassza ki a megfelelőt!");
+        View dialogRootView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_select_items, null, false);
+
+        RecyclerView.LayoutManager lm = new LinearLayoutManager(getContext());
+        List<XD_Dialog_ItemsParameters> itemsList = new ArrayList<>();
+        List<String[]> dataList = data;
+        if( dataList != null && dataList.size() > 0 ){
+            for(int i=0; i < dataList.size(); i++){
+                try {
+                    if( Integer.parseInt(dataList.get(i)[qNeed]) > 0 ) {
+                        itemsList.add(new XD_Dialog_ItemsParameters(Long.parseLong(dataList.get(i)[0]), Integer.parseInt(dataList.get(i)[qNeed]), Integer.parseInt(dataList.get(i)[qCurrent]), Integer.parseInt(dataList.get(i)[qWeight]), HelperClass.convertStringToFloat(dataList.get(i)[qLength]), HelperClass.convertStringToFloat(dataList.get(i)[qWidth]), HelperClass.convertStringToFloat(dataList.get(i)[qHeight]), dataList.get(i)[qToPlace]));
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                    HelperClass.messageBox(getActivity(),"Adatmegadás","Hibás érték formátum " , HelperClass.ERROR);
+                }
+            }
+        }
+
+        XD_Dialog_ItemsParametersListAdapter XD_listAdapter = new XD_Dialog_ItemsParametersListAdapter(getContext(),itemsList,3);
+        XD_listAdapter.setEvidNum( "" );
+        XD_listAdapter.setActivity(getActivity());
+        XD_listAdapter.setOnSelectMoreItems(new XD_ItemsParametersListAdapter.OnSelectMoreItems() {
+            @Override
+            public void onContainerClick(Long id) {
+                dialogSelectItem = String.valueOf(id);
+            }
+        });
+        RecyclerView itemsListContainer = dialogRootView.findViewById(R.id.dialog_rv_items_list);
+        itemsListContainer.setLayoutManager(lm);
+        itemsListContainer.setAdapter(XD_listAdapter);
+        SimpleDividerItemDecoration itemDecor = new SimpleDividerItemDecoration(getContext());
+        itemsListContainer.addItemDecoration(itemDecor);
+
+
+        builderSelect.setView(dialogRootView);
+        builderSelect.setPositiveButton("Kiválaszt", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                refreshData(SessionClass.getParam("XD_CHECKED3"));
+            }
+        });
+        builderSelect.setNegativeButton("Mégsem", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                dialog.cancel();
+            }
+        });
+
+        builderSelect.setCancelable(false);
+        builderSelect.show();
+    }
+
+    public void show(final EditText et) {
+        final Dialog d = new Dialog(getContext());
+        d.setTitle("NumberPicker");
+        d.setContentView(R.layout.dialog_combo_picker);
+        ImageView b1 = d.findViewById(R.id.button1);
+        ImageView b2 = d.findViewById(R.id.button2);
+
+        final NumberPicker np = d.findViewById(R.id.numberPicker1);
+        np.setMaxValue(arrayComboSelect.length-1);
+        np.setMinValue(0);
+        np.setWrapSelectorWheel(false);
+        np.setDisplayedValues(arrayComboSelect);
+        np.setValue(selectedComboVal);
+        b1.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                et.setText( arrayComboSelect[np.getValue()] );
+                selectedComboVal = np.getValue();
+                d.dismiss();
+            }
+        });
+        b2.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v) {
+                d.dismiss();
+            }
+        });
+        d.show();
+    }
 }

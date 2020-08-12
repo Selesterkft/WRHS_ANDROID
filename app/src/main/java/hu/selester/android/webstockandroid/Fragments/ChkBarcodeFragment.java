@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.SwitchCompat;
 import android.text.InputType;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -212,7 +213,7 @@ public class ChkBarcodeFragment extends Fragment {
         bar2Btn.EDText.setHint(getResources().getString(R.string.buttonLabel));
         bar2Btn.setOnDetectBarcodeListener(new WHEditBox.OnDetectBarcodeListener() {
             @Override
-            public void OnDetectBarcode() {
+            public void OnDetectBarcode(String value) {
                 String edtext = bar2Btn.EDText.getText().toString();
                 if(trimBarcode2){
                     try {
@@ -230,11 +231,26 @@ public class ChkBarcodeFragment extends Fragment {
                 bar1Btn.EDText.setText("");
                 bar1Btn.EDText.performClick();
             }
+
+            @Override
+            public void OnDetectError(String errorResult, String value) {
+
+            }
+
+            @Override
+            public void OnFocusOutListener(String value) {
+
+            }
+
+            @Override
+            public void OnFocusInListener(String value) {
+
+            }
         });
 
         bar1Btn.setOnDetectBarcodeListener(new WHEditBox.OnDetectBarcodeListener() {
             @Override
-            public void OnDetectBarcode() {
+            public void OnDetectBarcode(String value) {
                 String edtext = bar1Btn.EDText.getText().toString();
                 if(trimBarcode1){
                     try {
@@ -253,6 +269,21 @@ public class ChkBarcodeFragment extends Fragment {
                     bar2Btn.EDText.setText("");
                     bar2Btn.EDText.performClick();
                 }
+            }
+
+            @Override
+            public void OnDetectError(String errorResult, String value) {
+
+            }
+
+            @Override
+            public void OnFocusOutListener(String value) {
+
+            }
+
+            @Override
+            public void OnFocusInListener(String value) {
+
             }
         });
 
@@ -429,7 +460,7 @@ public class ChkBarcodeFragment extends Fragment {
         map.put("movenr",movenum);
         map.put("Tranid",tranid);
         map.put("userid",SessionClass.getParam("userid"));
-
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {

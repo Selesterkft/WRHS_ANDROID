@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,7 +75,7 @@ public class AllLinesData {
     public static void toStringLog(){
         String str="";
         for (Map.Entry<String, String[]> entry : params.entrySet()) {
-            Log.i("MAP_LIST",entry.getKey() + " : " + Arrays.toString(entry.getValue()));
+            Log.i("TAG",entry.getKey() + " : " + Arrays.toString(entry.getValue()));
         }
     }
 
@@ -103,7 +104,6 @@ public class AllLinesData {
                             e.printStackTrace();
 
                         }
-                        Log.i("TAG",bars[j] + " - " + find);
                         if (bars[j].equals(find)) {
                             if (!hit.contains(entry.getKey())) {
                                 hit.add(entry.getKey());
@@ -116,12 +116,53 @@ public class AllLinesData {
         return hit;
     }
 
-    public static List<String[]> findItemsFromMap(String find, int itemNum) {
+    public static List<String[]> findSameItemsFromMap(String find, int itemNum, int qRefId) {
         List<String[]> result = new ArrayList<>();
         for (Map.Entry<String, String[]> entry : params.entrySet()) {
             String value = entry.getValue()[itemNum];
             if (value.equals(find)) {
-                result.add(entry.getValue());
+                if( entry.getValue()[qRefId].equals("0") ) {
+                    result.add(entry.getValue());
+                }
+            }
+        }
+        return result;
+    }
+
+    public static List<String[]> findSameUniqueItemsFromMap(String find, int itemNum, int qRefId) {
+        List<String> removeIDS = new ArrayList<>();
+        List<String[]> result = new ArrayList<>();
+        for (Map.Entry<String, String[]> entry : params.entrySet()) {
+            String value = entry.getValue()[itemNum];
+            if (value.equals(find)) {
+                if( entry.getValue()[qRefId].equals("0") ) {
+                    result.add(entry.getValue());
+                }else{
+                    removeIDS.add(""+entry.getValue()[qRefId]);
+                }
+            }
+        }
+
+        Iterator<String[]> i = result.iterator();
+        while (i.hasNext()) {
+            String[] s = i.next();
+            Log.i("TAG CONTAIN",Arrays.toString(s));
+            if( removeIDS.contains( s[0] ) ){
+                i.remove();
+            }
+        }
+        return result;
+    }
+
+
+    public static List<String[]> findItemsFromMap(String find, int itemNum) {
+        List<String[]> result = new ArrayList<>();
+        for (Map.Entry<String, String[]> entry : params.entrySet()) {
+            String value = entry.getValue()[itemNum];
+            if(find != null && value != null) {
+                if (value.equals(find)) {
+                    result.add(entry.getValue());
+                }
             }
         }
         return result;
@@ -148,7 +189,6 @@ public class AllLinesData {
                     return id;
                 }
             }
-            //return findArray.get(findArray.size()-1);
         }
         return null;
     }

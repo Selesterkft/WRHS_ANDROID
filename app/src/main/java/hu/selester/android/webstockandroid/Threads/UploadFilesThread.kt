@@ -25,7 +25,9 @@ class UploadFilesThread(val context: Context?, val tranCode:String , val tranID:
     var allComplated = true
 
     override fun run() {
+
         val list = db.photosDao().getAllNotUploadedData()
+        Log.i("TAG", ""+list.size);
         if(list.isNotEmpty()) {
             allComplated = true
             list.forEach {
@@ -35,7 +37,6 @@ class UploadFilesThread(val context: Context?, val tranCode:String , val tranID:
                 }else{
                     allComplated = false
                 }
-                Log.i("TAG", "OUT THREAD")
             }
             if (allComplated){
                 val dir = File( context!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)!!.absolutePath )
@@ -47,7 +48,6 @@ class UploadFilesThread(val context: Context?, val tranCode:String , val tranID:
                 }
                 db.photosDao().deleteAll()
                 CloseLineThread(context, tranCode, tranID, f).start()
-                Log.i("TAG", "ALL COMPLATED!")
             }else{
                 Log.i("TAG","Lezárás nem sikerült, hiba a fájlok feltöltésekor!")
             }
@@ -62,7 +62,6 @@ class UploadFilesThread(val context: Context?, val tranCode:String , val tranID:
             val file = File(filePathString)
             val filename = file.path.substring(file.path.lastIndexOf("/") + 1)
             val appID = appId
-            Log.i("TAG", filename)
             val options = BitmapFactory.Options()
             options.inPreferredConfig = Bitmap.Config.ARGB_8888
             val content_type = getMimeType(file.path)
@@ -70,27 +69,21 @@ class UploadFilesThread(val context: Context?, val tranCode:String , val tranID:
             client.addFilePart("pic", file, filename, content_type!!)
             client.addHeaderField("addrid", addrID.toString())
             client.addHeaderField("doctypeid", "-1003")
-            Log.i("TAG", "$addrID - $docType")
             client.upload(object : Multipart.OnFileUploadedListener {
                 override fun onFileUploadingSuccess(response: String) {
-                    Log.i("TAG", response)
                     val jsonText = JSONObject(response).getString("UploadFileResult")
                     val jsonRoot = JSONObject(jsonText)
-                    Log.i("TAG", "ERROR CODE " + jsonRoot.getString("ERROR_CODE") )
+                    Log.i("TAG",response)
                     if(jsonRoot.getString("ERROR_CODE") == "-1"){
                         db.photosDao().setUploadStatus(appID,2)
-                        Log.i("TAG","Upload OK")
                     }else{
                         errorUpload(appID)
-                        Log.i("TAG","Upload Tried")
                     }
                 }
 
                 override fun onFileUploadingFailed(responseCode: Int) {
                     allComplated = false
                     errorUpload(appID)
-                    Log.i("TAG","FAILD: $appID")
-
                 }
             })
         }else{
@@ -100,7 +93,6 @@ class UploadFilesThread(val context: Context?, val tranCode:String , val tranID:
 
     fun errorUpload(appID: Long){
         val photoData = db.photosDao().getDataWithID(appID)
-        Log.i("TAG","tried: "+photoData.tried)
         if( photoData.tried < 6){
             db.photosDao().addTried(appID)
         }else{

@@ -49,10 +49,11 @@ public class SessionTemp {
     private String param37;
     private String param38;
     private String param39;
+    private int notClose;
     private int status;
     private boolean insertRow;
 
-    public SessionTemp(long id, int num, String param0, String param1, String param2, String param3, String param4, String param5, String param6, String param7, String param8, String param9, String param10, String param11, String param12, String param13, String param14, String param15, String param16, String param17, String param18, String param19, String param20, String param21, String param22, String param23, String param24, String param25, String param26, String param27, String param28, String param29, String param30, String param31, String param32, String param33, String param34, String param35, String param36, String param37, String param38, String param39, int status, boolean insertRow) {
+    public SessionTemp(long id, int num, String param0, String param1, String param2, String param3, String param4, String param5, String param6, String param7, String param8, String param9, String param10, String param11, String param12, String param13, String param14, String param15, String param16, String param17, String param18, String param19, String param20, String param21, String param22, String param23, String param24, String param25, String param26, String param27, String param28, String param29, String param30, String param31, String param32, String param33, String param34, String param35, String param36, String param37, String param38, String param39, int status, boolean insertRow, int notClose) {
         this.id = id;
         this.num = num;
         this.param0 = param0;
@@ -96,8 +97,10 @@ public class SessionTemp {
         this.param38 = param38;
         this.param39 = param39;
         this.status = status;
+        this.notClose = notClose;
         this.insertRow = insertRow;
     }
+
 
     public boolean isInsertRow() {
         return insertRow;
@@ -451,6 +454,14 @@ public class SessionTemp {
         this.param39 = param39;
     }
 
+    public int getNotClose() {
+        return notClose;
+    }
+
+    public void setNotClose(int notClose) {
+        this.notClose = notClose;
+    }
+
     @Override
     public String toString() {
         return "SessionTemp{" +
@@ -496,6 +507,7 @@ public class SessionTemp {
                 ", param37='" + param37 + '\'' +
                 ", param38='" + param38 + '\'' +
                 ", param39='" + param39 + '\'' +
+                ", notClose=" + notClose +
                 ", status=" + status +
                 ", insertRow=" + insertRow +
                 '}';

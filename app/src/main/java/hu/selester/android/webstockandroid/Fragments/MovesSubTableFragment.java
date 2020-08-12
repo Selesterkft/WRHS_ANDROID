@@ -1,5 +1,6 @@
 package hu.selester.android.webstockandroid.Fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -11,8 +12,11 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -41,15 +45,24 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
+import hu.selester.android.webstockandroid.Adapters.XD_Dialog_ItemsParametersListAdapter;
+import hu.selester.android.webstockandroid.Adapters.XD_ItemsParametersListAdapter;
 import hu.selester.android.webstockandroid.Database.SelesterDatabase;
 import hu.selester.android.webstockandroid.Database.Tables.LogTable;
 import hu.selester.android.webstockandroid.Database.Tables.SessionTemp;
+import hu.selester.android.webstockandroid.Divider.SimpleDividerItemDecoration;
 import hu.selester.android.webstockandroid.Helper.HelperClass;
 import hu.selester.android.webstockandroid.Helper.KeyboardUtils;
 import hu.selester.android.webstockandroid.Helper.MySingleton;
@@ -58,7 +71,10 @@ import hu.selester.android.webstockandroid.Objects.AllLinesData;
 import hu.selester.android.webstockandroid.Objects.CheckedList;
 import hu.selester.android.webstockandroid.Objects.InsertedList;
 import hu.selester.android.webstockandroid.Objects.ListSettings;
+import hu.selester.android.webstockandroid.Objects.NotCloseList;
 import hu.selester.android.webstockandroid.Objects.SessionClass;
+import hu.selester.android.webstockandroid.Objects.XD_Dialog_ItemsParameters;
+import hu.selester.android.webstockandroid.Objects.XD_ItemsParameters;
 import hu.selester.android.webstockandroid.R;
 import hu.selester.android.webstockandroid.TablePanel.TablePanel;
 import hu.selester.android.webstockandroid.Threads.ChangeStatusThread;
@@ -69,6 +85,7 @@ import hu.selester.android.webstockandroid.Threads.SaveAllSessionTemp;
 import hu.selester.android.webstockandroid.Threads.SaveDataThread_All;
 import hu.selester.android.webstockandroid.Threads.SaveDataThread_All_INSERT;
 import hu.selester.android.webstockandroid.Threads.UploadFilesThread;
+import mobil.selester.wheditbox.WHEditBox;
 
 public class MovesSubTableFragment extends Fragment implements View.OnClickListener, MovesSubViewPager.FragmentLifecycle {
 
@@ -81,7 +98,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     private String tranCode;
     private String tranID;
     private String movenum;
-    private int qNeed,qCurrent,qBarcode01,qMissing,qBarcode,qLineID,qRefLineID,qEvidNum,qTo_Place,qRampNum;
+    private int qNeed,qCurrent,qBarcode01,qMissing,qBarcode,qLineID,qEvidNum,qTo_Place,qRampNum, qWeight, qWidth, qHeight, qLength, qRefLineId;
     private ImageButton saveDataBtn, lockBtn, selectBtn, flushBtn, createBtn, paramsBtn;
     private int qBreak, qCollection, qTakePhoto, qMAR;
     private String[] arrayBtnVisibility;
@@ -99,6 +116,10 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     private boolean closeMovesDialogRun;
     private String resultText;
     private List<String[]> rowTempData = new ArrayList<>();
+    private AlertDialog.Builder builderSelect;
+    private String dialogSelectItem;
+    private List<String[]> dataDialog;
+    private AlertDialog dialog;
 
     public static MovesSubTableFragment getInstance(Bundle args){
         MovesSubTableFragment f = new MovesSubTableFragment();
@@ -118,14 +139,23 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         db = SelesterDatabase.getDatabase(getContext());
         tranCode = getArguments().getString("tranCode");
         SessionClass.setParam("tranCode", ""+tranCode);
+        WHEditBox.activity = getActivity();
+        WHEditBox.suffix = SessionClass.getParam("barcodeSuffix");
+
         tranID      = getArguments().getString("tranid");
         movenum     = getArguments().getString("movenum");
         reload      = getArguments().getString("reload");
+
+        qWeight     = HelperClass.getArrayPosition("Weight",        SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qWidth      = HelperClass.getArrayPosition("Size_Width",    SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qHeight     = HelperClass.getArrayPosition("Size_Height",   SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qLength     = HelperClass.getArrayPosition("Size_Length",   SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qRefLineId  = HelperClass.getArrayPosition("Ref_Line_ID",   SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+
         qBarcode01  = HelperClass.getArrayPosition("Barcode01", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qBarcode    = HelperClass.getArrayPosition("Barcode", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qMissing    = HelperClass.getArrayPosition("Missing_Qty", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qLineID     = HelperClass.getArrayPosition("Line_ID", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
-        qRefLineID  = HelperClass.getArrayPosition("Ref_Line_ID", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qEvidNum    = HelperClass.getArrayPosition("EvidNum", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qRampNum    = HelperClass.getArrayPosition("Loading_Gate", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         if(tranCode.charAt(0)=='4'){
@@ -152,6 +182,14 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         progressPercent = rootView.findViewById(R.id.movessub_progresspercent);
         findTvLabel     = rootView.findViewById(R.id.movessub_header_label);
         findTvLabel.setText(SessionClass.getParam(tranCode + "_Line_TextBox_Find_Text"));
+        findTvLabel.setLongClickable(true);
+        findTvLabel.setOnLongClickListener(new View.OnLongClickListener(){
+            @Override
+            public boolean onLongClick(View v) {
+                saveImageDialog();
+                return true;
+            }
+        });
         progressLayout.setVisibility(View.GONE);
         SessionClass.setParam("currentPlace","");
         selectBtn           = rootView.findViewById(R.id.movessub_selectBtn);
@@ -196,7 +234,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
             paramsBtn.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (tablePanel.getAdapter().getCheckedPosition(0) != null && tablePanel.getAdapter().getCheckedPosition(0).size() > 0) {
+                        if (tablePanel.getAdapter().getCheckedPosition(0) != null && tablePanel.getAdapter().getCheckedPosition(0).size() > 0) {
                         Fragment f = new XD_ItemParametersFragment();
                         FragmentTransaction ft = getActivity().getSupportFragmentManager().beginTransaction();
                         Bundle b = new Bundle();
@@ -242,10 +280,9 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                     if( CheckedList.getSizeOfChecked() == 0 ) {
                         boolean error = false;
                         String errorString = "";
-                        Log.i("TAG","TRANCODE: "+tranCode);
                         if( tranCode.charAt(0) == '3' ) {
                             for (Map.Entry<String, String[]> entry : AllLinesData.getAllParam().entrySet()) {
-                                if (!InsertedList.isInsert(entry.getKey())) {
+                                if (!InsertedList.isInsert(entry.getKey()) && NotCloseList.getParamItem(entry.getKey()) == 0) {
                                     if (!entry.getValue()[qCurrent].equals("0")) {
                                         error = true;
                                         errorString += entry.getValue()[qEvidNum] + ", ";
@@ -255,7 +292,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                             if (!errorString.equals("")) errorString = "Nincs minden bevételezett tétel rakhelyre helyezve!\nEvidenciaszám(ok):\n"+errorString.substring(0, errorString.length() - 2);
                         }else if( tranCode.charAt(0) == '4' ) {
                             for (Map.Entry<String, String[]> entry : AllLinesData.getAllParam().entrySet()) {
-                                if ( !entry.getValue()[qCurrent].equals( entry.getValue()[qNeed] ) ) {
+                                if ( !entry.getValue()[qCurrent].equals( entry.getValue()[qNeed] )  && NotCloseList.getParamItem(entry.getKey()) == 0 ) {
                                     error = true;
                                     errorString += entry.getValue()[qEvidNum] + ", ";
                                 }
@@ -361,6 +398,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
             SharedPreferences sharedPref = getActivity().getPreferences(getContext().MODE_PRIVATE);
             String line = sharedPref.getString("whrs_selexped_currentLineID","");
             SessionClass.setParam("currentLineID",line);
+
             if (tranCode.charAt(0) == '3') {
                 rowTempData = AllLinesData.getGroupByParam(qEvidNum, qNeed, qCurrent, qMissing);
             }else{
@@ -379,7 +417,6 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 tablePanel = new TablePanel(getContext(), rootView, R.id.moves_mainSubLayout, headerText, rowTempData, headerWidth);
                 createTablePanel();
             } else {
-
                 refreshData();
             }
         }
@@ -458,7 +495,6 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         isBar = HelperClass.isBarcode(findValue.getText().toString());
         if( isBar != null ){
             isBar = HelperClass.getTrimmedText(isBar);
-            Log.i("TAG", isBar);
             List<String[]> resourceDataList = new ArrayList<>();
             ArrayList<String> findValueList = AllLinesData.findKeyFromMap(isBar,findRow);
             for (int i=0; i<findValueList.size();i++){
@@ -536,7 +572,19 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 loadScanCount_now(id);
             }
         } else {
-            loadScanCount_now(id);
+            checkBarcode(id);
+        }
+    }
+
+    private void checkBarcode(String id){
+        String[] barcodes = AllLinesData.getParam(id);
+        List<String[]> data = AllLinesData.findSameUniqueItemsFromMap(barcodes[qBarcode] , qBarcode, qRefLineId);
+        if(data.size() > 1){
+            if( qTo_Place > 0) showSelectItemDialog(id, data, qTo_Place);
+        }if(data.size() == 1){
+            loadScanCount_now(data.get(0)[0]);
+        }if(data.size() == 0){
+            HelperClass.messageBox(getActivity(),"Feladatkezelés","Az adott tétel már rakhelyen van!\nHa változtatni szeretné kérem törölje a rakhelyről!",HelperClass.WARNING);
         }
     }
 
@@ -600,10 +648,10 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
             url = SessionClass.getParam("WSUrl")+"/getTaskLines/"+terminal+"/"+userid+"/"+pdaid+"/"+listviewselect+"/"+listviewfrom+"/"+listviewwhere+"/"+listvieworderby+"/"+tranCode;
             resultText = "getTaskLinesResult";
         }
-        Log.i("URL",url);
         RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
         JSONObject jsonObject=null;
         pd = HelperClass.loadingDialogOn(getActivity());
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new  JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -636,6 +684,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                         }
 
                         AllLinesData.setParam(dataText[0],dataText);
+                        NotCloseList.setParamItem(dataText[0],0);
                         tl.add(dataText);
                     }
                     AllLinesData.toStringLog();
@@ -659,7 +708,9 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                     db.logDao().addLog(new LogTable(LogTable.LogType_Error,"MovesSubTableFragment",e.getMessage(),"LOGUSER",null,null));
                     e.printStackTrace();
                 }
-                pd.dismiss();
+                if( pd!=null ){
+                    pd.dismiss();
+                }
             }
         }, new Response.ErrorListener() {
             @Override
@@ -667,7 +718,9 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 if(error!=null){
                     error.printStackTrace();
                 }
-                pd.dismiss();
+                if( pd!=null ){
+                    pd.dismiss();
+                }
             }
         });
         jr.setRetryPolicy(new DefaultRetryPolicy(50000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
@@ -682,10 +735,11 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         tps.setCellLeftRightPadding(HelperClass.dpToPx(getContext(),6));
         tps.setCellTopBottomPadding(HelperClass.dpToPx(getContext(),6));
         tps.setOnRowClickListener(new View.OnClickListener() {
+            @SuppressLint("ResourceType")
             @Override
             public void onClick(View v) {
                 KeyboardUtils.hideKeyboard(getActivity());
-                CheckBox cb = v.findViewById(R.dimen.tablepanel_row_checkBox);
+                @SuppressLint("ResourceType") CheckBox cb = v.findViewById(R.dimen.tablepanel_row_checkBox);
                 if(v.getId() != R.dimen.tablepanel_row_checkBox) cb.setChecked(!cb.isChecked());
                 for(int i = 0; i < tablePanel.getAdapter().getItemCount(); i++){
                     tablePanel.getAdapter().checkedList[i] = false;
@@ -851,7 +905,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
 
     private void closeDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Biztos, hogy lezárja a feladatot!");
+        builder.setTitle("Biztos, hogy lezárja a feladatot?");
         builder.setMessage("Lezárás után a feladat eltűnik a feladatlistából és áttöltődik a rendszerbe!");
         builder.setNegativeButton("mégsem", new DialogInterface.OnClickListener() {
             @Override
@@ -864,11 +918,79 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 KeyboardUtils.hideKeyboard(getActivity());
-                closeLine();
+                if( tranCode.charAt(0)=='3' ){
+                    closeLine();
+                }else {
+                    if (NotCloseList.getSizeOfChecked() > 0) {
+                        notCloseDialog();
+                    } else {
+                        closeLine();
+                    }
+                }
                 dialog.cancel();
             }
         });
         builder.show();
+    }
+
+    private void notCloseDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Biztos, hogy lezárja a feladatot?");
+        builder.setMessage("Vannak tételek amik nem lesznek lezárva!\n\nErősítse meg a műveletet a műszakvezető kódjával:");
+        View rootView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_close_checker, null);
+        final WHEditBox whEditBox = rootView.findViewById(R.id.dialog_close_checker);
+        final TextView succText = rootView.findViewById(R.id.dialog_close_text);
+        succText.setVisibility(View.GONE);
+
+        whEditBox.setOnDetectBarcodeListener(new WHEditBox.OnDetectBarcodeListener() {
+            @Override
+            public void OnDetectBarcode(String value) {
+                if( whEditBox.EDText.getText().toString().equals("muszakvezeto") ) {
+                    whEditBox.EDText.setText("");
+                    whEditBox.setVisibility(View.GONE);
+                    succText.setVisibility(View.VISIBLE);
+                    dialog.setMessage("");
+                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(true);
+                }else {
+                    Toast.makeText(getContext(),"Hibás engedélyező kód!", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void OnDetectError(String errorResult, String value) {
+
+            }
+
+            @Override
+            public void OnFocusOutListener(String value) {
+
+            }
+
+            @Override
+            public void OnFocusInListener(String value) {
+
+            }
+        });
+        builder.setView(rootView);
+        builder.setNegativeButton("mégsem", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                dialog.cancel();
+            }
+        });
+        builder.setPositiveButton("lezárom", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                closeLine();
+                dialog.cancel();
+            }
+        });
+
+        dialog = builder.create();
+        dialog.show();
+        dialog.getButton(AlertDialog.BUTTON_POSITIVE).setEnabled(false);
     }
 
     private void notSaveAll(){
@@ -897,10 +1019,11 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
     }
 
     public void closeFragment(){
-        Log.i("TAG","CloseFragment");
         KeyboardUtils.hideKeyboard(getActivity());
         db.sessionTempDao().deleteAllData();
-        pd.dismiss();
+        if( pd!=null ){
+            pd.dismiss();
+        }
         if(SessionClass.getParam("collectionBtn").equals("1") ){
             ((MovesSubViewPager)getParentFragment()).closeFragment();
         }else{
@@ -908,9 +1031,10 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         }
     }
     public void errorClose() {
-        Log.i("TAG","ERRORClose");
         KeyboardUtils.hideKeyboard(getActivity());
-        pd.dismiss();
+        if( pd!=null ){
+            pd.dismiss();
+        }
     }
 
     void placeDialog(final String id) {
@@ -1041,6 +1165,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 KeyboardUtils.hideKeyboard(getActivity());
                 if( tranCode.charAt(0) == '3' || tranCode.charAt(0) == '4' ) {
                     getActivity().getSupportFragmentManager().popBackStack();
+                    new ChangeStatusThread(getContext(), "XD_PDA", tranCode, tranID, frg).start();
                 }else {
                     new ChangeStatusThread(getContext(), "PDA", tranCode, tranID, frg).start();
                 }
@@ -1128,7 +1253,7 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         popup.show();
     }
 
-    void createLineDialog() {
+    void createLineDialog_old() {
         try {
             SessionClass.setParam("currentLineID", tablePanel.getAdapter().getCheckedPosition(0).get(0));
         }catch (Exception e){
@@ -1172,56 +1297,63 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
                 builder.setPositiveButton("Felbontom", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        if( (Integer.valueOf( AllLinesData.getParam(SessionClass.getParam("currentLineID"))[qNeed]) - 1 ) > Integer.valueOf(num.getText().toString()) ) {
-                            int qTo_Place  = HelperClass.getArrayPosition("To_Place", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+
+                        //----------------------------------------------------------- Normal worehouse break function ------------------------------------------------------------------
+
+                        if( !num.getText().toString().equals("0") ) {
+                            if ((Integer.valueOf(AllLinesData.getParam(SessionClass.getParam("currentLineID"))[qNeed]) - 1) >= Integer.valueOf(num.getText().toString())) {
+                                int qTo_Place = HelperClass.getArrayPosition("To_Place", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
 
 
-                            String[] oldRow = AllLinesData.getParam(SessionClass.getParam("currentLineID"));
-                            int pos = AllLinesData.getRowCount(SessionClass.getParam("currentLineID"));
-                            String[] newRow = new String[oldRow.length];
+                                String[] oldRow = AllLinesData.getParam(SessionClass.getParam("currentLineID"));
+                                int pos = AllLinesData.getRowCount(SessionClass.getParam("currentLineID"));
+                                String[] newRow = new String[oldRow.length];
 
-                            for (int i = 0; i < oldRow.length; i++) {
-                                newRow[i] = oldRow[i];
-                            }
-                            String newId = "";
-                            if (newId.equals("")) {
-                                Random r = new Random();
-                                newId = String.valueOf(-1 * Long.parseLong(oldRow[0]) + 1000000000 + (r.nextInt(900000 - 100000) + 100000));
-                            }
+                                for (int i = 0; i < oldRow.length; i++) {
+                                    newRow[i] = oldRow[i];
+                                }
+                                String newId = "";
+                                if (newId.equals("")) {
+                                    Random r = new Random();
+                                    newId = String.valueOf(-1 * Long.parseLong(oldRow[0]) + 1000000000 + (r.nextInt(900000 - 100000) + 100000));
+                                }
 
-                            newRow[0] = newId;
-                            newRow[qNeed] = num.getText().toString();
-                            newRow[qCurrent] = "0";
-                            newRow[qMissing] = "0";
-                            if( qBarcode > -1) newRow[qBarcode] = "";
-                            if( qTo_Place > -1) newRow[qTo_Place] = "";
-                            newRow[qRefLineID] = oldRow[qLineID];
-                            oldRow[qNeed] = String.valueOf(Integer.valueOf(oldRow[qNeed]) - Integer.valueOf(num.getText().toString()));
-                            if( Integer.valueOf(oldRow[qNeed]) < Integer.valueOf(oldRow[qCurrent]) ){
-                                oldRow[qCurrent] = oldRow[qNeed];
-                            }
-                            oldRow[qMissing] = String.valueOf( Integer.valueOf(oldRow[qNeed]) - Integer.valueOf(oldRow[qCurrent]) );
-                            List<SessionTemp> st = db.sessionTempDao().getAllData();
-                            AllLinesData.insertParam(AllLinesData.getRowCount(oldRow[0]) + 1, newRow[0], newRow);
-                            if (tranCode.charAt(0) == '3') {
-                                rowTempData = AllLinesData.getGroupByParam(qEvidNum, qNeed, qCurrent, qMissing);
-                            }else{
-                                rowTempData = AllLinesData.getAllDataList();
-                            }
+                                newRow[0] = newId;
+                                newRow[qNeed] = num.getText().toString();
+                                newRow[qCurrent] = "0";
+                                newRow[qMissing] = "0";
+                                if (qBarcode > -1) newRow[qBarcode] = "";
+                                //if (qTo_Place > -1) newRow[qTo_Place] = "";
+                                newRow[qRefLineId] = oldRow[qLineID];
+                                oldRow[qNeed] = String.valueOf(Integer.valueOf(oldRow[qNeed]) - Integer.valueOf(num.getText().toString()));
+                                if (Integer.valueOf(oldRow[qNeed]) < Integer.valueOf(oldRow[qCurrent])) {
+                                    oldRow[qCurrent] = oldRow[qNeed];
+                                }
+                                oldRow[qMissing] = String.valueOf(Integer.valueOf(oldRow[qNeed]) - Integer.valueOf(oldRow[qCurrent]));
+                                List<SessionTemp> st = db.sessionTempDao().getAllData();
+                                AllLinesData.insertParam(AllLinesData.getRowCount(oldRow[0]) + 1, newRow[0], newRow);
+                                if (tranCode.charAt(0) == '3') {
+                                    rowTempData = AllLinesData.getGroupByParam(qEvidNum, qNeed, qCurrent, qMissing);
+                                } else {
+                                    rowTempData = AllLinesData.getAllDataList();
+                                }
 
-                            tablePanel = new TablePanel(getContext(), rootView, R.id.moves_mainSubLayout, headerText, rowTempData, headerWidth);
-                            createTablePanel();
-                            if (tranCode.charAt(0) != '3') {
-                                tablePanel.getAdapter().setCheckedArray(AllLinesData.findPosition(SessionClass.getParam("currentLineID")));
-                                tablePanel.smoothScrollToPosition(pos);
+                                tablePanel = new TablePanel(getContext(), rootView, R.id.moves_mainSubLayout, headerText, rowTempData, headerWidth);
+                                createTablePanel();
+                                if (tranCode.charAt(0) != '3') {
+                                    tablePanel.getAdapter().setCheckedArray(AllLinesData.findPosition(SessionClass.getParam("currentLineID")));
+                                    tablePanel.smoothScrollToPosition(pos);
+                                }
+                                InsertedList.setInsertElement(newId, "0");
+                                CheckedList.setParamItem(oldRow[0], 1);
+                                NotCloseList.setParamItem(newId, 0);
+                                SaveAllSessionTemp sst = new SaveAllSessionTemp(getContext());
+                                sst.start();
+                            } else {
+                                Toast.makeText(getContext(), "Túl nagy a bontási mennyiség!", Toast.LENGTH_LONG).show();
                             }
-                            InsertedList.setInsertElement(newId, "0");
-                            Log.i("TAG","OLD ROW: "+oldRow[0]);
-                            CheckedList.setParamItem(oldRow[0], 1);
-                            SaveAllSessionTemp sst = new SaveAllSessionTemp(getContext());
-                            sst.start();
                         }else{
-                            Toast.makeText(getContext(), "Túl nagy a bontási mennyiség!", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), "Bontási mennyiség nem lehet nulla!", Toast.LENGTH_LONG).show();
                         }
                     }
                 });
@@ -1245,6 +1377,61 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         }
     }
 
+    private void showSelectItemDialog(final String barcode, final List<String[]> data, int placePos){
+        dialogSelectItem = "";
+        builderSelect = new AlertDialog.Builder(getActivity());
+        builderSelect.setTitle("Tétel kiválasztás");
+        builderSelect.setMessage("Ez a vonalkód több különböző tételsort is meghatároz, kérem válassza ki a megfelelőt!");
+        View dialogRootView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_select_items, null, false);
+
+        RecyclerView.LayoutManager lm = new LinearLayoutManager(getContext());
+        List<XD_Dialog_ItemsParameters> itemsList = new ArrayList<>();
+        List<String[]> dataList = data;
+        if( dataList != null && dataList.size() > 0 ){
+            for(int i=0; i < dataList.size(); i++){
+                try {
+                    itemsList.add(new XD_Dialog_ItemsParameters(Long.parseLong(dataList.get(i)[0]), Integer.parseInt(dataList.get(i)[qNeed]), Integer.parseInt(dataList.get(i)[qCurrent]), Integer.parseInt(dataList.get(i)[qWeight]), HelperClass.convertStringToFloat(dataList.get(i)[qLength]), HelperClass.convertStringToFloat(dataList.get(i)[qWidth]), HelperClass.convertStringToFloat(dataList.get(i)[qHeight]), dataList.get(i)[placePos]));
+                }catch (Exception e){
+                    e.printStackTrace();
+                    HelperClass.messageBox(getActivity(),"Adatmegadás","Hibás érték formátum " , HelperClass.ERROR);
+                }
+            }
+        }
+
+        XD_Dialog_ItemsParametersListAdapter XD_listAdapter = new XD_Dialog_ItemsParametersListAdapter(getContext(),itemsList,3);
+        XD_listAdapter.setEvidNum( "" );
+        XD_listAdapter.setActivity(getActivity());
+        XD_listAdapter.setOnSelectMoreItems(new XD_ItemsParametersListAdapter.OnSelectMoreItems() {
+            @Override
+            public void onContainerClick(Long id) {
+                dialogSelectItem = String.valueOf(id);
+            }
+        });
+        RecyclerView itemsListContainer = dialogRootView.findViewById(R.id.dialog_rv_items_list);
+        itemsListContainer.setLayoutManager(lm);
+        itemsListContainer.setAdapter(XD_listAdapter);
+        SimpleDividerItemDecoration itemDecor = new SimpleDividerItemDecoration(getContext());
+        itemsListContainer.addItemDecoration(itemDecor);
+
+
+        builderSelect.setView(dialogRootView);
+        builderSelect.setPositiveButton("Kiválaszt", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                loadScanCount_now(SessionClass.getParam("XD_CHECKED3"));
+            }
+        });
+        builderSelect.setNegativeButton("Mégsem", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                dialog.cancel();
+            }
+        });
+
+        builderSelect.setCancelable(false);
+        builderSelect.show();
+    }
 
 /*
     private void palettDialog() {
@@ -1325,4 +1512,291 @@ public class MovesSubTableFragment extends Fragment implements View.OnClickListe
         popup = builder.create();
         popup.show();
     }*/
+
+    void createLineDialog() {
+        try {
+            SessionClass.setParam("currentLineID", tablePanel.getAdapter().getCheckedPosition(0).get(0));
+        }catch (Exception e){
+            SessionClass.setParam("currentLineID", "");
+        }
+        if( !SessionClass.getParam("currentLineID").equals("") ) {
+            if ( !InsertedList.isInsert(SessionClass.getParam("currentLineID")) ) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Tételbontás");
+                builder.setMessage("Kérem adja meg a bontandó darabszámot:");
+                View dialogRootView = LayoutInflater.from(getContext()).inflate(R.layout.dialog_numberpicker, null, false);
+                final EditText num = dialogRootView.findViewById(R.id.numberpicker_number);
+                Button add = dialogRootView.findViewById(R.id.numberpicker_number_add);
+                Button minus = dialogRootView.findViewById(R.id.numberpicker_number_minus);
+                num.setText("0");
+                add.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            if( (Integer.valueOf( AllLinesData.getParam(SessionClass.getParam("currentLineID"))[qNeed]) - 1 ) > Integer.valueOf(num.getText().toString()) ) {
+                                num.setText("" + (Integer.valueOf(num.getText().toString()) + 1));
+                            }
+                        } catch (Exception e) {
+                            num.setText("0");
+                        }
+                    }
+                });
+                minus.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            if( 0 < Integer.valueOf(num.getText().toString()) ) {
+                                num.setText("" + (Integer.valueOf(num.getText().toString()) - 1));
+                            }
+                        } catch (Exception e) {
+                            num.setText("0");
+                        }
+                    }
+                });
+                builder.setView(dialogRootView);
+                builder.setPositiveButton("Felbontom", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
+                        String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_XD_CD_SPLIT";
+                        HashMap<String,String> map = new HashMap<>();
+                        map.put("Terminal",SessionClass.getParam("terminal"));
+                        map.put("WRHS_L_ID", SessionClass.getParam("currentLineID"));
+                        map.put("PCS",num.getText().toString());
+                        HelperClass.printHashMap(map);
+                        Log.i("URL",url);
+                        JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
+                            @Override
+                            public void onResponse(JSONObject response) {
+                                try {
+                                    String rootText = response.getString("WRHS_PDA_XD_CD_SPLITResult");
+                                    Log.i("TAG",rootText);
+                                    JSONObject jsonObject = new JSONObject(rootText);
+                                    String rtext = jsonObject.getString("ERROR_CODE");
+                                    if (!rtext.isEmpty()) {
+                                        if (rtext.equals("0")) {
+                                            String newID = jsonObject.getString("NEWID");
+                                            String newLineID = jsonObject.getString("NEWLINEID");
+                                            int pos = AllLinesData.getRowCount(SessionClass.getParam("currentLineID"));
+                                            String[] baseLine = AllLinesData.getParam( SessionClass.getParam("currentLineID") );
+                                            String[] newLine = new String[baseLine.length];
+                                            for(int i = 0; i < baseLine.length; i++){
+                                                newLine[i] = baseLine[i];
+                                            }
+                                            newLine[0] = newID;
+                                            newLine[qLineID] = newLineID;
+                                            newLine[qNeed] = num.getText().toString();
+                                            //if( !baseLine[qCurrent].equals("0")){ newLine[qCurrent] = num.getText().toString(); } else { newLine[qCurrent] = "0"; }
+                                            //newLine[qBarcode] = newID;
+                                            newLine[qCurrent] = "0";
+                                            Float f = Float.parseFloat( newLine[qNeed] ) / ( Float.parseFloat(baseLine[qNeed]) + Float.parseFloat(baseLine[qMissing]) );
+                                            if( Integer.parseInt(baseLine[qCurrent]) > Integer.parseInt(baseLine[qNeed]) ){
+                                                baseLine[qCurrent] = baseLine[qNeed];
+                                            }
+                                            baseLine[qNeed] = String.valueOf( Integer.parseInt(baseLine[qNeed]) - Integer.parseInt(num.getText().toString()) );
+                                            baseLine[qWeight] = String.valueOf( Math.round( Float.parseFloat(baseLine[qWeight]) * (1-f) ));
+                                            newLine[qWeight] = String.valueOf( Math.round( Float.parseFloat(newLine[qWeight]) * f) );
+                                            AllLinesData.setParam(newID, newLine);
+                                            if (tranCode.charAt(0) == '3') {
+                                                rowTempData = AllLinesData.getGroupByParam(qEvidNum, qNeed, qCurrent, qMissing);
+                                            } else {
+                                                rowTempData = AllLinesData.getAllDataList();
+                                            }
+                                            baseLine[qMissing] = String.valueOf( Integer.parseInt(baseLine[qCurrent]) - Integer.parseInt(baseLine[qNeed]) );
+                                            newLine[qMissing] = String.valueOf( Integer.parseInt(newLine[qCurrent]) - Integer.parseInt(newLine[qNeed]) );
+                                            tablePanel = new TablePanel(getContext(), rootView, R.id.moves_mainSubLayout, headerText, rowTempData, headerWidth);
+                                            createTablePanel();
+                                            if (tranCode.charAt(0) != '3') {
+                                                tablePanel.getAdapter().setCheckedArray(AllLinesData.findPosition(SessionClass.getParam("currentLineID")));
+                                                tablePanel.smoothScrollToPosition(pos);
+                                            }
+
+                                            new SaveAllSessionTemp(getContext()).start();
+                                        }else{
+                                            Toast.makeText(getContext(),jsonObject.getString("ERROR_TEXT"),Toast.LENGTH_LONG).show();
+                                        }
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            }
+                        }, new Response.ErrorListener() {
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                if(error!=null){
+                                    Toast.makeText(getContext(),"Adatok áttöltése sikertelen, hálózati hiba!",Toast.LENGTH_LONG).show();
+                                    error.printStackTrace();
+                                }
+                            }
+                        });
+                        jr.setRetryPolicy(new DefaultRetryPolicy(50000,DefaultRetryPolicy.DEFAULT_MAX_RETRIES,DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                        rq.add(jr);
+                    }
+                });
+                builder.setNegativeButton("Mégsem", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        KeyboardUtils.hideKeyboard(getActivity());
+                        dialog.cancel();
+                    }
+                });
+
+                builder.setCancelable(false);
+                builder.show();
+            } else {
+                HelperClass.messageBox(getActivity(),"Feladatkezelés","Bontott tételt tovább nem bonthat!",HelperClass.ERROR);
+                //Toast.makeText(getContext(), "Bontott tételt tovább nem bonthat!", Toast.LENGTH_LONG).show();
+            }
+        }else{
+            HelperClass.messageBox(getActivity(),"Feladatkezelés","Nincs kiválasztva feladat sor!",HelperClass.ERROR);
+            //Toast.makeText(getContext(), "Nincs kiválasztva feladat sor!", Toast.LENGTH_LONG).show();
+        }
+
+    }
+
+    private void saveImageDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Állapot mentés");
+        TextView tv1 = new TextView(getContext());
+        tv1.setPadding(HelperClass.dpToPx(getContext(),20),HelperClass.dpToPx(getContext(),20),0,0);
+        tv1.setText("Szeretné az adott állapotot feltölteni a szerverre hibakeresés céljából?");
+        builder.setView(tv1);
+        builder.setNegativeButton("Nem", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                KeyboardUtils.hideKeyboard(getActivity());
+                dialog.cancel();
+            }
+        });
+        builder.setPositiveButton("Igen", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                saveImageData();
+            }
+        });
+        builder.show();
+    }
+
+    private void saveImageData(){
+
+        JSONObject jsonObject= new JSONObject();
+
+        pd = HelperClass.loadingDialogOn(getActivity());
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy.MM.dd HH:mm", Locale.getDefault());
+        String currentDateandTime = sdf.format(new Date());
+        Map<String, String> headMap = new HashMap<>();
+        headMap.put("tran_code",""+tranCode);
+        headMap.put("move_num",""+movenum);
+        headMap.put("action_date",currentDateandTime);
+        headMap.put("terminal",SessionClass.getParam("terminal"));
+        headMap.put("userid",SessionClass.getParam("userid"));
+        JSONObject jsonRoot = new JSONObject(headMap);
+
+        List<SessionTemp> tempList = db.sessionTempDao().getAllData();
+        JSONArray jsonArray = new JSONArray();
+        for(int i = 0; i < tempList.size(); i++){
+            try {
+                JSONObject jobj = new JSONObject();
+                jobj.put("id", tempList.get(i).getId());
+                jobj.put("num", tempList.get(i).getNum());
+                jobj.put("param0", tempList.get(i).getParam0()   == null ? JSONObject.NULL : tempList.get(i).getParam0());
+                jobj.put("param1", tempList.get(i).getParam1()   == null ? JSONObject.NULL : tempList.get(i).getParam1());
+                jobj.put("param2", tempList.get(i).getParam2()   == null ? JSONObject.NULL : tempList.get(i).getParam2());
+                jobj.put("param3", tempList.get(i).getParam3()   == null ? JSONObject.NULL : tempList.get(i).getParam3());
+                jobj.put("param4", tempList.get(i).getParam4()   == null ? JSONObject.NULL : tempList.get(i).getParam4());
+                jobj.put("param5", tempList.get(i).getParam5()   == null ? JSONObject.NULL : tempList.get(i).getParam5());
+                jobj.put("param6", tempList.get(i).getParam6()   == null ? JSONObject.NULL : tempList.get(i).getParam6());
+                jobj.put("param7", tempList.get(i).getParam7()   == null ? JSONObject.NULL : tempList.get(i).getParam7());
+                jobj.put("param8", tempList.get(i).getParam8()   == null ? JSONObject.NULL : tempList.get(i).getParam8());
+                jobj.put("param9", tempList.get(i).getParam9()   == null ? JSONObject.NULL : tempList.get(i).getParam9());
+                jobj.put("param10", tempList.get(i).getParam10() == null ? JSONObject.NULL : tempList.get(i).getParam10());
+                jobj.put("param11", tempList.get(i).getParam11() == null ? JSONObject.NULL : tempList.get(i).getParam11());
+                jobj.put("param12", tempList.get(i).getParam12() == null ? JSONObject.NULL : tempList.get(i).getParam12());
+                jobj.put("param13", tempList.get(i).getParam13() == null ? JSONObject.NULL : tempList.get(i).getParam13());
+                jobj.put("param14", tempList.get(i).getParam14() == null ? JSONObject.NULL : tempList.get(i).getParam14());
+                jobj.put("param15", tempList.get(i).getParam15() == null ? JSONObject.NULL : tempList.get(i).getParam15());
+                jobj.put("param16", tempList.get(i).getParam16() == null ? JSONObject.NULL : tempList.get(i).getParam16());
+                jobj.put("param17", tempList.get(i).getParam17() == null ? JSONObject.NULL : tempList.get(i).getParam17());
+                jobj.put("param18", tempList.get(i).getParam18() == null ? JSONObject.NULL : tempList.get(i).getParam18());
+                jobj.put("param19", tempList.get(i).getParam19() == null ? JSONObject.NULL : tempList.get(i).getParam19());
+                jobj.put("param20", tempList.get(i).getParam20() == null ? JSONObject.NULL : tempList.get(i).getParam20());
+                jobj.put("param21", tempList.get(i).getParam21() == null ? JSONObject.NULL : tempList.get(i).getParam21());
+                jobj.put("param22", tempList.get(i).getParam22() == null ? JSONObject.NULL : tempList.get(i).getParam22());
+                jobj.put("param23", tempList.get(i).getParam23() == null ? JSONObject.NULL : tempList.get(i).getParam23());
+                jobj.put("param24", tempList.get(i).getParam24() == null ? JSONObject.NULL : tempList.get(i).getParam24());
+                jobj.put("param25", tempList.get(i).getParam25() == null ? JSONObject.NULL : tempList.get(i).getParam25());
+                jobj.put("param26", tempList.get(i).getParam26() == null ? JSONObject.NULL : tempList.get(i).getParam26());
+                jobj.put("param27", tempList.get(i).getParam27() == null ? JSONObject.NULL : tempList.get(i).getParam27());
+                jobj.put("param28", tempList.get(i).getParam28() == null ? JSONObject.NULL : tempList.get(i).getParam28());
+                jobj.put("param29", tempList.get(i).getParam29() == null ? JSONObject.NULL : tempList.get(i).getParam29());
+                jobj.put("param30", tempList.get(i).getParam30() == null ? JSONObject.NULL : tempList.get(i).getParam30());
+                jobj.put("param31", tempList.get(i).getParam31() == null ? JSONObject.NULL : tempList.get(i).getParam31());
+                jobj.put("param32", tempList.get(i).getParam32() == null ? JSONObject.NULL : tempList.get(i).getParam32());
+                jobj.put("param33", tempList.get(i).getParam33() == null ? JSONObject.NULL : tempList.get(i).getParam33());
+                jobj.put("param34", tempList.get(i).getParam34() == null ? JSONObject.NULL : tempList.get(i).getParam34());
+                jobj.put("param35", tempList.get(i).getParam35() == null ? JSONObject.NULL : tempList.get(i).getParam35());
+                jobj.put("param36", tempList.get(i).getParam36() == null ? JSONObject.NULL : tempList.get(i).getParam36());
+                jobj.put("param37", tempList.get(i).getParam37() == null ? JSONObject.NULL : tempList.get(i).getParam37());
+                jobj.put("param38", tempList.get(i).getParam38() == null ? JSONObject.NULL : tempList.get(i).getParam38());
+                jobj.put("param39", tempList.get(i).getParam39() == null ? JSONObject.NULL : tempList.get(i).getParam39());
+                jobj.put("STATUS", tempList.get(i).getStatus());
+                jobj.put("insertRow", tempList.get(i).isInsertRow());
+                jobj.put("notClose", tempList.get(i).getNotClose());
+                jsonArray.put(jobj);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
+        if(jsonArray != null){
+            try {
+                jsonRoot.put("data", jsonArray);
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+
+        }
+        Log.i("TAG",jsonRoot.toString());
+
+        HashMap<String,String> map = new HashMap<>();
+        String text = jsonRoot.toString();
+        String base64 = "";
+        try {
+            byte[] data = text.getBytes("UTF-8");
+            base64 = Base64.encodeToString(data, Base64.DEFAULT);
+        }catch (Exception e ){
+            e.printStackTrace();
+        }
+        map.put("Data", base64 );
+        // 0 - create new table
+        // 1 - insert row in table
+        map.put("NEW_DATA", "1" );
+
+        if(HelperClass.isOnline(getContext())) {
+            RequestQueue rq = MySingleton.getInstance(getContext()).getRequestQueue();
+            String url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_DATA_LOG_Upload";
+            //url = "https://web-restapi-services-01.conveyor.cloud/service1.svc/WRHS_PDA_DATA_LOG_Upload";
+            Log.i("URL", url);
+            Log.i("TAG", new JSONObject(map).toString() );
+            JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.POST, url, new JSONObject(map), new Response.Listener<JSONObject>() {
+                @Override
+                public void onResponse(JSONObject response) {
+                    Log.i("TAG",response.toString());
+                    pd.dismiss();
+                }
+            }, new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
+                    if (error != null) {
+                        Toast.makeText(getContext(), "Adatok áttöltése sikertelen, hálózati hiba!", Toast.LENGTH_LONG).show();
+                        error.printStackTrace();
+                        pd.dismiss();
+                    }
+                }
+            });
+            jr.setRetryPolicy(new DefaultRetryPolicy(50000, DefaultRetryPolicy.DEFAULT_MAX_RETRIES, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+            rq.add(jr);
+        }
+    }
 }

@@ -220,7 +220,7 @@ public class XD_SelectFragment extends Fragment {
         String userid = SessionClass.getParam("userid");
         //String ordid = "1116323141";
         String ordid = orderId.getText().toString();
-        String url;
+        final String url;
         if( tranCode.charAt(0)=='3') {
             url = SessionClass.getParam("WSUrl") + "/WRHS_PDA_XD_getTask/" + terminal + "/" + userid + "/" + ordid + "/" + tranCode + "/" + pdaid + "/License_Num,Weight,Needed_Qty/WRHS_PDA_XD_INSTRUCTIONS/nothing/ord_num";
         }else{
@@ -251,7 +251,6 @@ public class XD_SelectFragment extends Fragment {
 
                     if( tranCode.charAt(0) == '4' ) {
                         fromPlaces = Arrays.toString( fp.toArray() );
-                        Log.i("TAG",fromPlaces);
                         fp_text.setVisibility(View.VISIBLE);
                         fromPlaceTV.setVisibility(View.VISIBLE);
                         fromPlaces = fromPlaces.substring(1,fromPlaces.length()-1);
@@ -271,6 +270,7 @@ public class XD_SelectFragment extends Fragment {
                 } catch (JSONException e) {
                     HelperClass.messageBox(getActivity(),"CrossDock - kiválasztás","Nincs adat ehhez a feladatkódhoz!",HelperClass.ERROR);
                     //Toast.makeText(getContext(),"Nincs adat ehhez a feladatkódhoz!",Toast.LENGTH_LONG).show();
+                    Log.i("TAG",url);
                     e.printStackTrace();
                 }
                 pd.dismiss();

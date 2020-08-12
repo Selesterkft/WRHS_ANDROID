@@ -39,11 +39,14 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
     private List<XD_ItemsParameters> dataList;
     private Context context;
     private int adapterType;
-    private int qEvidNum, qNeed, qCurrent, qWeight, qWidth, qHeight, qLength, qBarcode, qToPlace, qMissing;
+    private int qEvidNum, qNeed, qCurrent, qWeight, qWidth, qHeight, qLength, qBarcode, qSelID, qToPlace, qMissing, qRefLineId;
     private String tranCode, evidNum;
     private OnEventUpdate onEventUpdate;
+    private OnSelectMoreItems onSelectMoreItems;
     private Long checkNum;
     private Activity activity;
+    private boolean[] checkedArray;
+    private int selectedPosition = -1;
 
     public void setActivity(Activity activity) {
         this.activity = activity;
@@ -59,6 +62,14 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
 
     public interface OnEventUpdate{
         public void onUpdatePanel();
+    }
+
+    public void setOnSelectMoreItems(OnSelectMoreItems onSelectMoreItems) {
+        this.onSelectMoreItems = onSelectMoreItems;
+    }
+
+    public interface OnSelectMoreItems{
+        public void onContainerClick(Long id);
     }
 
 
@@ -95,7 +106,9 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
         this.dataList = dataList;
         this.context = context;
         this.adapterType = adapterType;
+        checkedArray = new boolean[1000];
         tranCode = SessionClass.getParam("tranCode");
+        qSelID = 0;
         qBarcode = HelperClass.getArrayPosition("Barcode", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qEvidNum = HelperClass.getArrayPosition("EvidNum", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qNeed = HelperClass.getArrayPosition("Needed_Qty", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
@@ -106,6 +119,10 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
         qHeight  = HelperClass.getArrayPosition("Size_Height", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qLength  = HelperClass.getArrayPosition("Size_Length", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
         qToPlace  = HelperClass.getArrayPosition("To_Place", SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        qRefLineId  = HelperClass.getArrayPosition("Ref_Line_ID",   SessionClass.getParam(tranCode + "_Line_ListView_SELECT"));
+        for(int i=0;i<dataList.size();i++){
+            checkedArray[i]=false;
+        }
     }
 
     @Override
@@ -113,7 +130,8 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
         holder.container.setTag("container_" + position);
         holder.item_sumpcs.setVisibility(View.VISIBLE);
         holder.delBtn.setVisibility(View.GONE);
-        holder.checkBox.setVisibility(View.GONE);
+        holder.checkBox.setVisibility(View.VISIBLE);
+        holder.checkBox.setVisibility(View.VISIBLE);
         if (adapterType == 1) {
             holder.item_sumpcs.setVisibility(View.GONE);
             holder.delBtn.setVisibility(View.VISIBLE);
@@ -123,11 +141,10 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
                     delItem(String.valueOf(dataList.get(position).getItem_id()));
                 }
             });
-            holder.checkBox.setVisibility(View.VISIBLE);
             if(SessionClass.getParam("XD_CHECKED")==null) SessionClass.setParam("XD_CHECKED","0");
-            Log.i("CHECKED",SessionClass.getParam("XD_CHECKED"));
             if(SessionClass.getParam("XD_CHECKED").equals(""+dataList.get(position).getItem_id())){
                 holder.checkBox.setChecked(true);
+                checkedArray[position] = true;
             }else{
                 holder.checkBox.setChecked(false);
             }
@@ -137,22 +154,85 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
                 public void onClick(View v) {
                     if( ((CheckBox) v).isChecked() ) {
                         SessionClass.setParam("XD_CHECKED", "" + dataList.get(position).getItem_id());
+                        for (int i = 0;i<checkedArray.length;i++){
+                            if(i == position){
+                                checkedArray[i]=true;
+                                selectedPosition = i;
+                            }else{
+                                checkedArray[i]=false;
+                            }
+                        }
+                        notifyDataSetChanged();
                     }else{
                         SessionClass.setParam("XD_CHECKED", "0");
                     }
                 }
             });
-        }else{
+        }else if (adapterType == 0) {
             holder.container.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     modifyDataDialog(position);
                 }
             });
+            if(SessionClass.getParam("XD_CHECKED2") == null) SessionClass.setParam("XD_CHECKED2","0");
+            if(SessionClass.getParam("XD_CHECKED2").equals(""+dataList.get(position).getItem_id())){
+                holder.checkBox.setChecked(true);
+                checkedArray[position] = true;
+            }else{
+                holder.checkBox.setChecked(false);
+            }
+
+            holder.checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if( ((CheckBox) v).isChecked() ) {
+                        SessionClass.setParam("XD_CHECKED2", "" + dataList.get(position).getItem_id());
+                        for (int i = 0;i<checkedArray.length;i++){
+                            if(i == position){
+                                checkedArray[i]=true;
+                                selectedPosition = i;
+                            }else{
+                                checkedArray[i]=false;
+                            }
+                        }
+                        notifyDataSetChanged();
+                    }else{
+                        SessionClass.setParam("XD_CHECKED2", "0");
+                    }
+                }
+            });
+        }else if (adapterType == 3) {
+            if(SessionClass.getParam("XD_CHECKED3") == null) SessionClass.setParam("XD_CHECKED3","0");
+            if(SessionClass.getParam("XD_CHECKED3").equals(""+dataList.get(position).getItem_id())){
+                holder.checkBox.setChecked(true);
+                checkedArray[position] = true;
+            }else{
+                holder.checkBox.setChecked(false);
+            }
+            holder.checkBox.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if( ((CheckBox) v).isChecked() ) {
+                        SessionClass.setParam("XD_CHECKED3", "" + dataList.get(position).getItem_id());
+                        for (int i = 0;i<checkedArray.length;i++){
+                            if(i == position){
+                                checkedArray[i]=true;
+                                selectedPosition = i;
+                            }else{
+                                checkedArray[i]=false;
+                            }
+                        }
+                        notifyDataSetChanged();
+                    }else{
+                        SessionClass.setParam("XD_CHECKED3", "0");
+                    }
+                }
+            });
         }
         holder.item_sumpcs.setText("" + dataList.get(position).getItem_sumpcs());
         holder.item_pcs.setText("" + dataList.get(position).getItem_pcs());
-        if( dataList.get(position).getItem_weight() == null) holder.item_weight.setText(""); else holder.item_weight.setText("" + dataList.get(position).getItem_weight());
+        if( dataList.get(position).getItem_weight() == 0) holder.item_weight.setText(""); else holder.item_weight.setText("" + dataList.get(position).getItem_weight());
         if( dataList.get(position).getItem_width()  == null) holder.item_width.setText("");  else holder.item_width.setText( "" + dataList.get(position).getItem_width());
         if( dataList.get(position).getItem_height() == null) holder.item_height.setText(""); else holder.item_height.setText("" + dataList.get(position).getItem_height());
         if( dataList.get(position).getItem_length() == null) holder.item_length.setText(""); else holder.item_length.setText("" + dataList.get(position).getItem_length());
@@ -177,7 +257,7 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
             for(int i=0; i < resDataList.size(); i++){
                 if( resDataList.get(i)[qToPlace].equals(queryPlace) ) {
                     try {
-                        itemsList.add(new XD_ItemsParameters(Long.parseLong(resDataList.get(i)[0]), Integer.parseInt(resDataList.get(i)[qNeed]), Integer.parseInt(resDataList.get(i)[qCurrent]), HelperClass.convertStringToFloat(resDataList.get(i)[qWeight]), HelperClass.convertStringToFloat(resDataList.get(i)[qLength]), HelperClass.convertStringToFloat(resDataList.get(i)[qWidth]), HelperClass.convertStringToFloat(resDataList.get(i)[qHeight])));
+                        itemsList.add(new XD_ItemsParameters(Long.parseLong(resDataList.get(i)[0]), Integer.parseInt(resDataList.get(i)[qNeed]), Integer.parseInt(resDataList.get(i)[qCurrent]), Float.parseFloat(resDataList.get(i)[qWeight]), HelperClass.convertStringToFloat(resDataList.get(i)[qLength]), HelperClass.convertStringToFloat(resDataList.get(i)[qWidth]), HelperClass.convertStringToFloat(resDataList.get(i)[qHeight])));
                     }catch (Exception e){
                         e.printStackTrace();
                         HelperClass.messageBox(activity,"Adatmegadás","Hibás érték formátum " , HelperClass.ERROR);
@@ -209,12 +289,10 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
             public void onClick(DialogInterface dialog, int which) {
                 //Toast.makeText(context, "" + delID, Toast.LENGTH_LONG).show();
                 int curr = Integer.parseInt( AllLinesData.getParam(delID)[qCurrent] );
-                String parentID = AllLinesData.getParam(delID)[qBarcode];
+                String parentID = AllLinesData.getParam(delID)[qRefLineId];
                 AllLinesData.delRow(delID);
                 InsertedList.removeInsertElement(delID);
-                Log.i("TAG","ParentID: "+parentID);
                 String[] data = AllLinesData.getParam(parentID);
-                Log.i("TAG", Arrays.toString(data));
                 data[qCurrent] = String.valueOf( Integer.parseInt( data[qCurrent] ) + curr );
                 update("");
                 SaveAllSessionTemp sst = new SaveAllSessionTemp(context);
@@ -241,7 +319,7 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
         final EditText ED2 = dialogView.findViewById(R.id.dialog_xd_item_editText2);
         final EditText ED3 = dialogView.findViewById(R.id.dialog_xd_item_editText3);
         final EditText ED4 = dialogView.findViewById(R.id.dialog_xd_item_editText4);
-        if (dataList.get(position).getItem_weight() == null ) ED1.setText( "" ); else ED1.setText( String.valueOf(dataList.get(position).getItem_weight()) );
+        if (dataList.get(position).getItem_weight() == 0 ) ED1.setText( "" ); else ED1.setText( String.valueOf(dataList.get(position).getItem_weight()) );
         if (dataList.get(position).getItem_length() == null ) ED2.setText( "" ); else ED2.setText( String.valueOf(dataList.get(position).getItem_length()) );
         if (dataList.get(position).getItem_width()  == null ) ED3.setText( "" ); else ED3.setText( String.valueOf(dataList.get(position).getItem_width()) );
         if (dataList.get(position).getItem_height() == null ) ED4.setText( "" ); else ED4.setText( String.valueOf(dataList.get(position).getItem_height()) );
@@ -256,10 +334,15 @@ public class XD_ItemsParametersListAdapter extends RecyclerView.Adapter<XD_Items
         builder.setPositiveButton("módosítom", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                if( !ED1.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qBarcode,qWeight, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qBarcode], ED1.getText().toString());
-                if( !ED2.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qBarcode,qLength, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qBarcode], ED2.getText().toString());
-                if( !ED3.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qBarcode,qWidth,  AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qBarcode], ED3.getText().toString());
-                if( !ED4.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qBarcode,qHeight, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qBarcode], ED4.getText().toString());
+                if( !ED1.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qSelID,qWeight, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qSelID], ED1.getText().toString());
+                if( !ED2.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qSelID,qLength, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qSelID], ED2.getText().toString());
+                if( !ED3.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qSelID,qWidth,  AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qSelID], ED3.getText().toString());
+                if( !ED4.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qSelID,qHeight, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qSelID], ED4.getText().toString());
+
+                if( !ED1.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qRefLineId,qWeight, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qSelID], ED1.getText().toString());
+                if( !ED2.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qRefLineId,qLength, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qSelID], ED2.getText().toString());
+                if( !ED3.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qRefLineId,qWidth,  AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qSelID], ED3.getText().toString());
+                if( !ED4.getText().toString().isEmpty() ) AllLinesData.setParamsPosition(qRefLineId,qHeight, AllLinesData.getParam( String.valueOf(dataList.get(position).getItem_id()))[qSelID], ED4.getText().toString());
                 update("");
                 KeyboardUtils.hideKeyboard(activity);
                 onEventUpdate.onUpdatePanel();

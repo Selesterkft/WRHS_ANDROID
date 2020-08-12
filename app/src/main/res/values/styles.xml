@@ -45,5 +45,12 @@
         <item name="android:textColor">@drawable/checkbox_color_selector</item>
         <item name="buttonTint">@drawable/checkbox_color_selector</item>
     </style>
+
+    <style name="AppTheme.Picker" parent="Theme.AppCompat.Light.NoActionBar" >
+        <item name="android:textColorPrimary">@android:color/black</item>
+        <item name="android:textSize">15sp</item>
+        <item name="colorControlNormal">@android:color/transparent</item>
+    </style>
+
 </resources>
 

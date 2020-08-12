@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <TextView
+        android:id="@+id/dialog_close_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="ENGEDÉLYEZVE"
+        android:padding="4dp"
+        android:textAlignment="center"
+        android:layout_margin="20dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorGreen"
+        />
+    <mobil.selester.wheditbox.WHEditBox
+        android:id="@+id/dialog_close_checker"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        app:backgroundStyle="@drawable/logintext_et_shape_round"
+        app:innerPadding="4dp"
+        android:layout_margin="20dp"
+        app:selectBackgroundStyle="@drawable/et_shape_select"
+        app:setDelBtn="true"
+        app:textSize="18sp"
+        app:writeType="None"
+
+        />
+</android.support.constraint.ConstraintLayout>

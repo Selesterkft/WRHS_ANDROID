@@ -82,7 +82,10 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.frg_login,container,false);
         db = SelesterDatabase.getDatabase(getContext());
-        db.systemDao().setValue(new SystemTable("WSUrl","http://192.168.1.103:8089/Service1.svc"));
+        //db.systemDao().setValue(new SystemTable("WSUrl","http://192.168.1.103:8089/Service1.svc"));
+        //db.systemDao().setValue(new SystemTable("WSUrl","http://webandtrace.com:8095/Service1.svc"));
+
+        //db.systemDao().setValue(new SystemTable("WSUrl","http://185.187.72.228:8095/service1.svc"));
         //db.systemDao().setValue(new SystemTable("WSUrl","https://web-restapi-services-01.conveyor.cloud/service1.svc"));
         //db.systemDao().setValue(new SystemTable("terminal","AdmAndrJ"));
         //db.systemDao().setValue(new SystemTable("barcodeSuffix","#&"));
@@ -90,7 +93,7 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
 
         showPasword = false;
         loginBtn = rootView.findViewById(R.id.login_btn);
-        if(db.systemDao().getValue("WSUrl")!=null ||  db.systemDao().getValue("terminal")!=null){
+        if(db.systemDao().getValue("WSUrl") != null || db.systemDao().getValue("terminal") != null){
             SessionClass.setParam("WSUrl",db.systemDao().getValue("WSUrl"));
             SessionClass.setParam("terminal",db.systemDao().getValue("terminal"));
         }else{
@@ -170,8 +173,8 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
         String terminal = SessionClass.getParam("terminal");
         String pdaid = SessionClass.getParam("pdaid");
         String url = SessionClass.getParam("WSUrl")+"/log_in/"+account+"/"+password+"/"+terminal+"/"+pdaid;
-        Log.i("URL",url);
         JSONObject jsonObject=null;
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -194,7 +197,6 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
                             }
                         }else{
                             if(root.getString("version")!=null){
-                                Log.i("TAG",root.getString("version") + " - " + BuildConfig.VERSION_NAME);
                                 if(root.getString("version").equals(BuildConfig.VERSION_NAME)){
                                     db.usersDao().setUserData(
                                         new UsersTable(
@@ -280,8 +282,8 @@ public class LoginFragment extends Fragment implements DownloadNewVersion.AsyncR
         String terminal = SessionClass.getParam("terminal");
         String pdaid = SessionClass.getParam("pdaid");
         String url = SessionClass.getParam("WSUrl")+"/log_in/a/a/"+terminal+"/"+pdaid;
-        Log.i("URL",url);
         JSONObject jsonObject=null;
+        Log.i("URL",url);
         JsonRequest<JSONObject> jr = new JsonObjectRequest(Request.Method.GET, url, jsonObject, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
